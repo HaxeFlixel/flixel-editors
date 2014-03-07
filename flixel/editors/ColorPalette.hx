@@ -1,11 +1,11 @@
-package com.leveluplabs.tools.animator;
+package flixel.editors;
 import flixel.addons.ui.SwatchData;
 import flixel.addons.ui.U;
 import flixel.interfaces.IFlxDestroyable;
 
 /**
- * ...
- * @author Lars A. Doucet
+ * Just a simple collection of SwatchData values with a name
+ * @author larsiusprime
  */
 
  class ColorPalette implements IFlxDestroyable {

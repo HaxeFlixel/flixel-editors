@@ -20,6 +20,7 @@
 	<haxelib name="firetongue"/>
 	<haxelib name="task"/>
 	<haxelib name="systools"/>
+	<haxelib name="flixel-editors"/>
 
 	<haxedef name="FLX_BMP_DEBUG"/>
 	<haxedef name="FLX_NO_DEBUG" unless="debug"/>

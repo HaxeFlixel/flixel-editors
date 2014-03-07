@@ -1,14 +1,17 @@
-package com.leveluplabs.tools.animator;
+package flixel.editors;
 import flixel.FlxSprite;
 import flixel.interfaces.IFlxDestroyable;
 
 /**
- * ...
- * @author 
+ * Stores Animation MetaData for an EntitySprite. 
+ * Contains basic FlxSprite animation information, along with "sweet spots",
+ * additional metadata that can be used to specify when something like a punch
+ * or projectile should happen in an animation, and where it should appear.
+ * @author larsiusprime
  */
 class AnimationData implements IFlxDestroyable
 {
-	public var name:String = "";
+	public var name:String = "";						//name of the animation, unique string identifier
 	
 	public var frames:Array<Int> = null;				//raw frame data
 	public var sweets:Map<Int,AnimSweetSpot> = null;	//sweet spots in the animation, keyed by index
@@ -33,12 +36,26 @@ class AnimationData implements IFlxDestroyable
 		sweets = null;
 	}
 	
+	/**
+	 * Add a sweet spot at the given animation frame location
+	 * @param	i		frame in the animation
+	 * @param	Sweet	SweetSpot data
+	 */
+	
 	public function setSweetSpot(i:Int, Sweet:AnimSweetSpot):Void {
 		if (sweets == null) {
 			sweets = new Map<Int, AnimSweetSpot>();
 		}
 		sweets.set(i, Sweet);
 	}
+	
+	/**
+	 * Modify an existing sweet spot, or create one if it doesn't exist
+	 * @param	i		frame in the animation
+	 * @param	Name	new name for the sweet spot
+	 * @param	X		x location of sweet spot
+	 * @param	Y		y location of sweet spot
+	 */
 	
 	public function editSweetSpot(i:Int,Name:String,X:Float,Y:Float):Void {
 		if (sweets == null) {
@@ -55,6 +72,11 @@ class AnimationData implements IFlxDestroyable
 		}
 	}
 	
+	/**
+	 * Remove a sweet spot from the animation
+	 * @param	i	frame in the animation
+	 */
+	
 	public function removeSweetSpot(i:Int):Void {
 		if (sweets == null) {
 			return;
@@ -65,12 +87,24 @@ class AnimationData implements IFlxDestroyable
 		}
 	}
 	
+	/**
+	 * Returns whether a sweet spot exists at that location
+	 * @param	i	frame in the animation
+	 * @return
+	 */
+	
 	public function hasSweetSpot(i:Int):Bool {
 		if (sweets != null && sweets.exists(i)) {
 			return true;
 		}
 		return false;
 	}
+	
+	/**
+	 * Returns a sweet spot at the given location
+	 * @param	i	frame in the animation
+	 * @return
+	 */
 	
 	public function getSweetSpot(i:Int):AnimSweetSpot{
 		if (sweets == null) {

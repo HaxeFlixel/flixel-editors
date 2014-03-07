@@ -1,7 +1,5 @@
 package com.leveluplabs.tools.animator;
 
-import com.leveluplabs.tools.animator.EntityGraphics.EntityColorLayer;
-import com.leveluplabs.tools.animator.EntitySkin;
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.BlendMode;
@@ -20,6 +18,12 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxRandom;
 import openfl.Assets;
+
+
+import flixel.editors.EntityGraphics.EntityColorLayer;
+import flixel.editors.EntitySkin;
+import flixel.editors.EntitySprite;
+import flixel.editors.EntityGraphics;
 
 /**
  * ...

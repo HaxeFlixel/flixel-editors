@@ -1,4 +1,4 @@
-package com.leveluplabs.tools.animator;
+package flixel.editors;
 import flixel.addons.ui.StrIdLabel;
 import flixel.addons.ui.SwatchData;
 import flixel.addons.ui.U;
@@ -7,7 +7,30 @@ import haxe.xml.Fast;
 
 /**
  * Loads up all the color palette data in the game for easy referencing
- * @author 
+ * 
+
+ Expects an XML file in this basic format:
+	 
+ <?xml version="1.0" encoding="utf-8" ?>
+ <data>
+  	<palette_data>
+		<palette name="rainbow">		<!--list of palettes referencing swatches-->
+			<swatch name="red"/>
+			<swatch name="orange"/>
+			<swatch name="yellow"/>
+			<swatch name="green"/>
+		</palette>
+	</palette_data>
+	<swatch_data>						<!--list of swatches with up to 10 sub-colors-->
+		<swatch name="red" c0="0xff5353" c1="0xfa0000" c2="0xc80000" c3="0xa80000"/>		can specify c0, c1, c2...c9
+		<swatch name="orange" c0="0xff9854" c1="0xfa6400" c2="0xc85000" c3="0xa82400"/>
+		<swatch name="yellow" c0="0xfffefe" c1="0xfff900" c2="0xd2c700" c3="0xb0a000"/>
+		<swatch name="green" c0="0xacffa2" c1="0x1bfa00" c2="0x16c800" c3="0x08b000"/>
+	</swatch_data>
+ </data>
+
+ *
+ * @author larsiusprime
  */
 class ColorIndex implements IFlxDestroyable
 {
@@ -50,6 +73,12 @@ class ColorIndex implements IFlxDestroyable
 			_loadPalettes(xml.node.palette_data);
 		}
 	}
+	
+	/**
+	 * Update the ColorIndex's information
+	 * @param	list				list of new swatch data
+	 * @param	forceMatchOnName	true: only update swatches with matching names in list; false: first update matches, then add non-matches as new entries. 
+	 */
 	
 	public function updateFromSwatches(list:Array<SwatchData>,forceMatchOnName:Bool):Void{
 		for (sd in list) {

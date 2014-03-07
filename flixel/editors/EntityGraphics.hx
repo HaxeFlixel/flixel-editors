@@ -1,6 +1,6 @@
-package com.leveluplabs.tools.animator;
-import com.leveluplabs.tools.animator.EntityGraphics.EntityColorLayer;
-import com.leveluplabs.tools.animator.EntitySkin;
+package flixel.editors;
+import flixel.editors.EntityGraphics.EntityColorLayer;
+import flixel.editors.EntitySkin;
 import flash.display.BitmapData;
 import flash.geom.ColorTransform;
 import flixel.addons.ui.StrIdLabel;
@@ -12,55 +12,47 @@ import haxe.xml.Fast;
 import openfl.Assets;
 
 /**
- * All the data you need to make an EntitySprite
+ * All the MetaData you need to make an EntitySprite
  * @author 
  */
 class EntityGraphics
 {
 	public var name:String;								//string identifier
+	public var asset_src(get, null):String = "";		//the path to the asset file you want
+	public var skinName:String = "";					//the string name of the desired EntitySkin (set this to change it)
 	
-	/**
-	 * The path to the file you want
-	 */
+	public var skin(get, null):EntitySkin;				//the currently selected EntitySkin
+	public var map_skins:Map<String,EntitySkin>;		//all possible skins, maps string names ("hero") to skin data
+	public var animations:Map<String,AnimationData>;	//all animations, maps string names ("walk_left") to animation data
 	
-	public var asset_src(get, null):String = "";
-	public function get_asset_src():String {
+	public static inline var COLOR_CHANGE_NONE:Int = 0;				//don't change colors on the base asset
+	public static inline var COLOR_CHANGE_LAYERS:Int = 1;			//it's an "HD style" layered sprite, change colors by colorizing & compositing layers
+	public static inline var COLOR_CHANGE_PIXEL_PALETTE:Int = 2;	//it's a pixel-sprite, change colors by palette-swapping exact pixel color values
+	
+	public var colorKey(get, null):String;				//Returns a unique identifier for the current skin (combination of asset file(s) + custom color rules)
+														//examples: 
+														//  "assets/gfx/defenders/dude+pants#FF0000+hat#0000FF+shirt#00FF00" (HD layered sprite)
+														//  "assets/gfx/defenders/dude#FF0000+#0000FF+#00FF00"				 (pixel sprite)
+	
+	/**********GETTER/SETTERS*************/
+	
+	public function get_asset_src():String
+	{
 		if (skin != null) {
 			return skin.path + "/" + skin.asset_src;
 		}
 		return null;
 	}
 	
-	/**
-	 * The name of the currently selected EntitySkin. Set this to change it.
-	 */
-	
-	public var skinName:String = "";			//currently selected skin
-	
-	/**
-	 * The currently selected EntitySkin
-	 */
-	
-	public var skin(get, null):EntitySkin;
-	public function get_skin():EntitySkin {
-		if (map_skins != null && map_skins.exists(skinName)) {
+	public function get_skin():EntitySkin
+	{
+		if (map_skins != null && map_skins.exists(skinName))
+		{
 			return map_skins.get(skinName);
 		}
 		return null;
 	}
 	
-	public var map_skins:Map<String,EntitySkin>;			//maps string identifiers ("hero") to skin data
-	
-	public var animations:Map<String,AnimationData>;		//animations
-	
-	public static inline var COLOR_CHANGE_NONE:Int = 0;
-	public static inline var COLOR_CHANGE_LAYERS:Int = 1;
-	public static inline var COLOR_CHANGE_PIXEL_PALETTE:Int = 2;
-	
-	/**
-	 * Returns a unique identifier for the current skin (combination of asset file(s) + custom color rules)
-	 */
-	public var colorKey(get, null):String;
 	public function get_colorKey():String
 	{
 		var key:String = U.gfx(asset_src);
@@ -90,9 +82,10 @@ class EntityGraphics
 		return key;
 	}
 	
+	
 	public function new() 
 	{
-	
+		
 	}
 	
 	public function destroy():Void {

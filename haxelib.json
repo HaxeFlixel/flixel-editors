@@ -1,0 +1,11 @@
+{
+	"name": "flixel-editors",
+	"url": "https://github.com/HaxeFlixel/flixel-editors",
+	"license": "MIT",
+	"tags": [flixel,editor,tool],
+	"description": "A set of editors for HaxeFlixel",
+	"version": "0.0.0",
+	"releasenote": "",
+	"contributors": [ "haxeflixel","larsiusprime","Gama11" ],
+	"dependencies": {}
+}

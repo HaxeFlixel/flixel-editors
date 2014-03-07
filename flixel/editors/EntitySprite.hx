@@ -1,6 +1,6 @@
-package com.leveluplabs.tools.animator;
-import com.leveluplabs.tools.animator.EntityGraphics.EntityColorLayer;
-import com.leveluplabs.tools.animator.EntitySkin;
+package flixel.editors;
+import flixel.editors.EntityGraphics.EntityColorLayer;
+import flixel.editors.EntitySkin;
 import flash.display.BitmapData;
 import flash.display.BlendMode;
 import flash.geom.ColorTransform;
@@ -13,18 +13,21 @@ import flixel.util.loaders.CachedGraphics;
 import openfl.Assets;
 
 /**
- * An extension of FlxSprite with some extra power
- * @author 
+ * An extension of FlxSprite with some extra power -- namely extra metadata for animation,
+ * and the ability to dynamically recolor the sprite.
+ * @author larsiusprime
  */
 class EntitySprite extends FlxSprite
 {
 	public var name:String;
 	
-	//Callback for when a sweet-spot animation frame is played, parameters:
-		//AnimationName:String
-		//SweetSpotName:String
-		//X:Float
-		//Y:Float
+	/**
+	 * Callback for when a sweet-spot animation frame is played, parameters:
+	 * AnimationName:String
+	 * SweetSpotName:String
+	 * X:Float
+	 * Y:Float
+	 */
 	public var onSweetSpotCallback:String->String->Float->Float->Void;
 	
 	public function new(X:Float=0,Y:Float=0,G:EntityGraphics) 
@@ -88,11 +91,11 @@ class EntitySprite extends FlxSprite
 		//Else, construct it from scratch using the proper method and cache it
 		if (G.skin.color_change_mode == EntityGraphics.COLOR_CHANGE_LAYERS) 
 		{
-			loadCustomColorLayers(G);
+			loadCustomColorLayers(G);	//colorize layers and composite them -- "HD style" sprites
 		}
 		else if (G.skin.color_change_mode == EntityGraphics.COLOR_CHANGE_PIXEL_PALETTE) 
 		{
-			loadCustomPixelPalette(G);
+			loadCustomPixelPalette(G);	//do individual per-pixel exact-color-value palette swaps
 		}
 	}
 	

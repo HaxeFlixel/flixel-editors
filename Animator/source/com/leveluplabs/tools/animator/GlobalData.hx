@@ -1,4 +1,5 @@
 package com.leveluplabs.tools.animator;
+import flixel.editors.EntityGraphics;
 
 /**
  * ...

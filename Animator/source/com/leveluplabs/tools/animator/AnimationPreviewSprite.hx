@@ -1,4 +1,6 @@
 package com.leveluplabs.tools.animator;
+import flixel.editors.AnimationData;
+import flixel.editors.AnimSweetSpot;
 import flash.display.BitmapData;
 import flash.geom.Matrix;
 import flash.geom.Point;

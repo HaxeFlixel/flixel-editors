@@ -1,8 +1,9 @@
-package com.leveluplabs.tools.animator;
+package flixel.editors;
 
 /**
- * ...
- * @author 
+ * An extra bit of metadata for animation frames -- specifies the location of, e.g. spawnable
+ * events/objects like when/where a punch lands, or when/where a bullet should happen
+ * @author larsiusprime
  */
 class AnimSweetSpot
 {

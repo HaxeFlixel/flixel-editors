@@ -1,5 +1,5 @@
 package com.leveluplabs.tools.animator;
-
+import flixel.editors.ColorIndex;
 import flash.geom.Rectangle;
 import flixel.addons.ui.FlxSlider;
 import flixel.addons.ui.FlxUI;

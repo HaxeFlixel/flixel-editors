@@ -1,7 +1,8 @@
 package com.leveluplabs.tools.animator;
 import flixel.FlxG;
 import flixel.util.FlxRandom;
-
+import flixel.editors.EntitySprite;
+import flixel.editors.EntityGraphics;
 /**
  * ...
  * @author 

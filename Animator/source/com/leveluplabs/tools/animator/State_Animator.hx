@@ -1,6 +1,5 @@
 package com.leveluplabs.tools.animator;
 
-import com.leveluplabs.tools.animator.EntitySkin;
 import flash.display.BitmapData;
 import flash.geom.Matrix;
 import flash.geom.Rectangle;
@@ -49,6 +48,16 @@ import haxe.xml.Printer;
 import firetongue.FireTongue;
 import haxe.xml.Fast;
 import openfl.Assets;
+
+import flixel.editors.ColorIndex;
+import flixel.editors.EntityGraphics;
+import flixel.editors.EntitySprite;
+import flixel.editors.AnimationData;
+import flixel.editors.AnimSweetSpot;
+import flixel.editors.ColorPalette;
+import flixel.editors.EntitySkin;
+import flixel.editors.ColorFeature;
+
 
 /**
  * @author Lars Doucet

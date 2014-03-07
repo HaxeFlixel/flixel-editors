@@ -1,5 +1,5 @@
-package com.leveluplabs.tools.animator;
-import com.leveluplabs.tools.animator.EntityGraphics.EntityColorLayer;
+package flixel.editors;
+import flixel.editors.EntityGraphics.EntityColorLayer;
 import flixel.addons.ui.SwatchData;
 import flixel.addons.ui.U;
 import flixel.interfaces.IFlxDestroyable;
@@ -7,13 +7,15 @@ import flixel.util.FlxColorUtil;
 import haxe.xml.Fast;
 
 /**
- * ...
- * @author 
+ * EntityGraphics objects let you share one set of AnimationData with multiple "skins" -- different looks for the same sprite.
+ * You can differentiate skins by using different sprite sheets (assuming same animations), different dynamic color schemes,
+ * or a combination of both.
+ * @author larsiusprime
  */
 class EntitySkin implements IFlxDestroyable
 {
 
-	public var name:String;						//identifier
+	public var name:String;						//string identifier
 	public var path:String;						//path to asset within assets/gfx/ folder
 	public var width:Int;						//width of frame
 	public var height:Int;						//height of frame
@@ -22,10 +24,10 @@ class EntitySkin implements IFlxDestroyable
 	public var asset_src:String;				//filename sans extension
 	public var isDefault:Bool;					//is this the default skin
 	public var color_change_mode:Int;			//color change method: COLOR_CHANGE_NONE, COLOR_CHANGE_LAYERS, COLOR_CHANGE_PIXELS
-	public var list_colors:Array<Int>;			//color change rules, in correct sorting order (optional: works with PIXELS and LAYERS )
+	public var list_colors:Array<Int>;			//color change values, in correct sorting order (optional: works with PIXELS and LAYERS )
 	public var list_original_pixel_colors:Array<Int>;						//original pixels for color change (optional: COLOR_CHANGE_PIXELS mode only)
 	public var list_color_layers:Array<EntityGraphics.EntityColorLayer>;	//layer structure for color change (optional: COLOR_CHANGE_LAYERS mode only)
-	public var list_color_features:Array<ColorFeature>;						//palette structue for color change
+	public var list_color_features:Array<ColorFeature>;						//palette structure for color change
 	public var using_default_structure:Bool=false;							//whether we loaded our color structure from the default layout
 	
 	public function new() 
@@ -33,7 +35,7 @@ class EntitySkin implements IFlxDestroyable
 	}
 	
 	public function destroy():Void {
-		//todo
+		//TODO
 	}
 	
 	public function removeColorFeature(name:String):Void {
@@ -52,23 +54,20 @@ class EntitySkin implements IFlxDestroyable
 			}
 			
 			if (match != null) {
-				trace("could not find (" + name + ") in list " + list_color_features);
 				list_color_features.splice(i, 1);
 				match.destroy();
 			}else {
-				trace("removed(" + name + ") list = " + list_color_features);
+				//
 			}
 		}
 	}
 	
 	public function getSwatchFromColorFeature(name:String):SwatchData {
-		trace("getSwatchFromColorFeature(" + name + ")");
 		if (list_color_features != null)
 		{
 			var match:ColorFeature = null;
 			for (cf in list_color_features)
 			{
-				trace("cf.name = " + cf.name + " VS " + name);
 				if (cf.name == name)
 				{
 					match = cf;
@@ -79,7 +78,6 @@ class EntitySkin implements IFlxDestroyable
 			if (match != null) 
 			{
 				var swatch:SwatchData = new SwatchData("");
-				trace("swatch.colors = " + swatch.colors);
 				if(swatch.colors != null){
 					for (i in 0...swatch.colors.length) {
 						var indexInListColors:Int = -1;
@@ -158,7 +156,6 @@ class EntitySkin implements IFlxDestroyable
 	
 	public function changeColorFeature(name:String, data:SwatchData):Void
 	{
-		trace("changeColorFeature(" + name + "," + data + ")");
 		if (list_color_features != null)
 		{
 			var match:ColorFeature = null;
@@ -167,7 +164,6 @@ class EntitySkin implements IFlxDestroyable
 				if (cf.name == name)
 				{
 					match = cf;
-					trace("Found a match! Match = " + match);
 					break;
 				}
 			}
@@ -178,17 +174,15 @@ class EntitySkin implements IFlxDestroyable
 					list_colors = [];
 				}
 				
-				trace("Match = " + match + " , list_colors = " + list_colors + " , data.colors = " + data.colors);
-				
 				var i:Int = 0;
 				for (cIndex in match.colors) {
 					if (cIndex >= 0) {
-						trace("cIndex = " + cIndex + ", data.colors[" + i + "] = #" + StringTools.hex(data.colors[i]));
 						list_colors[cIndex] = data.colors[i];
 					}
 					i++;
 				}
 				
+				//Avoid null integers!
 				#if neko
 					for (i in 0...list_colors.length) {
 						if (list_colors[i] == null) {

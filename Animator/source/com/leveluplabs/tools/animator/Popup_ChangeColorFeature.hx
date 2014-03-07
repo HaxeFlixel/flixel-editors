@@ -1,5 +1,4 @@
 package com.leveluplabs.tools.animator;
-
 import flixel.addons.ui.FlxUI;
 import flixel.addons.ui.FlxUI9SliceSprite;
 import flixel.addons.ui.FlxUIButton;
@@ -17,6 +16,11 @@ import flixel.util.FlxStringUtil;
 import haxe.macro.Compiler;
 import sys.FileSystem;
 import systools.Dialogs;
+
+import flixel.editors.ColorPalette;
+import flixel.editors.ColorFeature;
+import flixel.editors.ColorIndex;
+import flixel.editors.EntityGraphics;
 
 /**
  * ...
