@@ -19,6 +19,6 @@ before_script:
   - haxelib dev flixel-editors .
 
 script:
-  - cd Animators
+  - cd ./Animators
   - lime test neko
   - lime test linux
