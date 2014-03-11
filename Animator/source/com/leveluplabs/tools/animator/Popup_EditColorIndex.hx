@@ -190,7 +190,7 @@ class Popup_EditColorIndex extends FlxUIPopup
 		var rgbcol:Int = FlxColorUtil.getColor32(255,Std.int(rgb.red), Std.int(rgb.green), Std.int(rgb.blue));
 		
 		colorBlank.color = rgbcol;
-		currSwatch.set_colorAtIndex(rgbcol, curr_swatchIndex);
+		currSwatch.setColorAtIndex(rgbcol, curr_swatchIndex);
 		
 		btn_save.label.text = "Update*";
 		btn_save.label.color = 0xFF0000;
@@ -206,7 +206,7 @@ class Popup_EditColorIndex extends FlxUIPopup
 	}
 	
 	private function onDropDown(id:Int):Void {
-		var the_color:Int = currSwatch.colors.get_color(id);
+		var the_color:Int = currSwatch.colors.getColor(id);
 		
 		var the_rgb = FlxColorUtil.getARGB(the_color);
 		rgb.red = the_rgb.red;
