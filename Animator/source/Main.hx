@@ -1,18 +1,14 @@
 package ;
 
-
-import com.leveluplabs.tools.animator.FireTongueEx;
 import com.leveluplabs.tools.animator.GlobalData;
 import com.leveluplabs.tools.animator.State_Animator;
 import com.leveluplabs.tools.animator.State_StressTest;
 import flash.Lib;
 import flixel.FlxG;
 import flixel.FlxGame;
-import firetongue.FireTongue;
 	
 class Main extends FlxGame
 {	
-	public static var tongue:FireTongueEx;
 	public static var data:GlobalData;
 	
 	public function new()

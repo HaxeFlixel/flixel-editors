@@ -45,7 +45,6 @@ import haxe.xml.Printer;
 	import sys.io.FileOutput;
 #end
 
-import firetongue.FireTongue;
 import haxe.xml.Fast;
 import openfl.Assets;
 
@@ -150,12 +149,6 @@ class State_Animator extends FlxUIState
 		
 		FlxG.cameras.bgColor = 0xffaaaaaa;
 		FlxG.log.redirectTraces = false; 
-		
-		if (Main.tongue == null) {
-			Main.tongue = new FireTongueEx();
-			Main.tongue.init("en-US");
-			FlxUIState.static_tongue = Main.tongue;
-		}
 		
 		_xml_id = "state_animator";
 		

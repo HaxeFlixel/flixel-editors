@@ -17,8 +17,6 @@
 	<haxelib name="flixel-ui"/>
 	<haxelib name="flixel-addons"/>
 	<haxelib name="openfl"/>
-	<haxelib name="firetongue"/>
-	<haxelib name="task"/>
 	<haxelib name="systools"/>
 	<haxelib name="flixel-editors"/>
 
