@@ -1,6 +1,8 @@
 flixel-editors
 ===========
 
+[![Build Status](https://travis-ci.org/HaxeFlixel/flixel-editors.png)](https://travis-ci.org/HaxeFlixel/flixel-editors)
+
 A set of editors for HaxeFlixel
 
 #Animator
