@@ -20,5 +20,5 @@ before_script:
 
 script:
   - cd ./Animator
-  - lime test neko
-  - lime test linux
+  - haxelib run lime test neko
+  - haxelib run lime test linux
