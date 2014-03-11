@@ -15,7 +15,7 @@ before_script:
   - haxelib git flixel-tools https://github.com/HaxeFlixel/flixel-tools
   - haxelib git flixel-addons https://github.com/HaxeFlixel/flixel-addons dev
   - haxelib git flixel-ui https://github.com/HaxeFlixel/flixel-ui dev
-  - haxelib dev flixel https://github.com/HaxeFlixel/flixel dev
+  - haxelib git flixel https://github.com/HaxeFlixel/flixel dev
   - haxelib dev flixel-editors .
 
 script:
