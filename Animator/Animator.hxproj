@@ -34,8 +34,6 @@
     <library name="flixel-ui" />
     <library name="flixel-addons" />
     <library name="openfl" />
-    <library name="firetongue" />
-    <library name="task" />
     <library name="systools" />
     <library name="flixel-editors" />
   </haxelib>

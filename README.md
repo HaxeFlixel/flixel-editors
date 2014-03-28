@@ -1,6 +1,8 @@
 flixel-editors
 ===========
 
+[![Build Status](https://travis-ci.org/HaxeFlixel/flixel-editors.png)](https://travis-ci.org/HaxeFlixel/flixel-editors)
+
 A set of editors for HaxeFlixel
 
 #Animator
@@ -10,7 +12,7 @@ It's NOT for creating animations from scratch (like GraphicsGale), but for easil
 Currently only works on C++ and Neko targets, because it has to write to file system.
 
 Currently has some bugs.
-![Colorized Pixel Sprite](https://raw.github.com/larsiusprime/tdrpg-tools/master/Animator/screenshot_0.png)
-![Colorized HD Sprite](https://raw.github.com/larsiusprime/tdrpg-tools/master/Animator/screenshot_1.png)
-![HD Sprite Stress Test](https://raw.github.com/larsiusprime/tdrpg-tools/master/Animator/screenshot_2.png)
-![Pixel Sprite Stress Test](https://raw.github.com/larsiusprime/tdrpg-tools/master/Animator/screenshot_3.png)
+![Colorized Pixel Sprite](Animator/screenshot_0.png)
+![Colorized HD Sprite](Animator/screenshot_1.png)
+![HD Sprite Stress Test](Animator/screenshot_2.png)
+![Pixel Sprite Stress Test](Animator/screenshot_3.png)

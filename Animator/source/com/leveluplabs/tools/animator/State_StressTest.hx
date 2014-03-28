@@ -58,12 +58,6 @@ class State_StressTest extends FlxUIState
 		FlxG.cameras.bgColor = 0xffaaaaaa;
 		FlxG.log.redirectTraces = false; 
 		
-		if (Main.tongue == null) {
-			Main.tongue = new FireTongueEx();
-			Main.tongue.init("en-US");
-			FlxUIState.static_tongue = Main.tongue;
-		}
-		
 		spriteGroup = new FlxGroup();
 		add(spriteGroup);
 		
