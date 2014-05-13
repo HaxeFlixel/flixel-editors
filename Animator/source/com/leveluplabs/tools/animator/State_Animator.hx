@@ -557,7 +557,6 @@ class State_Animator extends FlxUIState
 	
 	private function showSpriteColorization():Void 
 	{
-		trace("showSpriteColorization()");
 		var skin:EntitySkin = entity_graphics.skin;
 		
 		if (tab_menu == null) {
@@ -662,16 +661,12 @@ class State_Animator extends FlxUIState
 								swatchSelecter.id = feature.name;
 								
 								var currSwatch:SwatchData = entity_graphics.skin.getSwatchFromColorFeature(feature.name);
-								trace("currSwatch = " + currSwatch);
 								if (currSwatch != null)
 								{
-									trace("selectByColors");
 									swatchSelecter.selectByColors(currSwatch, true);
-									trace("swatchSelecter.selectedSwatch.colorKey = " + swatchSelecter.selectedSwatch.colorKey());
 								}
 								else
 								{
-									trace("unselect");
 									swatchSelecter.unselect();
 								}
 							}
@@ -683,8 +678,6 @@ class State_Animator extends FlxUIState
 				}
 			}
 			
-			trace("yo");
-			
 			input_color_feature = getColorStuffInputText();
 			if (input_color_feature == null) {
 				input_color_feature = new FlxUIInputText(0, 0);
@@ -695,16 +688,12 @@ class State_Animator extends FlxUIState
 			input_color_feature.x = group_color_stuff.x + 4;
 			input_color_feature.y = yy;
 			
-			trace("what");
-			
 			var btn3:FlxUIButton = getColorStuffButton();
 			if (btn3 == null) 
 			{
 				btn3 = new FlxUIButton(4, 0, "New...");
 				group_color_stuff.add(btn3);
 			}
-			
-			trace("hey");
 			
 			btn3.label.text = "Add New";
 			btn3.resize(75, 16);
@@ -1043,7 +1032,6 @@ class State_Animator extends FlxUIState
 	}
 	
 	private function changeColorFeature(featureName:String, paletteName:String):Void {
-		trace("changeColorFeature(" + featureName+"," + paletteName+")");
 		colorFeatureToEdit = featureName;
 		openSubState(new Popup_ChangeColorFeature(paletteName,Reg.color_index,false,entity_graphics,featureName));
 	}
@@ -1078,8 +1066,6 @@ class State_Animator extends FlxUIState
 	public override function getEvent(id:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Void {
 		var str:String = "";
 		
-		trace("getEvent(" + id + "," + sender + "," + data + "," + params);
-		
 		var arr:Array<Dynamic>;
 		
 		switch(id) {
@@ -1090,7 +1076,7 @@ class State_Animator extends FlxUIState
 				var colorFeature:ColorFeature = cast data;
 				doNewColorFeature(colorFeature);
 			case "popup_color_index_change":
-				trace("color index changed!");
+				//trace("color index changed!");
 			case FlxUIPopup.CLICK_EVENT:
 				var p:FlxUIPopup = cast sender;
 				var popBtn:Int = Std.int(data);
@@ -1139,7 +1125,6 @@ class State_Animator extends FlxUIState
 				}
 			case FlxUIColorSwatchSelecter.CLICK_EVENT:
 				var swatch:SwatchData = cast data;
-				trace("Clicked on swatch(" + swatch + ")");
 				var swatchSelecter:FlxUIColorSwatchSelecter = cast sender;
 				entity_graphics.skin.changeColorFeature(swatchSelecter.id, swatch);
 				refreshSprite();

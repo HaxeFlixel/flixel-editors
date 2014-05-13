@@ -39,9 +39,6 @@ class State_Init extends FlxUIState
 	{
 		switch(name) {
 			case "choose_path":
-				#if debug
-					trace("choose_path data = " + data);
-				#end
 				changeIndexPath(cast data);
 				startAnimator();
 		}
