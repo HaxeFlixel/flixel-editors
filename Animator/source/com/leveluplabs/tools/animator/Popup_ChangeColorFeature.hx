@@ -45,7 +45,7 @@ class Popup_ChangeColorFeature extends FlxUIPopup
 	private var inputName:String = "";
 	private var anchorY:Float = 0;
 	
-	public function new(PaletteName:String,Color_index:ColorIndex,?Create:Bool=false,?Entity:EntityGraphics=null,?InputName:String=""):Void {
+	public function new(PaletteName:String, Color_index:ColorIndex, ?Create:Bool = false, ?Entity:EntityGraphics = null, ?InputName:String = ""):Void {
 		color_index = Color_index;
 		paletteName = PaletteName;
 		createMode = Create;
@@ -91,7 +91,9 @@ class Popup_ChangeColorFeature extends FlxUIPopup
 		var colorPalette:ColorPalette = color_index.getPalette(paletteName );
 		
 		if (colorPalette == null || colorPalette.list_colors == null) {
-			trace("error loading color palette for feature : " + paletteName );
+			#if debug
+				trace("error loading color palette for feature : " + paletteName );
+			#end
 			close();
 		}else {
 			refreshSwatchSelecter(colorPalette);
@@ -111,6 +113,7 @@ class Popup_ChangeColorFeature extends FlxUIPopup
 	
 	private function setupIndexStuff():Void {
 		var back:FlxUI9SliceSprite = cast _ui.getAsset("back");
+		
 		back.resize(back.width, back.height * 2);
 		var btn_cancel = _ui.getAsset("btn_cancel");
 		var btn_select = _ui.getAsset("btn_select");
@@ -138,12 +141,18 @@ class Popup_ChangeColorFeature extends FlxUIPopup
 		
 		spriteData = [];
 		if (entity != null) {
-			entity.skin.list_original_pixel_colors;
-			for (i in 0...entity.skin.list_original_pixel_colors.length) {
-				var pix:Int = entity.skin.list_original_pixel_colors[i];
-				spriteData.push(new StrIdLabel(Std.string(i), "0x" + StringTools.hex(pix, 6)));
+			if(entity.skin.list_original_pixel_colors != null){
+				for (i in 0...entity.skin.list_original_pixel_colors.length) {
+					var pix:Int = entity.skin.list_original_pixel_colors[i];
+					spriteData.push(new StrIdLabel(Std.string(i), "0x" + StringTools.hex(pix, 6)));
+				}
+			}else if (entity.skin.list_color_layers != null) {
+				for (i in 0...entity.skin.list_color_layers.length) {
+					var eclName:String = entity.skin.list_color_layers[i].name;
+					spriteData.push(new StrIdLabel(Std.string(i), eclName));
+				}
 			}
-		}else {
+		}else{
 			for (i in 0...16) {
 				spriteData.push(new StrIdLabel(Std.string(i), Std.string(i)));
 			}

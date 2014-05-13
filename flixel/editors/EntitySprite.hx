@@ -70,7 +70,7 @@ class EntitySprite extends FlxSprite
 		}
 		else 
 		{
-			loadGraphic(U.gfx(G.asset_src), true, false, s.width, s.height);
+			loadGraphic(U.gfx(G.asset_src), true, s.width, s.height);
 		}
 		
 		loadAnimations(G.animations);
@@ -84,7 +84,7 @@ class EntitySprite extends FlxSprite
 		//See if it already exists and if so return early
 		if (FlxG.bitmap.checkCache(customColorKey)) 
 		{
-			loadGraphic(customColorKey, true, false, G.skin.width, G.skin.height);
+			loadGraphic(customColorKey, true, G.skin.width, G.skin.height);
 			return;
 		}
 		
@@ -184,7 +184,7 @@ class EntitySprite extends FlxSprite
 		}
 		
 		//Load the base copy into our graphic and cache it with our custom color key
-		loadGraphic(baseCopy, true, false, G.skin.width, G.skin.height, false, G.colorKey);
+		loadGraphic(baseCopy, true, G.skin.width, G.skin.height, false, G.colorKey);
 	}
 	
 	private function loadCustomColorLayers(G:EntityGraphics):Void{
@@ -197,7 +197,7 @@ class EntitySprite extends FlxSprite
 		baseLayer = null;
 		
 		//Load the base copy into our graphic and cache it with our custom color key
-		loadGraphic(baseCopy, true, false, G.skin.width, G.skin.height, false, G.colorKey);
+		loadGraphic(baseCopy, true, G.skin.width, G.skin.height, false, G.colorKey);
 		
 		if (G.skin.list_colors != null)
 		{

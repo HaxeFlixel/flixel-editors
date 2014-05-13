@@ -21,7 +21,7 @@
 			<anchor x="btn_save.right" x-flush="left" y="btn_save.y" y-flush="top"/>
 		</text>
 		
-		<text id="text_index" use_def="black" text="..." x="5">
+		<text id="text_index" use_def="black" text="..." width="300" x="5">
 			<anchor x="label_index.right" x-flush="left" y="label_index.y" y-flush="top"/>
 		</text>
 		
@@ -37,7 +37,7 @@
 		
 		<region id="reg_sprites_dd" y="-4">
 			<anchor x="text_index.x" x-flush="left" y="label_sprite.y" y-flush="top"/>
-			<exact_size width="text_index.width" height="text_index.height"/>
+			<exact_size width="150" height="text_index.height"/>
 		</region>
 		
 		<text id="label_skin" text="SKIN:" use_def="label" width="50" align="right" x="5">

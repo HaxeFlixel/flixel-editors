@@ -23,4 +23,7 @@
 	<haxedef name="FLX_BMP_DEBUG"/>
 	<haxedef name="FLX_NO_DEBUG" unless="debug"/>
 		
+	<!--<haxedef name="HXCPP_DEBUGGER" if="debug"/>
+	<haxelib name="fdorg-hxcpp-debugger" if="debug"/>-->
+	
 </project>

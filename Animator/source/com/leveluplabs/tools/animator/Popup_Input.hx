@@ -31,11 +31,14 @@ class Popup_Input extends FlxUIPopup
 					case "click_button":
 						var param0:String = Std.string(params[0]);
 						if (param0 == "browse") {
-							var path:String = Dialogs.folder("TITLE!", "MESSAGE!");
+							var path:String = Dialogs.folder("Browse to your game's assets folder!", "MESSAGE!");
 							
-							FlxUI.event("choose_path", this, path);
-							
+							//FlxUI.event("choose_path", this, path);
+							var parent = castParent();
 							close();
+							if (parent != null) {
+								parent.getEvent("choose_path", this, path);
+							}
 						}
 				}
 			}

@@ -63,7 +63,8 @@ import flixel.editors.ColorFeature;
  */
 class State_Animator extends FlxUIState
 {
-	private var color_index:ColorIndex;
+	private var list_files:Array<String>;
+	
 	private var entity_graphics:EntityGraphics;
 	private var entity_sprite:EntitySprite;
 	private var bounds:FlxRect;
@@ -110,12 +111,6 @@ class State_Animator extends FlxUIState
 	
 	private var insert_mode:Int = -1;
 	
-	private var path_index:String = "";
-	private static inline var path_defenders:String = "\\xml\\entities\\defenders";
-	private static inline var path_enemies:String = "\\xml\\entities\\enemies";
-	private static inline var path_colors:String = "\\xml\\entities";
-	
-	private var list_files:Array<String> = null;
 	
 	private var map_xml_dirty:Map<String,Bool> = null;
 	private var map_xml_data:Map<String,Fast> = null;
@@ -160,16 +155,9 @@ class State_Animator extends FlxUIState
 		input_new = cast _ui.getAsset("input_new");
 		stepper_fps = cast _ui.getAsset("stepper_fps");
 		radio_insert = cast _ui.getAsset("radio_insert");
-	
-		var isReady:Bool = true;
 		
-		#if sys
-			isReady = initData();
-		#end
-		
-		if(isReady){
-			entryPoint();
-		}
+		useIndexPath(Reg.path_index);
+		entryPoint();
 	}
 	
 	public override function onResize(Width:Int, Height:Int):Void {
@@ -177,8 +165,8 @@ class State_Animator extends FlxUIState
 	}
 	
 	#if sys
-		private function initData():Bool{
-			path_index = readIndex();
+		/*private function initData():Bool{
+			path_index = Reg.readIndex();
 			if (path_index == "") {
 				openSubState(new Popup_Input());
 				return false;
@@ -194,61 +182,41 @@ class State_Animator extends FlxUIState
 				}
 			}
 			return true;
-		}
+		}*/
 		
-		private function changeIndexPath(path:String):Void {
-			path_index = path;
-			writeIndex(path_index);
-			showIndex(path_index);
-			var dirpath:String = path_index + path_defenders;
-			if(FileSystem.exists(dirpath) && FileSystem.isDirectory(dirpath)){
+		private function useIndexPath(path:String):Void {
+			Do.changeIndexPath(path);
+			showIndex(Reg.path_index);
+			var dirpath:String = Reg.path_index + Reg.path_defenders;
+			if (FileSystem.exists(dirpath) && FileSystem.isDirectory(dirpath))
+			{
 				list_files = FileSystem.readDirectory(dirpath);
-			}else {
+			}
+			else
+			{
 				FlxG.log.error("Could not find directory: " + dirpath + "!");
 			}
 		}
 		
 		private function changeIndex():Void {
-			path_index = Dialogs.folder("TITLE!", "MESSAGE!");
-			changeIndexPath(path_index);
+			Reg.path_index = Dialogs.folder("TITLE!", "MESSAGE!");
+			useIndexPath(Reg.path_index);
 		}
 		
 		private function showIndex(path:String):Void {
 			var text_index:FlxUIText = cast _ui.getAsset("text_index");
-			text_index.text = path_index;
+			text_index.text = Reg.path_index;
 			var safe:Int = 0;
 			while(text_index.textField.numLines > 1 && safe < 100) {
 				text_index.width += 10;
-				text_index.text = path_index;
+				text_index.text = Reg.path_index;
 				if (text_index.width > FlxG.width) {
 					break;
 				}
 				safe++;
 			}
 			btn_index = cast _ui.getAsset("btn_index");
-			btn_index.x = text_index.x + text_index.width + 5;
-		}
-		
-		private function readIndex():String {
-			if(FileSystem.exists("config.xml") == false){
-				writeIndex("");
-				return "";
-			}else {
-				var index:Fast = new Fast(Xml.parse(File.getContent("config.xml")).firstElement());
-				if (index.hasNode.index) {
-					var result:String = U.xml_str(index.node.index.x, "path");
-					if (result == null || result.toLowerCase() == "null") {
-						result = "";
-					}
-					return result;
-				}
-			}
-			return "";
-		}
-		
-		private function writeIndex(path:String):Void {
-			var xml:Xml = Xml.parse('<index path="'+path+'"/>');
-			U.writeXml(xml, "config.xml");
+			btn_index.x = text_index.x + text_index.textField.textWidth+ 5;
 		}
 		
 		private function saveFile():Void {
@@ -272,7 +240,7 @@ class State_Animator extends FlxUIState
 		}
 	#end
 	
-	private function entryPoint(t:FlxTimer=null):Void {
+	private function entryPoint(t:FlxTimer = null):Void {
 		setupDropdowns();
 		setupSprite();
 	}
@@ -307,7 +275,8 @@ class State_Animator extends FlxUIState
 		btn_anim_rename = cast _ui.getAsset("btn_anim_rename");
 	}
 		
-	private function setupSprite():Void{
+	private function setupSprite():Void
+	{
 		var files:Array<StrIdLabel> = getStrIdList(list_files);
 		dd_sprites.setData(files);
 		loadSprite(files[0].id);
@@ -334,7 +303,7 @@ class State_Animator extends FlxUIState
 		}
 		entity_graphics = new EntityGraphics();
 		
-		var loadpath:String = path_index + path_defenders + "\\" + fname;
+		var loadpath:String = Reg.path_index + Reg.path_defenders + "\\" + fname;
 		
 		var xml = null;
 		
@@ -423,6 +392,7 @@ class State_Animator extends FlxUIState
 			
 			radio_color_modes.x = 4;
 			radio_color_modes.y = 4;
+			radio_color_modes.fixedSize = false;
 			
 			var btn:FlxUIButton = new FlxUIButton(0, 0, "Edit Master\nColor Index", onClickColorIndex);
 			btn.resize(75, 40);
@@ -473,7 +443,7 @@ class State_Animator extends FlxUIState
 	}
 	
 	private function onClickColorIndex():Void {
-		openSubState(new Popup_EditColorIndex(color_index));
+		openSubState(new Popup_EditColorIndex(Reg.color_index));
 		//confirm("...", "Testing", "Color Index Goes Here", ["OK"]);
 	}
 	
@@ -669,7 +639,7 @@ class State_Animator extends FlxUIState
 						btn2.id = "btn_delete_color_feature";
 						btn2.params = [feature.name,i];
 						
-						var palette:ColorPalette = color_index.getPalette(feature.palette_name);
+						var palette:ColorPalette = Reg.color_index.getPalette(feature.palette_name);
 						
 						var swatch:SwatchData = null;
 						var xx:Float = group_color_stuff.x+4;
@@ -698,7 +668,8 @@ class State_Animator extends FlxUIState
 									trace("selectByColors");
 									swatchSelecter.selectByColors(currSwatch, true);
 									trace("swatchSelecter.selectedSwatch.colorKey = " + swatchSelecter.selectedSwatch.colorKey());
-								}else
+								}
+								else
 								{
 									trace("unselect");
 									swatchSelecter.unselect();
@@ -711,6 +682,9 @@ class State_Animator extends FlxUIState
 					i++;
 				}
 			}
+			
+			trace("yo");
+			
 			input_color_feature = getColorStuffInputText();
 			if (input_color_feature == null) {
 				input_color_feature = new FlxUIInputText(0, 0);
@@ -721,12 +695,16 @@ class State_Animator extends FlxUIState
 			input_color_feature.x = group_color_stuff.x + 4;
 			input_color_feature.y = yy;
 			
+			trace("what");
+			
 			var btn3:FlxUIButton = getColorStuffButton();
 			if (btn3 == null) 
 			{
 				btn3 = new FlxUIButton(4, 0, "New...");
 				group_color_stuff.add(btn3);
 			}
+			
+			trace("hey");
 			
 			btn3.label.text = "Add New";
 			btn3.resize(75, 16);
@@ -797,9 +775,11 @@ class State_Animator extends FlxUIState
 		return null;
 	}
 	
-	private function getStrIdList(list:Array<String>):Array<StrIdLabel> {
+	private function getStrIdList(list:Array<String>):Array<StrIdLabel>
+	{
 		var silist:Array<StrIdLabel> = [];
-		for (str in list) {
+		for (str in list)
+		{
 			silist.push(new StrIdLabel(str, str));
 		}
 		return silist;
@@ -930,7 +910,7 @@ class State_Animator extends FlxUIState
 	
 	private function stashAndDirtyData():Void {
 		var fname:String = dd_sprites.header.text.text;
-		var curr_path:String = path_index + path_defenders + "\\" + fname;		//get the full filename
+		var curr_path:String = Reg.path_index + Reg.path_defenders + "\\" + fname;		//get the full filename
 		
 		if (map_xml_data == null) {
 			map_xml_data = new Map<String,Fast>();
@@ -1063,12 +1043,13 @@ class State_Animator extends FlxUIState
 	}
 	
 	private function changeColorFeature(featureName:String, paletteName:String):Void {
+		trace("changeColorFeature(" + featureName+"," + paletteName+")");
 		colorFeatureToEdit = featureName;
-		openSubState(new Popup_ChangeColorFeature(paletteName,color_index,false,entity_graphics,featureName));
+		openSubState(new Popup_ChangeColorFeature(paletteName,Reg.color_index,false,entity_graphics,featureName));
 	}
 	
 	private function doChangeColorFeature(colorFeature:ColorFeature):Void {
-		var cp:ColorPalette = color_index.getPalette(colorFeature.palette_name);
+		var cp:ColorPalette = Reg.color_index.getPalette(colorFeature.palette_name);
 		
 		entity_graphics.skin.changeColorFeaturePalette(colorFeatureToEdit, cp, colorFeature.name);
 		entity_graphics.skin.replaceColorFeature(colorFeature.name, colorFeature);
@@ -1082,11 +1063,11 @@ class State_Animator extends FlxUIState
 	}
 	
 	private function newColorFeature():Void {
-		openSubState(new Popup_ChangeColorFeature("",color_index,true,entity_graphics,input_color_feature.text));
+		openSubState(new Popup_ChangeColorFeature("",Reg.color_index,true,entity_graphics,input_color_feature.text));
 	}
 	
 	private function doNewColorFeature(colorFeature:ColorFeature):Void {
-		var cp:ColorPalette = color_index.getPalette(colorFeature.palette_name);
+		var cp:ColorPalette = Reg.color_index.getPalette(colorFeature.palette_name);
 		colorFeature.palette = cp;
 		entity_graphics.skin.addColorFeature(colorFeature);
 		stashAndDirtyData();
@@ -1096,6 +1077,8 @@ class State_Animator extends FlxUIState
 	
 	public override function getEvent(id:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Void {
 		var str:String = "";
+		
+		trace("getEvent(" + id + "," + sender + "," + data + "," + params);
 		
 		var arr:Array<Dynamic>;
 		
@@ -1108,9 +1091,6 @@ class State_Animator extends FlxUIState
 				doNewColorFeature(colorFeature);
 			case "popup_color_index_change":
 				trace("color index changed!");
-			case "choose_path":
-				changeIndexPath(cast data);
-				entryPoint();
 			case FlxUIPopup.CLICK_EVENT:
 				var p:FlxUIPopup = cast sender;
 				var popBtn:Int = Std.int(data);
