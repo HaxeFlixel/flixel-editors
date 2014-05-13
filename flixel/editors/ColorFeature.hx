@@ -1,6 +1,6 @@
 package flixel.editors;
 import flixel.addons.ui.SwatchData;
-import flixel.interfaces.IFlxDestroyable;
+import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 
 /**
  * MetaData that maps a single color swatch to colorizable parts of an EntitySprite.

@@ -2,7 +2,7 @@ package flixel.editors;
 import flixel.addons.ui.StrIdLabel;
 import flixel.addons.ui.SwatchData;
 import flixel.addons.ui.U;
-import flixel.interfaces.IFlxDestroyable;
+import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 import haxe.xml.Fast;
 
 /**

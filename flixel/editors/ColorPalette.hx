@@ -1,7 +1,7 @@
 package flixel.editors;
 import flixel.addons.ui.SwatchData;
 import flixel.addons.ui.U;
-import flixel.interfaces.IFlxDestroyable;
+import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 
 /**
  * Just a simple collection of SwatchData values with a name

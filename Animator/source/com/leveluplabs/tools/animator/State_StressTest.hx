@@ -16,7 +16,7 @@ import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import flixel.util.FlxRandom;
+import flixel.math.FlxRandom;
 import openfl.Assets;
 
 
@@ -84,12 +84,12 @@ class State_StressTest extends FlxUIState
 		}
 		
 		label_bunnies = new FlxText(0, 20, FlxG.width, "Sprites: " + step_change.value);
-		label_bunnies.setFormat(null, 22, FlxColor.WHITE, "center", FlxText.BORDER_OUTLINE_FAST);
+		label_bunnies.setFormat(null, 22, FlxColor.WHITE, "center", FlxTextBorderStyle.OUTLINE_FAST);
 		label_bunnies.borderSize = 2;
 		add(label_bunnies);
 		
 		label_fps = new FlxText(0, label_bunnies.y+label_bunnies.height+10, FlxG.width, "FPS: " + 30);
-		label_fps.setFormat(null, 22, FlxColor.WHITE, "center",FlxText.BORDER_OUTLINE_FAST);
+		label_fps.setFormat(null, 22, FlxColor.WHITE, "center",FlxTextBorderStyle.OUTLINE_FAST);
 		label_fps.borderSize = 2;
 		add(label_fps);
 		

@@ -80,7 +80,7 @@ class ColorFeatureThingy extends FlxUIGroup
 		
 		if (hasHeaders) {
 			var label:FlxUIText = new FlxUIText(0, 0, Std.int(dd_sprite.width), "Palette Color");
-			label.setBorderStyle(FlxText.BORDER_OUTLINE_FAST, 0);
+			label.setBorderStyle(FlxTextBorderStyle.OUTLINE_FAST, 0);
 			add(label);
 			
 			label.x = dd_sprite.x;
@@ -89,7 +89,7 @@ class ColorFeatureThingy extends FlxUIGroup
 			dd_sprite.y += label.height + 2;
 			
 			label = new FlxUIText(0,0,Std.int(dd_swatch.width),"Swatch Index");
-			label.setBorderStyle(FlxText.BORDER_OUTLINE_FAST, 0);
+			label.setBorderStyle(FlxTextBorderStyle.OUTLINE_FAST, 0);
 			add(label);
 			
 			label.x = dd_swatch.x;

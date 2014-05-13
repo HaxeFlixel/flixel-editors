@@ -1,6 +1,6 @@
 package flixel.editors;
 import flixel.FlxSprite;
-import flixel.interfaces.IFlxDestroyable;
+import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 
 /**
  * Stores Animation MetaData for an EntitySprite. 

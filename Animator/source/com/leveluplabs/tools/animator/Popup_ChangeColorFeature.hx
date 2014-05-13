@@ -313,7 +313,10 @@ class Popup_ChangeColorFeature extends FlxUIPopup
 			thing = cast sprite;
 			var pixelIndex:Int = Std.parseInt(thing.dd_sprite.selectedId);
 			var swatchIndex:Int = Std.parseInt(thing.dd_swatch.selectedId);
-			if(swatchIndex != -1){
+			if (swatchIndex != -1) {
+				while (swatchIndex > color_list.length-1) {
+					color_list.push( -1);
+				}
 				color_list[swatchIndex] = pixelIndex;
 			}
 			//color_list[0] = 12 --> means "hilight of this swatch replaces --> original_pixels[12]"
@@ -330,13 +333,19 @@ class Popup_ChangeColorFeature extends FlxUIPopup
 			case "click_button":
 				if(params != null){
 					var param0:String = Std.string(params[0]);
-					if (param0 == "cancel") {
+					if (param0 == "cancel")
+					{
 						close();
-					}else if (param0 == "select") {
-						if (createMode) {
+					}
+					else if (param0 == "select")
+					{
+						if (createMode)
+						{
 							var colorFeature = new ColorFeature(input.text, getColorFeatureList(), paletteName);
 							castParent().getEvent("popup_create_color_feature", this, colorFeature);
-						}else {
+						}
+						else
+						{
 							var colorFeature = new ColorFeature(input.text, getColorFeatureList(), paletteName);
 							castParent().getEvent("popup_select_color_feature", this, colorFeature);
 						}
