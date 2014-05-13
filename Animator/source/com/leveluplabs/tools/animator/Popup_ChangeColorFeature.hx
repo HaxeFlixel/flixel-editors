@@ -88,7 +88,7 @@ class Popup_ChangeColorFeature extends FlxUIPopup
 		if (paletteName == "") {
 			paletteName = data_list[0].id;
 		}
-		var colorPalette:ColorPalette = color_index.getPalette(paletteName );
+		var colorPalette:ColorPalette = color_index.getPalette(paletteName);
 		
 		if (colorPalette == null || colorPalette.list_colors == null) {
 			#if debug
