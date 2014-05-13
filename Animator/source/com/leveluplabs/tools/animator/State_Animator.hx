@@ -165,25 +165,6 @@ class State_Animator extends FlxUIState
 	}
 	
 	#if sys
-		/*private function initData():Bool{
-			path_index = Reg.readIndex();
-			if (path_index == "") {
-				openSubState(new Popup_Input());
-				return false;
-			}else {
-				changeIndexPath(path_index);
-			}
-			if (color_index == null) 
-			{
-				color_index = new ColorIndex();
-				var xml:Fast = U.readFast(path_index + path_colors + "\\" + "colors.xml");
-				if (xml != null) {
-					color_index.fromXML(xml);
-				}
-			}
-			return true;
-		}*/
-		
 		private function useIndexPath(path:String):Void {
 			Do.changeIndexPath(path);
 			showIndex(Reg.path_index);

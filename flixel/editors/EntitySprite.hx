@@ -175,8 +175,10 @@ class EntitySprite extends FlxSprite
 				{
 					orig_color = G.skin.list_original_pixel_colors[i];
 					replace_color = G.skin.list_colors[i];
-					if(replace_color != 0x00000000){
-						trace("("+i+") replacing(" + FlxColorUtil.ARGBtoHexString(orig_color) + ") with(" + FlxColorUtil.ARGBtoHexString(replace_color) + ")");
+					if (replace_color != 0x00000000) {
+						#if debug
+							trace("(" + i + ") replacing(" + FlxColorUtil.ARGBtoHexString(orig_color) + ") with(" + FlxColorUtil.ARGBtoHexString(replace_color) + ")");
+						#end
 						baseCopy.threshold(baseCopy, baseCopy.rect, _flashPointZero, "==", orig_color, replace_color);
 					}
 				}
