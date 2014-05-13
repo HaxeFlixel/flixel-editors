@@ -77,7 +77,7 @@ class EntitySkin implements IFlxDestroyable
 			
 			if (match != null) 
 			{
-				var swatch:SwatchData = new SwatchData("");
+				var swatch:SwatchData = new SwatchData("",[0x00000000,0x00000000,0x00000000,0x00000000]);
 				if(swatch.colors != null){
 					for (i in 0...swatch.colors.length) {
 						var indexInListColors:Int = -1;
