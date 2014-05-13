@@ -187,10 +187,18 @@ class State_Animator extends FlxUIState
 		private function useIndexPath(path:String):Void {
 			Do.changeIndexPath(path);
 			showIndex(Reg.path_index);
-			var dirpath:String = Reg.path_index + Reg.path_defenders;
+			var dirpath:String = Reg.path_index + Reg.path_entities;
 			if (FileSystem.exists(dirpath) && FileSystem.isDirectory(dirpath))
 			{
 				list_files = FileSystem.readDirectory(dirpath);
+				var i:Int = 0;
+				for (str in list_files) {
+					if (str.indexOf("colors.xml") != -1) {
+						list_files.splice(i, 1);
+						i--;
+					}
+					i++;
+				}
 			}
 			else
 			{
@@ -303,7 +311,7 @@ class State_Animator extends FlxUIState
 		}
 		entity_graphics = new EntityGraphics();
 		
-		var loadpath:String = Reg.path_index + Reg.path_defenders + "\\" + fname;
+		var loadpath:String = Reg.path_index + Reg.path_entities + "\\" + fname;
 		
 		var xml = null;
 		
@@ -899,7 +907,7 @@ class State_Animator extends FlxUIState
 	
 	private function stashAndDirtyData():Void {
 		var fname:String = dd_sprites.header.text.text;
-		var curr_path:String = Reg.path_index + Reg.path_defenders + "\\" + fname;		//get the full filename
+		var curr_path:String = Reg.path_index + Reg.path_entities + "\\" + fname;		//get the full filename
 		
 		if (map_xml_data == null) {
 			map_xml_data = new Map<String,Fast>();

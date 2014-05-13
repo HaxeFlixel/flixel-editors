@@ -17,7 +17,7 @@
 		<frame value="12" />
 		<frame value="13" />
 	</anim>
-	<skin asset_src="base" height="230" default="true" off_y="0" off_x="0" width="189" path="defenders/glitch" name="green">
+	<skin asset_src="base" height="230" default="true" off_y="0" off_x="0" width="189" path="creatures/glitch" name="green">
 		<colors mode="layers">
 			<feature c0="-1" c3="-1" c2="-1" c1="0" palette="clothes_1" name="hat" />
 			<feature c0="-1" c3="-1" c2="-1" c1="1" palette="clothes_1" name="pants" />
@@ -27,7 +27,7 @@
 			<color index="1" value="0xFF2A9251" />
 		</colors>
 	</skin>
-	<skin asset_src="base" height="230" default="false" off_y="0" off_x="0" width="189" path="defenders/glitch" name="blue">
+	<skin asset_src="base" height="230" default="false" off_y="0" off_x="0" width="189" path="creatures/glitch" name="blue">
 		<colors use_default="true" mode="layers">
 			<color index="0" value="0xFF0000B0" />
 			<color index="1" value="0xFF009CFF" />

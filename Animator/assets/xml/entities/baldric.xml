@@ -128,7 +128,7 @@
 		<frame value="71" />
 		<frame value="72" />
 	</anim>
-	<skin name="baldric" path="defenders" width="64" height="64" default="true" off_x="0" off_y="0" asset_src="baldric">
+	<skin name="baldric" path="creatures" width="64" height="64" default="true" off_x="0" off_y="0" asset_src="baldric">
 		<colors mode="pixels">
 			<feature name="skin" palette="skin_1" c0="5" c1="4" c2="3" c3="2" c4="1" />
 			<feature name="armor" palette="armor_2" c0="11" c1="10" c2="9" c3="8" c4="7" />
