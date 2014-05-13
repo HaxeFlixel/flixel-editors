@@ -39,16 +39,20 @@ class ColorIndex implements IFlxDestroyable
 	}
 	
 	public function destroy():Void {
-		if(_map_palettes != null){
-			for (key in _map_palettes.keys()) {
+		if (_map_palettes != null)
+		{
+			for (key in _map_palettes.keys())
+			{
 				var arr:Array<String> = _map_palettes.get(key);
 				_map_palettes.remove(key);
 				U.clearArray(arr);
 				arr = null;
 			}
 		}
-		if(_map_swatches != null){
-			for (key in _map_swatches.keys()) {
+		if (_map_swatches != null)
+		{
+			for (key in _map_swatches.keys())
+			{
 				_map_swatches.remove(key);
 			}
 		}
@@ -82,13 +86,16 @@ class ColorIndex implements IFlxDestroyable
 	
 	public function updateFromSwatches(list:Array<SwatchData>,forceMatchOnName:Bool):Void{
 		for (sd in list) {
-			if (_map_swatches.exists(sd.name)) {
+			if (_map_swatches.exists(sd.name))
+			{
 				var sd2:SwatchData = _map_swatches.get(sd.name);
 				_map_swatches.remove(sd.name);
 				sd2.destroy();
 				sd2 = null;
 				_map_swatches.set(sd.name,sd.copy());
-			}else if (!forceMatchOnName) {
+			}
+			else if (!forceMatchOnName)
+			{
 				_map_swatches.set(sd.name, sd.copy());
 			}
 		}
@@ -96,7 +103,8 @@ class ColorIndex implements IFlxDestroyable
 	
 	public function getSwatchList():Array<SwatchData> {
 		var arr:Array<SwatchData> = [];
-		for (key in _map_swatches.keys()) {
+		for (key in _map_swatches.keys())
+		{
 			var sd:SwatchData = _map_swatches.get(key);
 			arr.push(sd.copy());
 		}
@@ -105,7 +113,8 @@ class ColorIndex implements IFlxDestroyable
 	
 	public function getPaletteList():Array<StrIdLabel>{
 		var arr:Array<StrIdLabel> = [];
-		for (key in _map_palettes.keys()) {
+		for (key in _map_palettes.keys())
+		{
 			arr.push(new StrIdLabel(key, key));
 		}
 		return arr;
@@ -119,7 +128,8 @@ class ColorIndex implements IFlxDestroyable
 	
 	public function getPalette(str:String):ColorPalette
 	{
-		if (str == "" || str == "null") {
+		if (str == "" || str == "null")
+		{
 			return null;
 		}
 		
@@ -148,7 +158,8 @@ class ColorIndex implements IFlxDestroyable
 	
 	public function getSwatch(name:String):SwatchData
 	{
-		if (_map_swatches.exists(name)) {
+		if (_map_swatches.exists(name))
+		{
 			var c:SwatchData = _map_swatches.get(name);
 			return c.copy();
 		}
@@ -166,12 +177,16 @@ class ColorIndex implements IFlxDestroyable
 		{
 			var name:String = U.xml_str(swatchNode.x, "name", true);
 			var colors:Array<Int> = [];
-			for(i in 0...10){
+			for (i in 0...10)
+			{
 				var iStr:String = "c"+Std.string(i);
-				if(U.xml_str(swatchNode.x,iStr) != ""){
+				if (U.xml_str(swatchNode.x, iStr) != "")
+				{
 					var col:Int = U.parseHex(U.xml_str(swatchNode.x, iStr, true, "0x000000"), true, true);
 					colors[i] = col;
-				}else {
+				}
+				else
+				{
 					colors[i] = 0x00000000;
 				}
 			}
