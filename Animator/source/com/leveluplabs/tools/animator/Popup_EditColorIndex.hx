@@ -15,9 +15,6 @@ import flixel.addons.ui.SwatchData;
 import flixel.addons.ui.U;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
-import flixel.util.FlxColorUtil;
-import flixel.util.FlxColorUtil.ARGB;
-import flixel.util.FlxColorUtil.HSV;
 import sys.FileSystem;
 import systools.Dialogs;
 
@@ -46,8 +43,8 @@ class Popup_EditColorIndex extends FlxUIPopup
 	
 	private var btn_save:FlxUIButton;
 	
-	public var rgb:ARGB;
-	public var hsb:HSBA;
+	public var rgb:{alpha:Float,red:Float,green:Float,blue:Float};
+	public var hsb:{alpha:Float, hue:Float, saturation:Float, brightness:Float };
 	
 	private var swatch_selecter:FlxUIColorSwatchSelecter;
 	
@@ -165,21 +162,21 @@ class Popup_EditColorIndex extends FlxUIPopup
 		var red:Int = Std.int(rgb.red);
 		var green:Int = Std.int(rgb.green);
 		var blue:Int = Std.int(rgb.blue);
-		var the_color:Int = FlxColorUtil.getColor32(255, red, green, blue);
-		var the_hsb = FlxColorUtil.getHSBA(the_color);
 		
-		hsb.hue = the_hsb.hue;
-		hsb.saturation = the_hsb.saturation;
-		hsb.brightness = the_hsb.brightness;
+		var c:FlxColor = FlxColor.fromRGB(red, green, blue, 255);
+		
+		hsb.hue = c.hue;
+		hsb.saturation = c.saturation;
+		hsb.brightness = c.brightness;
+		
 		onSlider();
 	}
 	
 	private function onSliderHSB():Void {
-		var the_color:Int = FlxColorUtil.makeFromHSBA(hsb.hue, hsb.saturation, hsb.brightness, 1.0);
-		var the_rgb = FlxColorUtil.getARGB(the_color);
-		rgb.red = the_rgb.red;
-		rgb.green = the_rgb.green;
-		rgb.blue = the_rgb.blue;
+		var c:FlxColor= FlxColor.fromHSB(hsb.hue, hsb.saturation, hsb.brightness, 1.0);
+		rgb.red = c.red;
+		rgb.green = c.green;
+		rgb.blue = c.blue;
 		onSlider();
 	}
 	
@@ -187,7 +184,7 @@ class Popup_EditColorIndex extends FlxUIPopup
 		var str:String = dd_swatch_component.selectedId;
 		var curr_swatchIndex:Int = Std.parseInt(str);
 		
-		var rgbcol:Int = FlxColorUtil.getColor32(255,Std.int(rgb.red), Std.int(rgb.green), Std.int(rgb.blue));
+		var rgbcol:FlxColor = FlxColor.fromRGB(Std.int(rgb.red), Std.int(rgb.green), Std.int(rgb.blue));
 		
 		colorBlank.color = rgbcol;
 		currSwatch.setColorAtIndex(rgbcol, curr_swatchIndex);
@@ -206,19 +203,17 @@ class Popup_EditColorIndex extends FlxUIPopup
 	}
 	
 	private function onDropDown(id:Int):Void {
-		var the_color:Int = currSwatch.colors.getColor(id);
+		var c:FlxColor = currSwatch.colors.getColor(id);
 		
-		var the_rgb = FlxColorUtil.getARGB(the_color);
-		rgb.red = the_rgb.red;
-		rgb.green = the_rgb.green;
-		rgb.blue = the_rgb.blue;
+		rgb.red = c.red;
+		rgb.green = c.green;
+		rgb.blue = c.blue;
 		
-		var the_hsb = FlxColorUtil.getHSBA(the_color);
-		hsb.hue = the_hsb.hue;
-		hsb.saturation = the_hsb.saturation;
-		hsb.brightness = the_hsb.brightness;
+		hsb.hue = c.hue;
+		hsb.saturation = c.saturation;
+		hsb.brightness = c.brightness;
 		
-		colorBlank.color = the_color;
+		colorBlank.color = c;
 	}
 	
 	private function onSwatchClick(sd:SwatchData):Void {

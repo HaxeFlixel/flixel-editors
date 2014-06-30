@@ -169,17 +169,31 @@ class State_Animator extends FlxUIState
 			Do.changeIndexPath(path);
 			showIndex(Reg.path_index);
 			var dirpath:String = Reg.path_index + Reg.path_entities;
+			var list_new:Array<String> = [];
 			if (FileSystem.exists(dirpath) && FileSystem.isDirectory(dirpath))
 			{
 				list_files = FileSystem.readDirectory(dirpath);
 				var i:Int = 0;
 				for (str in list_files) {
 					if (str.indexOf("colors.xml") != -1) {
-						list_files.splice(i, 1);
-						i--;
+						//do nothing
+					}
+					else if (str.indexOf(".xml") == -1) {
+						var localPath:String = dirpath + U.slash() + str;
+						if (FileSystem.isDirectory(localPath)) {
+							var list_subfiles:Array<String> = FileSystem.readDirectory(localPath);
+							for (subfile in list_subfiles) {
+								if(FileSystem.isDirectory(localPath+U.slash()+subfile) == false && subfile.indexOf("colors.xml") == -1){
+									list_new.push(str + U.slash() + subfile);
+								}
+							}
+						}
+					}else {
+						list_new.push(str);
 					}
 					i++;
 				}
+				list_files = list_new;
 			}
 			else
 			{
@@ -291,6 +305,7 @@ class State_Animator extends FlxUIState
 			entity_graphics.destroy();
 		}
 		entity_graphics = new EntityGraphics();
+		entity_graphics.remotePath = Reg.path_index + U.slash() + "gfx" + U.slash();
 		
 		var loadpath:String = Reg.path_index + Reg.path_entities + "\\" + fname;
 		
@@ -1027,8 +1042,6 @@ class State_Animator extends FlxUIState
 	
 	private function doChangeColorFeature(colorFeature:ColorFeature):Void
 	{
-		trace("doChangeColorFeature() cf = " + colorFeature);
-		
 		var cp:ColorPalette = Reg.color_index.getPalette(colorFeature.palette_name);
 		
 		entity_graphics.skin.changeColorFeaturePalette(colorFeatureToEdit, cp, colorFeature.name);

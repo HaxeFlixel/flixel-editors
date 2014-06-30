@@ -7,9 +7,9 @@ import flixel.addons.ui.StrIdLabel;
 import flixel.addons.ui.U;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxColor;
-import flixel.util.FlxColorUtil;
 import haxe.xml.Fast;
 import openfl.Assets;
+import sys.FileSystem;
 
 /**
  * All the MetaData you need to make an EntitySprite
@@ -20,6 +20,8 @@ class EntityGraphics
 	public var name:String;								//string identifier
 	public var asset_src(get, null):String = "";		//the path to the asset file you want
 	public var skinName:String = "";					//the string name of the desired EntitySkin (set this to change it)
+	
+	public var remotePath:String = "";					//if this is not "", then it will load from file instead of from Assets
 	
 	public var skin(get, null):EntitySkin;				//the currently selected EntitySkin
 	public var map_skins:Map<String,EntitySkin>;		//all possible skins, maps string names ("hero") to skin data
@@ -260,11 +262,23 @@ class EntityGraphics
 						
 						s.list_original_pixel_colors = [];
 						
-						var b:BitmapData = Assets.getBitmapData(U.gfx(asset_src),false);	//don't cache it, just peek at it
+						var b:BitmapData = null;
+						#if sys
+							if (remotePath != null && remotePath != "") {
+								if(FileSystem.exists(remotePath+asset_src+".png")){
+									b =  BitmapData.load(remotePath + asset_src + ".png");
+								}
+							}
+						#end
+						
+						if(b == null){
+							b = Assets.getBitmapData(U.gfx(asset_src),false);	//don't cache it, just peek at it
+						}
+						
 						if (b != null) {
 							for (py in 0...b.height) {
-								var pix_color:Int = b.getPixel32(0, py);
-								if (FlxColorUtil.getAlpha(pix_color) == 0) {				//break on first 100% transparent pixel
+								var pix_color:FlxColor = b.getPixel32(0, py);
+								if (pix_color.alpha == 0) {				//break on first 100% transparent pixel
 									break;
 								}
 								s.list_original_pixel_colors.push(pix_color);
@@ -514,6 +528,9 @@ class EntityGraphics
 			for (animNode in xml.nodes.anim) {
 				var a:AnimationData = new AnimationData();
 				a.name = U.xml_str(animNode.x, "name");
+				if (a.name == "") {
+					a.name = U.xml_str(animNode.x, "id");
+				}
 				a.looped = U.xml_bool(animNode.x, "looped");
 				a.frameRate = U.xml_i(animNode.x, "framerate");
 				if (animNode.hasNode.frame) {
@@ -535,7 +552,10 @@ class EntityGraphics
 						}
 						var sweet:String = U.xml_str(frameNode.x, "sweet", true);
 						if (sweet != "") {
-							var s_name:String = U.xml_str(frameNode.x, "name");
+							var s_name:String = sweet;
+							if (sweet.toLowerCase() == "true") {
+								s_name = U.xml_str(frameNode.x, "name");
+							}
 							var s_x:Float = U.xml_f(frameNode.x, "x", 0);
 							var s_y:Float = U.xml_f(frameNode.x, "y", 0);
 							var sweet:AnimSweetSpot = new AnimSweetSpot(s_name, s_x, s_y);
@@ -564,16 +584,13 @@ class EntityGraphics
 		return 0;
 	}
 	
-	public static function getColorTransform(?Trans:ColorTransform=null,Color:Int=0xffffff,Alpha:Float=1):ColorTransform {
+	public static function getColorTransform(?Trans:ColorTransform=null,Color:FlxColor=0xffffff,Alpha:Float=1):ColorTransform {
 		if (Trans == null) {
 			Trans = new ColorTransform();
 		}
-		var red:Float = FlxColorUtil.getRed(Color);
-		var green:Float = FlxColorUtil.getGreen(Color);
-		var blue:Float = FlxColorUtil.getBlue(Color);
-		Trans.redMultiplier = red / 255;
-		Trans.greenMultiplier = green / 255;
-		Trans.blueMultiplier = blue / 255;
+		Trans.redMultiplier = Color.redFloat / 255;
+		Trans.greenMultiplier =  Color.greenFloat / 255;
+		Trans.blueMultiplier = Color.blueFloat / 255;
 		Trans.alphaMultiplier = Alpha;
 		return Trans;
 	}

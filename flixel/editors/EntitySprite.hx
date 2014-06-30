@@ -1,4 +1,5 @@
 package flixel.editors;
+import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.editors.EntityGraphics.EntityColorLayer;
 import flixel.editors.EntitySkin;
 import flash.display.BitmapData;
@@ -8,9 +9,11 @@ import flixel.addons.ui.U;
 import flixel.animation.FlxAnimation;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.util.FlxColorUtil;
+import flixel.util.FlxColor;
 import flixel.util.loaders.CachedGraphics;
 import openfl.Assets;
+import sys.FileSystem;
+import sys.io.File;
 
 /**
  * An extension of FlxSprite with some extra power -- namely extra metadata for animation,
@@ -70,8 +73,15 @@ class EntitySprite extends FlxSprite
 		}
 		else 
 		{
-			loadGraphic(U.gfx(G.asset_src), true, s.width, s.height);
+			if (G.remotePath == "") {
+				loadGraphic(U.gfx(G.asset_src), true, s.width, s.height);
+			}else {
+				loadGraphic(BitmapData.load(G.remotePath + G.asset_src), true, s.width, s.height);
+			}
 		}
+		
+		offset.x = G.skin.off_x;
+		offset.y = G.skin.off_y;
 		
 		loadAnimations(G.animations);
 	}
@@ -142,16 +152,28 @@ class EntitySprite extends FlxSprite
 	
 	private function loadCustomPixelPalette(G:EntityGraphics):Void 
 	{
-		 //Get the base layer
-		var baseLayer:BitmapData = Assets.getBitmapData(U.gfx(G.asset_src));
+		//Get the base layer
+		
+		var baseLayer:BitmapData = null;
+		if (G.remotePath == "") {
+			baseLayer = Assets.getBitmapData(U.gfx(G.asset_src));
+		}else {
+			#if sys
+				var daPath:String = G.remotePath + G.asset_src + ".png";
+				if (FileSystem.exists(daPath))
+				{
+					baseLayer = BitmapData.load(daPath);
+				}
+			#end
+		}
 		
 		var baseCopy = baseLayer.clone();
 		
 		baseLayer = null;
 		
-		var orig_color:Int;
-		var pix_color:Int;
-		var replace_color:Int;
+		var orig_color:FlxColor;
+		var pix_color:FlxColor;
+		var replace_color:FlxColor;
 		
 		var i:Int = 0;
 		
@@ -175,11 +197,13 @@ class EntitySprite extends FlxSprite
 				{
 					orig_color = G.skin.list_original_pixel_colors[i];
 					replace_color = G.skin.list_colors[i];
-					if (replace_color != 0x00000000) {
-						#if debug
-							trace("(" + i + ") replacing(" + FlxColorUtil.ARGBtoHexString(orig_color) + ") with(" + FlxColorUtil.ARGBtoHexString(replace_color) + ")");
-						#end
-						baseCopy.threshold(baseCopy, baseCopy.rect, _flashPointZero, "==", orig_color, replace_color);
+					if (replace_color != 0x00000000) 
+					{
+						try {
+							baseCopy.threshold(baseCopy, baseCopy.rect, _flashPointZero, "==", orig_color, replace_color);
+						}catch (msg:Dynamic) {
+							FlxG.log.error(msg);
+						}
 					}
 				}
 			}
@@ -191,7 +215,15 @@ class EntitySprite extends FlxSprite
 	
 	private function loadCustomColorLayers(G:EntityGraphics):Void{
 		//Get the base layer
-		var baseLayer:BitmapData = Assets.getBitmapData(U.gfx(G.asset_src));
+		var baseLayer:BitmapData = null;
+		
+		if(G.remotePath == ""){
+			baseLayer = Assets.getBitmapData(U.gfx(G.asset_src));
+		}else {
+			#if sys
+				baseLayer = BitmapData.load(G.remotePath + G.asset_src + ".png");
+			#end
+		}
 		
 		//Clone pixels so we don't overwrite the original bitmap data
 		var baseCopy = baseLayer.clone();
@@ -210,7 +242,14 @@ class EntitySprite extends FlxSprite
 			{
 				//Grab a piece
 				var piece:FlxSprite = new FlxSprite();
-				piece.loadGraphic(U.gfx(G.skin.path + "/" + layer.asset_src));
+				if (G.remotePath == "")
+				{
+					piece.loadGraphic(U.gfx(G.skin.path + "/" + layer.asset_src));
+				}else 
+				{
+					var pieceBmp:BitmapData = BitmapData.load(G.remotePath + G.skin.path + "/" + layer.asset_src + ".png");
+					piece.loadGraphic(pieceBmp);
+				}
 				
 				//Grab the color from the skin
 				if(G.skin.list_colors.length > i){

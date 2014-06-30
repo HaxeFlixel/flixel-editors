@@ -14,7 +14,6 @@ import flixel.addons.ui.StrIdLabel;
 import flixel.addons.ui.U;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
-import flixel.util.FlxColorUtil;
 
 /**
  * Simple group wrapper around 3 widgets

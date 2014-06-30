@@ -7,5 +7,5 @@
 	"version": "0.0.0",
 	"releasenote": "",
 	"contributors": [ "haxeflixel","larsiusprime","Gama11" ],
-	"dependencies": {}
+	"dependencies": {"flixel","flixel-ui"}
 }

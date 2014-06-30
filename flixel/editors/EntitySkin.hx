@@ -3,7 +3,6 @@ import flixel.editors.EntityGraphics.EntityColorLayer;
 import flixel.addons.ui.SwatchData;
 import flixel.addons.ui.U;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
-import flixel.util.FlxColorUtil;
 import haxe.xml.Fast;
 
 /**

@@ -72,7 +72,7 @@
 				<exact_size width="50"/>
 			</button>
 		
-			<text id="input_new" text="" y="5" x="2" width="100" input="true" align="left" color="0x000000">
+			<text id="input_new" text="..." y="5" x="2" width="100" input="true" align="left" color="0x000000">
 				<anchor x="preview_box.right" x-flush="left" y="reg_animations_dd.bottom" y-flush="top"/>
 			</text>
 			<button id="btn_anim_rename" label="Rename" x="2">

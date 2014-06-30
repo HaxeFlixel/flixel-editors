@@ -11,7 +11,6 @@ import flixel.addons.ui.FlxUIText;
 import flixel.addons.ui.StrIdLabel;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
-import flixel.util.FlxColorUtil;
 import flixel.util.FlxStringUtil;
 import haxe.macro.Compiler;
 import sys.FileSystem;
