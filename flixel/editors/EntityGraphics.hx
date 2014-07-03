@@ -36,6 +36,8 @@ class EntityGraphics
 														//  "assets/gfx/defenders/dude+pants#FF0000+hat#0000FF+shirt#00FF00" (HD layered sprite)
 														//  "assets/gfx/defenders/dude#FF0000+#0000FF+#00FF00"				 (pixel sprite)
 	
+	public var ignoreColor:Null<FlxColor>=null;	//color that should be ignored during replacement logic
+	
 	/**********GETTER/SETTERS*************/
 	
 	public function get_asset_src():String
@@ -124,6 +126,11 @@ class EntityGraphics
 		return strIds;
 	}
 	
+	public function hasSkin(name:String):Bool
+	{
+		return map_skins.exists(name);
+	}
+	
 	public function getSkins():Array<EntitySkin>
 	{
 		var arr = [];
@@ -174,6 +181,7 @@ class EntityGraphics
 				if (anim.hasSweetSpot(i)) {
 					var sweet:AnimSweetSpot = anim.getSweetSpot(i);
 					frameXml.set("sweet", "true");
+					
 					if(sweet.x != 0){
 						frameXml.set("x", Std.string(sweet.x));
 					}
@@ -182,6 +190,14 @@ class EntityGraphics
 					}
 					if (sweet.name != "" && sweet.name != null) {
 						frameXml.set("name", sweet.name);
+					}
+					var meta:Map<String,Dynamic> = anim.getSweetSpot(i).meta;
+					if (meta != null)
+					{
+						for (key in meta.keys())
+						{
+							frameXml.set(key, meta.get(key));
+						}
 					}
 				}
 				animXml.addChild(frameXml);
@@ -551,14 +567,37 @@ class EntityGraphics
 							}
 						}
 						var sweet:String = U.xml_str(frameNode.x, "sweet", true);
-						if (sweet != "") {
+						if (sweet != "")
+						{
 							var s_name:String = sweet;
-							if (sweet.toLowerCase() == "true") {
+							if (sweet.toLowerCase() == "true")
+							{
 								s_name = U.xml_str(frameNode.x, "name");
 							}
 							var s_x:Float = U.xml_f(frameNode.x, "x", 0);
 							var s_y:Float = U.xml_f(frameNode.x, "y", 0);
-							var sweet:AnimSweetSpot = new AnimSweetSpot(s_name, s_x, s_y);
+							
+							var sweet:AnimSweetSpot = null;
+							
+							if (hasMetaAttr(frameNode))
+							{
+								var meta:Map<String,Dynamic> = new Map<String,Dynamic>();
+								for (attr in frameNode.x.attributes())
+								{
+									var value:String = U.xml_str(frameNode.x, attr);
+									if (value != null && value != "")
+									{
+										switch(attr)
+										{
+											case "width", "height": meta.set(attr, Std.parseInt(value));
+										}
+									}
+								}
+								sweet = new AnimSweetSpot(s_name, s_x, s_y, meta);
+							}else {
+								sweet = new AnimSweetSpot(s_name, s_x, s_y);
+							}
+							
 							a.setSweetSpot(i, sweet);
 						}
 						
@@ -576,6 +615,16 @@ class EntityGraphics
 				animations.set(a.name, a);
 			}
 		}
+	}
+	
+	private function hasMetaAttr(frameNode:Fast):Bool {
+		for (attr in frameNode.x.attributes())
+		{
+			switch(attr) {
+				case "width", "height": return true;
+			}
+		}
+		return false;
 	}
 	
 	private function sortEntityColorLayers(a:EntityColorLayer, b:EntityColorLayer):Int {

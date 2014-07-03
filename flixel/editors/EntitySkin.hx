@@ -2,6 +2,7 @@ package flixel.editors;
 import flixel.editors.EntityGraphics.EntityColorLayer;
 import flixel.addons.ui.SwatchData;
 import flixel.addons.ui.U;
+import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 import haxe.xml.Fast;
 

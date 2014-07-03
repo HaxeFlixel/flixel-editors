@@ -56,10 +56,16 @@ class EntitySprite extends FlxSprite
 			}
 			
 			var arr:Array<AnimSweetSpot> = _sweetSpotMap.get(anim.name);
-			
-			for (key in anim.sweets.keys()) {
-				var sweet:AnimSweetSpot = anim.sweets.get(key);
-				arr[key] = new AnimSweetSpot(sweet.name, sweet.x, sweet.y);	//copy it and add it to our list
+			for (ss in anim.sweets)
+			{
+				if (ss != null)
+				{
+					arr.push(ss.copy());
+				}
+				else
+				{
+					arr.push(null);
+				}
 			}
 		}
 	}
@@ -119,6 +125,63 @@ class EntitySprite extends FlxSprite
 		animation.callback = animationCallback;
 	}
 	
+	/**
+	 * Returns the list of AnimSweetSpot metadata for the given animation (assumes current if no parameter)
+	 * @param	animationName
+	 * @return
+	 */
+	
+	public function getSweetSpotList(?animationName:String):Array<AnimSweetSpot>
+	{
+		if (animationName == null)
+		{
+			if (animation != null && animation.curAnim != null)
+			{
+				animationName = animation.curAnim.name;
+			}
+		}
+		if (animationName == null)
+		{
+			return null;
+		}
+		if (!_sweetSpotMap.exists(animationName))
+		{
+			return null;
+		}
+		return _sweetSpotMap.get(animationName);
+	}
+	
+	/**
+	 * Returns a specific AnimSweetSpot metadata for a specific animation
+	 * @param	animationName
+	 * @param	frame
+	 * @param	sweetSpotName
+	 * @return
+	 */
+	
+	public function getSweetSpot(?animationName:String, ?frame:Int, ?sweetSpotName:String):AnimSweetSpot
+	{
+		var list = getSweetSpotList(animationName);
+		if (list != null)
+		{
+			if (frame != null && list.length > frame)
+			{
+				return list[frame];
+			}
+			if (sweetSpotName != null)
+			{
+				var ss:AnimSweetSpot;
+				for (ss in list)
+				{
+					if (ss.name == sweetSpotName)
+					{
+						return ss;
+					}
+				}
+			}
+		}
+		return null;
+	}
 	
 	/**PRIVATE**/
 	
@@ -197,7 +260,14 @@ class EntitySprite extends FlxSprite
 				{
 					orig_color = G.skin.list_original_pixel_colors[i];
 					replace_color = G.skin.list_colors[i];
-					if (replace_color != 0x00000000) 
+					var ignored:Bool = false;
+					if (G.ignoreColor != null) {
+						var testColor:FlxColor = replace_color | 0x00FFFFFF;
+						if ((replace_color & 0x00FFFFFF) == G.ignoreColor) {
+							ignored = true;
+						}
+					}
+					if (!ignored && replace_color != 0x00000000) 
 					{
 						try {
 							baseCopy.threshold(baseCopy, baseCopy.rect, _flashPointZero, "==", orig_color, replace_color);
