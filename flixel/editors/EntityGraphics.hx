@@ -7,6 +7,7 @@ import flixel.addons.ui.StrIdLabel;
 import flixel.addons.ui.U;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxColor;
+import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 import haxe.xml.Fast;
 import openfl.Assets;
 import sys.FileSystem;
@@ -15,7 +16,7 @@ import sys.FileSystem;
  * All the MetaData you need to make an EntitySprite
  * @author 
  */
-class EntityGraphics
+class EntityGraphics implements IFlxDestroyable
 {
 	public var name:String;								//string identifier
 	public var asset_src(get, null):String = "";		//the path to the asset file you want
@@ -30,6 +31,9 @@ class EntityGraphics
 	public static inline var COLOR_CHANGE_NONE:Int = 0;				//don't change colors on the base asset
 	public static inline var COLOR_CHANGE_LAYERS:Int = 1;			//it's an "HD style" layered sprite, change colors by colorizing & compositing layers
 	public static inline var COLOR_CHANGE_PIXEL_PALETTE:Int = 2;	//it's a pixel-sprite, change colors by palette-swapping exact pixel color values
+	
+	public var scaleX:Float = 1.0;
+	public var scaleY:Float = 1.0;
 	
 	public var colorKey(get, null):String;				//Returns a unique identifier for the current skin (combination of asset file(s) + custom color rules)
 														//examples: 
@@ -93,7 +97,25 @@ class EntityGraphics
 	}
 	
 	public function destroy():Void {
-		//TODO
+		name = "";
+		asset_src = "";
+		skinName = "";
+		remotePath = "";
+		for (key in map_skins.keys())
+		{
+			var s:EntitySkin = map_skins.get(key);
+			s.destroy();
+			map_skins.remove(key);
+		}
+		
+		for (key in animations.keys())
+		{
+			var ad:AnimationData = animations.get(key);
+			ad.destroy();
+			animations.remove(key);
+		}
+		
+		ignoreColor = null;
 	}
 	
 	public function countSkins():Int 
@@ -551,7 +573,8 @@ class EntityGraphics
 				a.frameRate = U.xml_i(animNode.x, "framerate");
 				if (animNode.hasNode.frame) {
 					var i:Int = 0;
-					for (frameNode in animNode.nodes.frame) {
+					for (frameNode in animNode.nodes.frame)
+					{
 						var frame:Int = U.xml_i(frameNode.x, "value", -1);
 						if(frame != -1){
 							a.frames.push(frame);

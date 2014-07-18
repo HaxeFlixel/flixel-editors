@@ -2,7 +2,9 @@ package flixel.editors;
 import flixel.editors.EntityGraphics.EntityColorLayer;
 import flixel.addons.ui.SwatchData;
 import flixel.addons.ui.U;
+import flixel.util.FlxArrayUtil;
 import flixel.util.FlxColor;
+import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 import haxe.xml.Fast;
 
@@ -35,7 +37,22 @@ class EntitySkin implements IFlxDestroyable
 	}
 	
 	public function destroy():Void {
-		//TODO
+		FlxArrayUtil.clearArray(list_colors);
+		FlxArrayUtil.clearArray(list_original_pixel_colors);
+		
+		if (list_color_layers != null)
+		{
+			while (list_color_layers.length > 0)
+			{
+				list_color_layers.pop();
+			}
+		}
+		
+		FlxDestroyUtil.destroyArray(list_color_features);
+		list_colors = null;
+		list_original_pixel_colors = null;
+		list_color_layers = null;
+		list_color_features = null;
 	}
 	
 	public function removeColorFeature(name:String):Void {

@@ -37,6 +37,33 @@ class AnimSweetSpot implements IFlxDestroyable
 		return new AnimSweetSpot(name, x, y, metaCopy);
 	}
 	
+	public function getMetaF(key:String):Float
+	{
+		if (meta.exists(key))
+		{
+			return cast meta.get(key);
+		}
+		return 0;
+	}
+	
+	public function getMetaStr(key:String):String
+	{
+		if (meta.exists(key))
+		{
+			return cast meta.get(key);
+		}
+		return "";
+	}
+	
+	public function getMetaI(key:String):Int
+	{
+		if (meta.exists(key))
+		{
+			return cast meta.get(key);
+		}
+		return 0;
+	}
+	
 	public function toString():String
 	{
 		var str:String = "{name:" + name+", (" + x + "," + y + ")";

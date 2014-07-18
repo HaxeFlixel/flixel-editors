@@ -1,5 +1,7 @@
 package flixel.editors;
 import flixel.addons.ui.SwatchData;
+import flixel.util.FlxArrayUtil;
+import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 
 /**
@@ -128,11 +130,11 @@ class ColorFeature implements IFlxDestroyable
 
 	public function destroy() : Void
 	{
+		FlxArrayUtil.clearArray(colors);
+		FlxDestroyUtil.destroy(swatch);
+		FlxDestroyUtil.destroy(palette);
+		colors = null;
 		swatch = null;
-		if (palette != null)
-		{
-			palette.destroy();
-		}
 		palette = null;
 	}
 

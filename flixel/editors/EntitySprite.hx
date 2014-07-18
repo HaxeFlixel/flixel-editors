@@ -12,6 +12,7 @@ import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.util.loaders.CachedGraphics;
 import openfl.Assets;
+import openfl.geom.Matrix;
 import sys.FileSystem;
 import sys.io.File;
 
@@ -70,7 +71,30 @@ class EntitySprite extends FlxSprite
 		}
 	}
 
-	public function loadEntityGraphics(G:EntityGraphics):Void {
+	public function loadEntityGraphics(G:EntityGraphics):Void
+	{
+		basicLoad(G);
+		
+		offset.x = G.skin.off_x;
+		offset.y = G.skin.off_y;
+		
+		if (G.scaleX != 1.0 || G.scaleY != 1.0)
+		{
+			if (G.skin != null)
+			{
+				doScale(G);
+			}
+			else
+			{
+				throw "Can't load if EntityGraphics.skin == null!";
+			}
+		}
+		
+		loadAnimations(G.animations);
+	}
+	
+	private function basicLoad(G:EntityGraphics):Void
+	{
 		var s:EntitySkin = cast G.skin;
 		
 		if (G.skin.color_change_mode != EntityGraphics.COLOR_CHANGE_NONE)
@@ -80,16 +104,36 @@ class EntitySprite extends FlxSprite
 		else 
 		{
 			if (G.remotePath == "") {
-				loadGraphic(U.gfx(G.asset_src), true, s.width, s.height);
+				var the_src:String = U.gfx(G.asset_src);
+				loadGraphic(the_src, true, s.width, s.height);
 			}else {
 				loadGraphic(BitmapData.load(G.remotePath + G.asset_src), true, s.width, s.height);
 			}
 		}
-		
-		offset.x = G.skin.off_x;
-		offset.y = G.skin.off_y;
-		
-		loadAnimations(G.animations);
+	}
+	
+	private function doScale(G:EntityGraphics):Void
+	{
+		var s:EntitySkin = G.skin;
+		var frameWidth:Int = Math.round(s.width*G.scaleX);
+		var frameHeight:Int = Math.round(s.height*G.scaleY);
+		var framesWide:Int = Std.int(pixels.width / s.width);
+		var framesTall:Int = Std.int(pixels.height / s.height);
+		var newWidth:Int = frameWidth * framesWide;
+		var newHeight:Int = frameHeight * framesTall;
+		var scaleKey:String = cachedGraphics.key + "_" + newWidth + "x" + newHeight;
+		if(FlxG.bitmap.checkCache(scaleKey) == false)
+		{
+			var scaledPixels:BitmapData = new BitmapData(newWidth, newHeight,true,0x00000000);
+			var matrix:Matrix = new Matrix();
+			matrix.scale(newWidth / pixels.width, newHeight / pixels.height);
+			scaledPixels.draw(pixels, matrix, null, null, null, true);
+			loadGraphic(scaledPixels, true, newWidth, newHeight, false, scaleKey);
+		}
+		else
+		{
+			loadGraphic(scaleKey, true, newWidth, newHeight);
+		}
 	}
 	
 	public function loadCustomColors(G:EntityGraphics):Void {
