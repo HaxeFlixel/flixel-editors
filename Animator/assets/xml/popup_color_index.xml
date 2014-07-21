@@ -54,9 +54,9 @@
 	<text id="label_swatch_name" use_def="label" text="Name:" y="68">
 		<anchor x="label_current_swatch.left" x-flush="left" y="label_current_swatch.bottom" y-flush="top"/>
 	</text>
-		<text id="input_swatch_name" use_def="input" y="2" width="200">
+		<input_text id="input_swatch_name" use_def="input" y="2" width="200">
 			<anchor x="label_swatch_name.left" x-flush="left" y="label_swatch_name.bottom" y-flush="top"/>
-		</text>
+		</input_text>
 	
 	<text id="label_swatch_component" use_def="label" text="Component:" y="4">
 		<anchor x="label_swatch_name.left" x-flush="left" y="input_swatch_name.bottom" y-flush="top"/>

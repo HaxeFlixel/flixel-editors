@@ -72,9 +72,9 @@
 				<exact_size width="50"/>
 			</button>
 		
-			<text id="input_new" text="..." y="5" x="2" width="100" input="true" align="left" color="0x000000">
+			<input_text id="input_new" text="..." y="5" x="2" width="100" align="left" color="0x000000">
 				<anchor x="preview_box.right" x-flush="left" y="reg_animations_dd.bottom" y-flush="top"/>
-			</text>
+			</input_text>
 			<button id="btn_anim_rename" label="Rename" x="2">
 				<param type="String" value="new_animation"/>
 				<anchor x="input_new.right" x-flush="left" y="input_new.center" y-flush="center"/>
@@ -96,9 +96,9 @@
 		<text id="label_name" text="NAME:" y="8" width="50" align="right" color="0xffffff" outline="0x000000">
 			<anchor x="preview_box.right" x-flush="left" y="label_fps.bottom" y-flush="top"/>
 		</text>
-			<text id="input_name" text="some_animation" x="2" width="100" input="true" align="left" color="0x000000">
+			<input_text id="input_name" text="some_animation" x="2" width="100" align="left" color="0x000000">
 				<anchor x="label_fps.right" x-flush="left" y="label_name.top" y-flush="top"/>
-			</text>
+			</input_text>
 		
 		<checkbox id="check_loop" label="Loop" y="8" x="50">
 			<anchor x="preview_box.right" x-flush="left" y="label_name.bottom" y-flush="top"/>

@@ -179,7 +179,7 @@ class AnimationPreviewSprite extends FlxSpriteGroup
 		}
 	}
 	
-	private function redraw(entity:FlxSprite,frames:Array<Int>,sweets:Map<Int,AnimSweetSpot>):Void {
+	private function redraw(entity:FlxSprite,frames:Array<Int>,sweets:Array<AnimSweetSpot>):Void {
 		var frame_index:Int = 0;
 		var i:Int = 0;
 		var grid_x:Int = 0;
@@ -187,7 +187,7 @@ class AnimationPreviewSprite extends FlxSpriteGroup
 		
 		for (frame_index in frames) {
 			var hasSweet:Bool = false;
-			if (sweets != null && sweets.exists(i)) {
+			if (sweets != null && sweets.length > i) {
 				hasSweet = true;
 			}
 			pasteFrame(entity, frame_index, grid_x, grid_y, _scale, i, hasSweet);	//paste each animation frame
