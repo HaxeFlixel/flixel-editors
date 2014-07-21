@@ -3,6 +3,8 @@ package ;
 import com.leveluplabs.tools.animator.GlobalData;
 import com.leveluplabs.tools.animator.State_Init;
 import com.leveluplabs.tools.animator.State_StressTest;
+import crashdumper.CrashDumper;
+import crashdumper.SessionData;
 import flash.Lib;
 import flixel.FlxG;
 import flixel.FlxGame;
@@ -15,6 +17,10 @@ class Main extends FlxGame
 	{
 		#if HXCPP_DEBUGGER
 		new org.flashdevelop.cpp.debugger.HaxeRemote(true, "127.0.0.1");
+		#end
+		
+		#if crashdumper
+			var c:CrashDumper = new CrashDumper(SessionData.generateID("animator"));
 		#end
 
 		data = new GlobalData();

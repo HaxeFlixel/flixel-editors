@@ -1,6 +1,8 @@
 package flixel.editors;
 import flixel.addons.ui.SwatchData;
-import flixel.interfaces.IFlxDestroyable;
+import flixel.util.FlxArrayUtil;
+import flixel.util.FlxDestroyUtil;
+import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 
 /**
  * MetaData that maps a single color swatch to colorizable parts of an EntitySprite.
@@ -34,13 +36,15 @@ class ColorFeature implements IFlxDestroyable
 												//index 2: ("shadowMid")  == 0xBBBBBB --> entitySkin.list_colors[4] = 0xBBBBBB;
 												//index 3: ("shadowDark") == 0x999999 --> ignored
 										//
-										//This is only really important for pixelized sprites where you want one colors watch to affect multiple actual
-										//color pixel values.
-										//In an "HD-style" layered sprite, each color swatch will probably only affect ONE color layer.
+										//This is most often used for pixelized sprites where you want one colors watch to affect multiple actual
+										//color pixel values. It can also be used in HD-style layered sprites, but usually you'll only need 1 color
+										//per layer with those.
 	
 	//Color Swatches can hold up to 10 sub-colors, and we give the shorthand name "hilight/midtone/shadowMid/shadowDark" to indeces 0-4 for convenience
+	
 	//Therefore, we create some handy getter/setters here as well. 
-	//Note that these values are color mapping INDECES, not actual colors. They're just a fancier way of setting "colors[i] = j;"
+	//Note that these values are color mapping INDECES, not actual colors!
+	//They're just a fancier way of setting "colors[i] = j;"
 	
 	public var hilight(get,set):Int;				//remember, a value of -1 means "ignore this index"
 	public var midtone(get,set):Int;				//and a value > 0 means "where to put this color swatch sub-color in entitySkin.list_colors"
@@ -107,9 +111,12 @@ class ColorFeature implements IFlxDestroyable
 	
 	public function new(Name:String, ?Colors:Array<Int>, ?Palette_name:String, ?Pallete:ColorPalette, ?Swatch:SwatchData) 
 	{
-		if (Colors == null) {
+		if (Colors == null)
+		{
 			colors = [];
-		}else {
+		}
+		else
+		{
 			colors = Colors;
 		}
 		name = Name;
@@ -123,11 +130,11 @@ class ColorFeature implements IFlxDestroyable
 
 	public function destroy() : Void
 	{
+		FlxArrayUtil.clearArray(colors);
+		FlxDestroyUtil.destroy(swatch);
+		FlxDestroyUtil.destroy(palette);
+		colors = null;
 		swatch = null;
-		if (palette != null)
-		{
-			palette.destroy();
-		}
 		palette = null;
 	}
 

@@ -1,4 +1,5 @@
 package flixel.editors;
+import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.editors.EntityGraphics.EntityColorLayer;
 import flixel.editors.EntitySkin;
 import flash.display.BitmapData;
@@ -8,9 +9,14 @@ import flixel.addons.ui.U;
 import flixel.animation.FlxAnimation;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.util.FlxColorUtil;
+import flixel.util.FlxColor;
 import flixel.util.loaders.CachedGraphics;
 import openfl.Assets;
+import openfl.geom.Matrix;
+#if sys
+import sys.FileSystem;
+import sys.io.File;
+#end
 
 /**
  * An extension of FlxSprite with some extra power -- namely extra metadata for animation,
@@ -53,15 +59,44 @@ class EntitySprite extends FlxSprite
 			}
 			
 			var arr:Array<AnimSweetSpot> = _sweetSpotMap.get(anim.name);
-			
-			for (key in anim.sweets.keys()) {
-				var sweet:AnimSweetSpot = anim.sweets.get(key);
-				arr[key] = new AnimSweetSpot(sweet.name, sweet.x, sweet.y);	//copy it and add it to our list
+			for (ss in anim.sweets)
+			{
+				if (ss != null)
+				{
+					arr.push(ss.copy());
+				}
+				else
+				{
+					arr.push(null);
+				}
 			}
 		}
 	}
 
-	public function loadEntityGraphics(G:EntityGraphics):Void {
+	public function loadEntityGraphics(G:EntityGraphics):Void
+	{
+		basicLoad(G);
+		
+		offset.x = G.skin.off_x;
+		offset.y = G.skin.off_y;
+		
+		if (G.scaleX != 1.0 || G.scaleY != 1.0)
+		{
+			if (G.skin != null)
+			{
+				doScale(G);
+			}
+			else
+			{
+				throw "Can't load if EntityGraphics.skin == null!";
+			}
+		}
+		
+		loadAnimations(G.animations);
+	}
+	
+	private function basicLoad(G:EntityGraphics):Void
+	{
 		var s:EntitySkin = cast G.skin;
 		
 		if (G.skin.color_change_mode != EntityGraphics.COLOR_CHANGE_NONE)
@@ -70,10 +105,41 @@ class EntitySprite extends FlxSprite
 		}
 		else 
 		{
-			loadGraphic(U.gfx(G.asset_src), true, s.width, s.height);
+			if (G.remotePath == "") {
+				var the_src:String = U.gfx(G.asset_src);
+				loadGraphic(the_src, true, s.width, s.height);
+			}else {
+				#if sys
+				loadGraphic(BitmapData.load(G.remotePath + G.asset_src), true, s.width, s.height);
+				#else
+				loadGraphic(G.remotePath + G.asset_src, true, s.width, s.height);
+				#end
+			}
 		}
-		
-		loadAnimations(G.animations);
+	}
+	
+	private function doScale(G:EntityGraphics):Void
+	{
+		var s:EntitySkin = G.skin;
+		var frameWidth:Int = Math.round(s.width*G.scaleX);
+		var frameHeight:Int = Math.round(s.height*G.scaleY);
+		var framesWide:Int = Std.int(pixels.width / s.width);
+		var framesTall:Int = Std.int(pixels.height / s.height);
+		var newWidth:Int = frameWidth * framesWide;
+		var newHeight:Int = frameHeight * framesTall;
+		var scaleKey:String = cachedGraphics.key + "_" + newWidth + "x" + newHeight;
+		if(FlxG.bitmap.checkCache(scaleKey) == false)
+		{
+			var scaledPixels:BitmapData = new BitmapData(newWidth, newHeight,true,0x00000000);
+			var matrix:Matrix = new Matrix();
+			matrix.scale(newWidth / pixels.width, newHeight / pixels.height);
+			scaledPixels.draw(pixels, matrix, null, null, null, true);
+			loadGraphic(scaledPixels, true, newWidth, newHeight, false, scaleKey);
+		}
+		else
+		{
+			loadGraphic(scaleKey, true, newWidth, newHeight);
+		}
 	}
 	
 	public function loadCustomColors(G:EntityGraphics):Void {
@@ -109,6 +175,63 @@ class EntitySprite extends FlxSprite
 		animation.callback = animationCallback;
 	}
 	
+	/**
+	 * Returns the list of AnimSweetSpot metadata for the given animation (assumes current if no parameter)
+	 * @param	animationName
+	 * @return
+	 */
+	
+	public function getSweetSpotList(?animationName:String):Array<AnimSweetSpot>
+	{
+		if (animationName == null)
+		{
+			if (animation != null && animation.curAnim != null)
+			{
+				animationName = animation.curAnim.name;
+			}
+		}
+		if (animationName == null)
+		{
+			return null;
+		}
+		if (!_sweetSpotMap.exists(animationName))
+		{
+			return null;
+		}
+		return _sweetSpotMap.get(animationName);
+	}
+	
+	/**
+	 * Returns a specific AnimSweetSpot metadata for a specific animation
+	 * @param	animationName
+	 * @param	frame
+	 * @param	sweetSpotName
+	 * @return
+	 */
+	
+	public function getSweetSpot(?animationName:String, ?frame:Int, ?sweetSpotName:String):AnimSweetSpot
+	{
+		var list = getSweetSpotList(animationName);
+		if (list != null)
+		{
+			if (frame != null && list.length > frame)
+			{
+				return list[frame];
+			}
+			if (sweetSpotName != null)
+			{
+				var ss:AnimSweetSpot;
+				for (ss in list)
+				{
+					if (ss.name == sweetSpotName)
+					{
+						return ss;
+					}
+				}
+			}
+		}
+		return null;
+	}
 	
 	/**PRIVATE**/
 	
@@ -142,16 +265,28 @@ class EntitySprite extends FlxSprite
 	
 	private function loadCustomPixelPalette(G:EntityGraphics):Void 
 	{
-		 //Get the base layer
-		var baseLayer:BitmapData = Assets.getBitmapData(U.gfx(G.asset_src));
+		//Get the base layer
+		
+		var baseLayer:BitmapData = null;
+		if (G.remotePath == "") {
+			baseLayer = Assets.getBitmapData(U.gfx(G.asset_src));
+		}else {
+			#if sys
+				var daPath:String = G.remotePath + G.asset_src + ".png";
+				if (FileSystem.exists(daPath))
+				{
+					baseLayer = BitmapData.load(daPath);
+				}
+			#end
+		}
 		
 		var baseCopy = baseLayer.clone();
 		
 		baseLayer = null;
 		
-		var orig_color:Int;
-		var pix_color:Int;
-		var replace_color:Int;
+		var orig_color:FlxColor;
+		var pix_color:FlxColor;
+		var replace_color:FlxColor;
 		
 		var i:Int = 0;
 		
@@ -175,9 +310,20 @@ class EntitySprite extends FlxSprite
 				{
 					orig_color = G.skin.list_original_pixel_colors[i];
 					replace_color = G.skin.list_colors[i];
-					if(replace_color != 0x00000000){
-						trace("("+i+") replacing(" + FlxColorUtil.ARGBtoHexString(orig_color) + ") with(" + FlxColorUtil.ARGBtoHexString(replace_color) + ")");
-						baseCopy.threshold(baseCopy, baseCopy.rect, _flashPointZero, "==", orig_color, replace_color);
+					var ignored:Bool = false;
+					if (G.ignoreColor != null) {
+						var testColor:FlxColor = replace_color | 0x00FFFFFF;
+						if ((replace_color & 0x00FFFFFF) == G.ignoreColor) {
+							ignored = true;
+						}
+					}
+					if (!ignored && replace_color != 0x00000000) 
+					{
+						try {
+							baseCopy.threshold(baseCopy, baseCopy.rect, _flashPointZero, "==", orig_color, replace_color);
+						}catch (msg:Dynamic) {
+							FlxG.log.error(msg);
+						}
 					}
 				}
 			}
@@ -189,7 +335,15 @@ class EntitySprite extends FlxSprite
 	
 	private function loadCustomColorLayers(G:EntityGraphics):Void{
 		//Get the base layer
-		var baseLayer:BitmapData = Assets.getBitmapData(U.gfx(G.asset_src));
+		var baseLayer:BitmapData = null;
+		
+		if(G.remotePath == ""){
+			baseLayer = Assets.getBitmapData(U.gfx(G.asset_src));
+		}else {
+			#if sys
+				baseLayer = BitmapData.load(G.remotePath + G.asset_src + ".png");
+			#end
+		}
 		
 		//Clone pixels so we don't overwrite the original bitmap data
 		var baseCopy = baseLayer.clone();
@@ -208,7 +362,18 @@ class EntitySprite extends FlxSprite
 			{
 				//Grab a piece
 				var piece:FlxSprite = new FlxSprite();
-				piece.loadGraphic(U.gfx(G.skin.path + "/" + layer.asset_src));
+				if (G.remotePath == "")
+				{
+					piece.loadGraphic(U.gfx(G.skin.path + "/" + layer.asset_src));
+				}else 
+				{
+					#if sys
+					var pieceBmp:BitmapData = BitmapData.load(G.remotePath + G.skin.path + "/" + layer.asset_src + ".png");
+					piece.loadGraphic(pieceBmp);
+					#else
+					piece.loadGraphic(G.remotePath + G.skin.path + "/" + layer.asset_src + ".png");
+					#end
+				}
 				
 				//Grab the color from the skin
 				if(G.skin.list_colors.length > i){

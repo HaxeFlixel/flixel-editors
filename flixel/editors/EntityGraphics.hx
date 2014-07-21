@@ -7,19 +7,24 @@ import flixel.addons.ui.StrIdLabel;
 import flixel.addons.ui.U;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxColor;
-import flixel.util.FlxColorUtil;
+import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 import haxe.xml.Fast;
 import openfl.Assets;
+#if sys
+import sys.FileSystem;
+#end
 
 /**
  * All the MetaData you need to make an EntitySprite
  * @author 
  */
-class EntityGraphics
+class EntityGraphics implements IFlxDestroyable
 {
 	public var name:String;								//string identifier
 	public var asset_src(get, null):String = "";		//the path to the asset file you want
 	public var skinName:String = "";					//the string name of the desired EntitySkin (set this to change it)
+	
+	public var remotePath:String = "";					//if this is not "", then it will load from file instead of from Assets
 	
 	public var skin(get, null):EntitySkin;				//the currently selected EntitySkin
 	public var map_skins:Map<String,EntitySkin>;		//all possible skins, maps string names ("hero") to skin data
@@ -29,10 +34,15 @@ class EntityGraphics
 	public static inline var COLOR_CHANGE_LAYERS:Int = 1;			//it's an "HD style" layered sprite, change colors by colorizing & compositing layers
 	public static inline var COLOR_CHANGE_PIXEL_PALETTE:Int = 2;	//it's a pixel-sprite, change colors by palette-swapping exact pixel color values
 	
+	public var scaleX:Float = 1.0;
+	public var scaleY:Float = 1.0;
+	
 	public var colorKey(get, null):String;				//Returns a unique identifier for the current skin (combination of asset file(s) + custom color rules)
 														//examples: 
 														//  "assets/gfx/defenders/dude+pants#FF0000+hat#0000FF+shirt#00FF00" (HD layered sprite)
 														//  "assets/gfx/defenders/dude#FF0000+#0000FF+#00FF00"				 (pixel sprite)
+	
+	public var ignoreColor:Null<FlxColor>=null;	//color that should be ignored during replacement logic
 	
 	/**********GETTER/SETTERS*************/
 	
@@ -89,7 +99,25 @@ class EntityGraphics
 	}
 	
 	public function destroy():Void {
-		//TODO
+		name = "";
+		asset_src = "";
+		skinName = "";
+		remotePath = "";
+		for (key in map_skins.keys())
+		{
+			var s:EntitySkin = map_skins.get(key);
+			s.destroy();
+			map_skins.remove(key);
+		}
+		
+		for (key in animations.keys())
+		{
+			var ad:AnimationData = animations.get(key);
+			ad.destroy();
+			animations.remove(key);
+		}
+		
+		ignoreColor = null;
 	}
 	
 	public function countSkins():Int 
@@ -120,6 +148,11 @@ class EntityGraphics
 		}
 		strIds.sort(StrIdLabel.sortByLabel);
 		return strIds;
+	}
+	
+	public function hasSkin(name:String):Bool
+	{
+		return map_skins.exists(name);
 	}
 	
 	public function getSkins():Array<EntitySkin>
@@ -172,6 +205,7 @@ class EntityGraphics
 				if (anim.hasSweetSpot(i)) {
 					var sweet:AnimSweetSpot = anim.getSweetSpot(i);
 					frameXml.set("sweet", "true");
+					
 					if(sweet.x != 0){
 						frameXml.set("x", Std.string(sweet.x));
 					}
@@ -180,6 +214,14 @@ class EntityGraphics
 					}
 					if (sweet.name != "" && sweet.name != null) {
 						frameXml.set("name", sweet.name);
+					}
+					var meta:Map<String,Dynamic> = anim.getSweetSpot(i).meta;
+					if (meta != null)
+					{
+						for (key in meta.keys())
+						{
+							frameXml.set(key, meta.get(key));
+						}
 					}
 				}
 				animXml.addChild(frameXml);
@@ -260,11 +302,23 @@ class EntityGraphics
 						
 						s.list_original_pixel_colors = [];
 						
-						var b:BitmapData = Assets.getBitmapData(U.gfx(asset_src),false);	//don't cache it, just peek at it
+						var b:BitmapData = null;
+						#if sys
+							if (remotePath != null && remotePath != "") {
+								if(FileSystem.exists(remotePath+asset_src+".png")){
+									b =  BitmapData.load(remotePath + asset_src + ".png");
+								}
+							}
+						#end
+						
+						if(b == null){
+							b = Assets.getBitmapData(U.gfx(asset_src),false);	//don't cache it, just peek at it
+						}
+						
 						if (b != null) {
 							for (py in 0...b.height) {
-								var pix_color:Int = b.getPixel32(0, py);
-								if (FlxColorUtil.getAlpha(pix_color) == 0) {				//break on first 100% transparent pixel
+								var pix_color:FlxColor = b.getPixel32(0, py);
+								if (pix_color.alpha == 0) {				//break on first 100% transparent pixel
 									break;
 								}
 								s.list_original_pixel_colors.push(pix_color);
@@ -514,11 +568,15 @@ class EntityGraphics
 			for (animNode in xml.nodes.anim) {
 				var a:AnimationData = new AnimationData();
 				a.name = U.xml_str(animNode.x, "name");
+				if (a.name == "") {
+					a.name = U.xml_str(animNode.x, "id");
+				}
 				a.looped = U.xml_bool(animNode.x, "looped");
 				a.frameRate = U.xml_i(animNode.x, "framerate");
 				if (animNode.hasNode.frame) {
 					var i:Int = 0;
-					for (frameNode in animNode.nodes.frame) {
+					for (frameNode in animNode.nodes.frame)
+					{
 						var frame:Int = U.xml_i(frameNode.x, "value", -1);
 						if(frame != -1){
 							a.frames.push(frame);
@@ -534,11 +592,37 @@ class EntityGraphics
 							}
 						}
 						var sweet:String = U.xml_str(frameNode.x, "sweet", true);
-						if (sweet != "") {
-							var s_name:String = U.xml_str(frameNode.x, "name");
+						if (sweet != "")
+						{
+							var s_name:String = sweet;
+							if (sweet.toLowerCase() == "true")
+							{
+								s_name = U.xml_str(frameNode.x, "name");
+							}
 							var s_x:Float = U.xml_f(frameNode.x, "x", 0);
 							var s_y:Float = U.xml_f(frameNode.x, "y", 0);
-							var sweet:AnimSweetSpot = new AnimSweetSpot(s_name, s_x, s_y);
+							
+							var sweet:AnimSweetSpot = null;
+							
+							if (hasMetaAttr(frameNode))
+							{
+								var meta:Map<String,Dynamic> = new Map<String,Dynamic>();
+								for (attr in frameNode.x.attributes())
+								{
+									var value:String = U.xml_str(frameNode.x, attr);
+									if (value != null && value != "")
+									{
+										switch(attr)
+										{
+											case "width", "height": meta.set(attr, Std.parseInt(value));
+										}
+									}
+								}
+								sweet = new AnimSweetSpot(s_name, s_x, s_y, meta);
+							}else {
+								sweet = new AnimSweetSpot(s_name, s_x, s_y);
+							}
+							
 							a.setSweetSpot(i, sweet);
 						}
 						
@@ -558,22 +642,29 @@ class EntityGraphics
 		}
 	}
 	
+	private function hasMetaAttr(frameNode:Fast):Bool {
+		for (attr in frameNode.x.attributes())
+		{
+			switch(attr) {
+				case "width", "height": return true;
+			}
+		}
+		return false;
+	}
+	
 	private function sortEntityColorLayers(a:EntityColorLayer, b:EntityColorLayer):Int {
 		if (a.sort < b.sort) return -1;
 		if (a.sort > b.sort) return 1;
 		return 0;
 	}
 	
-	public static function getColorTransform(?Trans:ColorTransform=null,Color:Int=0xffffff,Alpha:Float=1):ColorTransform {
+	public static function getColorTransform(?Trans:ColorTransform=null,Color:FlxColor=0xffffff,Alpha:Float=1):ColorTransform {
 		if (Trans == null) {
 			Trans = new ColorTransform();
 		}
-		var red:Float = FlxColorUtil.getRed(Color);
-		var green:Float = FlxColorUtil.getGreen(Color);
-		var blue:Float = FlxColorUtil.getBlue(Color);
-		Trans.redMultiplier = red / 255;
-		Trans.greenMultiplier = green / 255;
-		Trans.blueMultiplier = blue / 255;
+		Trans.redMultiplier = Color.redFloat / 255;
+		Trans.greenMultiplier =  Color.greenFloat / 255;
+		Trans.blueMultiplier = Color.blueFloat / 255;
 		Trans.alphaMultiplier = Alpha;
 		return Trans;
 	}

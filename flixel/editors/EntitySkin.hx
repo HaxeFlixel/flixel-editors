@@ -2,8 +2,10 @@ package flixel.editors;
 import flixel.editors.EntityGraphics.EntityColorLayer;
 import flixel.addons.ui.SwatchData;
 import flixel.addons.ui.U;
-import flixel.interfaces.IFlxDestroyable;
-import flixel.util.FlxColorUtil;
+import flixel.util.FlxArrayUtil;
+import flixel.util.FlxColor;
+import flixel.util.FlxDestroyUtil;
+import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 import haxe.xml.Fast;
 
 /**
@@ -35,7 +37,22 @@ class EntitySkin implements IFlxDestroyable
 	}
 	
 	public function destroy():Void {
-		//TODO
+		FlxArrayUtil.clearArray(list_colors);
+		FlxArrayUtil.clearArray(list_original_pixel_colors);
+		
+		if (list_color_layers != null)
+		{
+			while (list_color_layers.length > 0)
+			{
+				list_color_layers.pop();
+			}
+		}
+		
+		FlxDestroyUtil.destroyArray(list_color_features);
+		list_colors = null;
+		list_original_pixel_colors = null;
+		list_color_layers = null;
+		list_color_features = null;
 	}
 	
 	public function removeColorFeature(name:String):Void {
@@ -77,14 +94,16 @@ class EntitySkin implements IFlxDestroyable
 			
 			if (match != null) 
 			{
-				var swatch:SwatchData = new SwatchData("");
+				var swatch:SwatchData = new SwatchData("",[0x00000000,0x00000000,0x00000000,0x00000000]);
 				if(swatch.colors != null){
 					for (i in 0...swatch.colors.length) {
 						var indexInListColors:Int = -1;
-						if (i < match.colors.length) {
+						if (i < match.colors.length)
+						{
 							indexInListColors = match.colors[i];
 						}
-						if(indexInListColors >= 0 && indexInListColors < list_colors.length){
+						if (indexInListColors >= 0 && indexInListColors < list_colors.length)
+						{
 							swatch.colors[i] = list_colors[match.colors[i]];
 						}
 					}
@@ -118,13 +137,15 @@ class EntitySkin implements IFlxDestroyable
 			
 			if (match != null)
 			{
-				if (match.palette != null) {
+				if (match.palette != null)
+				{
 					match.palette.destroy();
 					match.palette = null;
 				}
 				match.palette = cp;
 				match.palette_name = cp.name;
-				if (newName != "") {
+				if (newName != "")
+				{
 					match.name = newName;
 				}
 			}
@@ -175,8 +196,10 @@ class EntitySkin implements IFlxDestroyable
 				}
 				
 				var i:Int = 0;
-				for (cIndex in match.colors) {
-					if (cIndex >= 0) {
+				for (cIndex in match.colors)
+				{
+					if (cIndex >= 0)
+					{
 						list_colors[cIndex] = data.colors[i];
 					}
 					i++;
@@ -184,8 +207,10 @@ class EntitySkin implements IFlxDestroyable
 				
 				//Avoid null integers!
 				#if neko
-					for (i in 0...list_colors.length) {
-						if (list_colors[i] == null) {
+					for (i in 0...list_colors.length)
+					{
+						if (list_colors[i] == null)
+						{
 							list_colors[i] = 0;
 						}
 					}
@@ -194,12 +219,15 @@ class EntitySkin implements IFlxDestroyable
 		}
 	}
 	
-	public function colorString():String {
+	public function colorString():String
+	{
 		var str:String = "";
 		var i:Int = 0;
-		for (color in list_colors) {
+		for (color in list_colors)
+		{
 			str += ("0x" + StringTools.hex(color, 6));
-			if (i <= list_colors.length - 1) {
+			if (i <= list_colors.length - 1)
+			{
 				str += ",";
 			}
 			i++;
@@ -226,16 +254,19 @@ class EntitySkin implements IFlxDestroyable
 		copy.list_color_features = null;
 		copy.using_default_structure = using_default_structure;
 		
-		if (list_color_features != null) {
+		if (list_color_features != null)
+		{
 			copy.list_color_features = [];
-			for (cf in list_color_features) {
+			for (cf in list_color_features)
+			{
 				copy.list_color_features.push(cf.copy());
 			}
 		}
 		
 		if (list_color_layers != null) {
 			copy.list_color_layers = [];
-			for (ecl in list_color_layers) {
+			for (ecl in list_color_layers)
+			{
 				copy.list_color_layers.push(EntityGraphics.copyEntityColorLayer(ecl));
 			}
 		}
@@ -243,7 +274,8 @@ class EntitySkin implements IFlxDestroyable
 		return copy;
 	}
 	
-	public function toXML():Fast{
+	public function toXML():Fast
+	{
 		var xml:Xml = Xml.createElement("skin");
 		xml.set("name", name);
 		xml.set("default", Std.string(isDefault));
@@ -312,7 +344,8 @@ class EntitySkin implements IFlxDestroyable
 		return new Fast(xml);
 	}
 	
-	private inline function hexColor(col:Int):String {
+	private inline function hexColor(col:Int):String
+	{
 		return "0x" + StringTools.hex(col, 6);
 	}
 }

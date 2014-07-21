@@ -19,10 +19,15 @@
 	<haxelib name="openfl"/>
 	<haxelib name="systools"/>
 	<haxelib name="flixel-editors"/>
+	<haxelib name="crashdumper"/>
 
 	<haxedef name="FLX_BMP_DEBUG"/>
 	<haxedef name="FLX_NO_DEBUG" unless="debug"/>
-		
+	
+	
+	<haxedef name="HXCPP_STACK_LINE" />  <!--if you want line numbers-->
+	<haxedef name="HXCPP_STACK_TRACE"/>  <!--if you want stack traces-->
+ 
 	<!--<haxedef name="HXCPP_DEBUGGER" if="debug"/>
 	<haxelib name="fdorg-hxcpp-debugger" if="debug"/>-->
 	

@@ -33,9 +33,9 @@ import flixel.group.FlxGroup;
 import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import flixel.util.FlxRect;
+import flixel.math.FlxRect;
 import flixel.util.FlxTimer;
-import flixel.util.FlxVector;
+import flixel.math.FlxVector;
 import haxe.xml.Printer;
 #if sys
 	import systools.Dialogs;
@@ -165,32 +165,35 @@ class State_Animator extends FlxUIState
 	}
 	
 	#if sys
-		/*private function initData():Bool{
-			path_index = Reg.readIndex();
-			if (path_index == "") {
-				openSubState(new Popup_Input());
-				return false;
-			}else {
-				changeIndexPath(path_index);
-			}
-			if (color_index == null) 
-			{
-				color_index = new ColorIndex();
-				var xml:Fast = U.readFast(path_index + path_colors + "\\" + "colors.xml");
-				if (xml != null) {
-					color_index.fromXML(xml);
-				}
-			}
-			return true;
-		}*/
-		
 		private function useIndexPath(path:String):Void {
 			Do.changeIndexPath(path);
 			showIndex(Reg.path_index);
-			var dirpath:String = Reg.path_index + Reg.path_defenders;
+			var dirpath:String = Reg.path_index + Reg.path_entities;
+			var list_new:Array<String> = [];
 			if (FileSystem.exists(dirpath) && FileSystem.isDirectory(dirpath))
 			{
 				list_files = FileSystem.readDirectory(dirpath);
+				var i:Int = 0;
+				for (str in list_files) {
+					if (str.indexOf("colors.xml") != -1) {
+						//do nothing
+					}
+					else if (str.indexOf(".xml") == -1) {
+						var localPath:String = dirpath + U.slash() + str;
+						if (FileSystem.isDirectory(localPath)) {
+							var list_subfiles:Array<String> = FileSystem.readDirectory(localPath);
+							for (subfile in list_subfiles) {
+								if(FileSystem.isDirectory(localPath+U.slash()+subfile) == false && subfile.indexOf("colors.xml") == -1){
+									list_new.push(str + U.slash() + subfile);
+								}
+							}
+						}
+					}else {
+						list_new.push(str);
+					}
+					i++;
+				}
+				list_files = list_new;
 			}
 			else
 			{
@@ -302,8 +305,9 @@ class State_Animator extends FlxUIState
 			entity_graphics.destroy();
 		}
 		entity_graphics = new EntityGraphics();
+		entity_graphics.remotePath = Reg.path_index + U.slash() + "gfx" + U.slash();
 		
-		var loadpath:String = Reg.path_index + Reg.path_defenders + "\\" + fname;
+		var loadpath:String = Reg.path_index + Reg.path_entities + "\\" + fname;
 		
 		var xml = null;
 		
@@ -410,7 +414,7 @@ class State_Animator extends FlxUIState
 		group_sweet.id = "sweets";
 		
 		label_curr_frame = new FlxUIText(5, 5, 200, "Select an animation frame!");
-		label_curr_frame.setBorderStyle(FlxText.BORDER_OUTLINE_FAST, 0);
+		label_curr_frame.setBorderStyle(FlxTextBorderStyle.OUTLINE_FAST, 0);
 		group_sweet.add(label_curr_frame);
 		
 		check_sweet = new FlxUICheckBox(5, label_curr_frame.y+20,null,null,"Has Sweet Spot");
@@ -429,13 +433,13 @@ class State_Animator extends FlxUIState
 		
 		
 		var label = new FlxUIText(stepper_sweet_x.x - 20, stepper_sweet_x.y, 20, "X:");
-		label.setBorderStyle(FlxText.BORDER_OUTLINE_FAST, 0);
+		label.setBorderStyle(FlxTextBorderStyle.OUTLINE_FAST, 0);
 		group_sweet.add(label);
 		label = new FlxUIText(stepper_sweet_y.x - 20, stepper_sweet_y.y, 20, "Y:");
-		label.setBorderStyle(FlxText.BORDER_OUTLINE_FAST, 0);
+		label.setBorderStyle(FlxTextBorderStyle.OUTLINE_FAST, 0);
 		group_sweet.add(label);
 		label = new FlxUIText(input_sweet_name.x - 40, input_sweet_name.y, 40, "Name:");
-		label.setBorderStyle(FlxText.BORDER_OUTLINE_FAST, 0);
+		label.setBorderStyle(FlxTextBorderStyle.OUTLINE_FAST, 0);
 		group_sweet.add(label);
 		
 		tab_menu.addGroup(group_sweet);
@@ -557,7 +561,6 @@ class State_Animator extends FlxUIState
 	
 	private function showSpriteColorization():Void 
 	{
-		trace("showSpriteColorization()");
 		var skin:EntitySkin = entity_graphics.skin;
 		
 		if (tab_menu == null) {
@@ -608,7 +611,7 @@ class State_Animator extends FlxUIState
 						label.y = yy;
 						label.text = feature.name.toUpperCase();
 						label.color = 0xFFFFFF;
-						label.setBorderStyle(FlxText.BORDER_OUTLINE_FAST);
+						label.setBorderStyle(FlxTextBorderStyle.OUTLINE_FAST);
 						label.alignment = "left";
 						
 						var btn:FlxUIButton = getColorStuffButton();
@@ -662,16 +665,12 @@ class State_Animator extends FlxUIState
 								swatchSelecter.id = feature.name;
 								
 								var currSwatch:SwatchData = entity_graphics.skin.getSwatchFromColorFeature(feature.name);
-								trace("currSwatch = " + currSwatch);
 								if (currSwatch != null)
 								{
-									trace("selectByColors");
 									swatchSelecter.selectByColors(currSwatch, true);
-									trace("swatchSelecter.selectedSwatch.colorKey = " + swatchSelecter.selectedSwatch.colorKey());
 								}
 								else
 								{
-									trace("unselect");
 									swatchSelecter.unselect();
 								}
 							}
@@ -683,8 +682,6 @@ class State_Animator extends FlxUIState
 				}
 			}
 			
-			trace("yo");
-			
 			input_color_feature = getColorStuffInputText();
 			if (input_color_feature == null) {
 				input_color_feature = new FlxUIInputText(0, 0);
@@ -695,16 +692,12 @@ class State_Animator extends FlxUIState
 			input_color_feature.x = group_color_stuff.x + 4;
 			input_color_feature.y = yy;
 			
-			trace("what");
-			
 			var btn3:FlxUIButton = getColorStuffButton();
 			if (btn3 == null) 
 			{
 				btn3 = new FlxUIButton(4, 0, "New...");
 				group_color_stuff.add(btn3);
 			}
-			
-			trace("hey");
 			
 			btn3.label.text = "Add New";
 			btn3.resize(75, 16);
@@ -910,7 +903,7 @@ class State_Animator extends FlxUIState
 	
 	private function stashAndDirtyData():Void {
 		var fname:String = dd_sprites.header.text.text;
-		var curr_path:String = Reg.path_index + Reg.path_defenders + "\\" + fname;		//get the full filename
+		var curr_path:String = Reg.path_index + Reg.path_entities + "\\" + fname;		//get the full filename
 		
 		if (map_xml_data == null) {
 			map_xml_data = new Map<String,Fast>();
@@ -1043,19 +1036,16 @@ class State_Animator extends FlxUIState
 	}
 	
 	private function changeColorFeature(featureName:String, paletteName:String):Void {
-		trace("changeColorFeature(" + featureName+"," + paletteName+")");
 		colorFeatureToEdit = featureName;
 		openSubState(new Popup_ChangeColorFeature(paletteName,Reg.color_index,false,entity_graphics,featureName));
 	}
 	
-	private function doChangeColorFeature(colorFeature:ColorFeature):Void {
+	private function doChangeColorFeature(colorFeature:ColorFeature):Void
+	{
 		var cp:ColorPalette = Reg.color_index.getPalette(colorFeature.palette_name);
 		
 		entity_graphics.skin.changeColorFeaturePalette(colorFeatureToEdit, cp, colorFeature.name);
 		entity_graphics.skin.replaceColorFeature(colorFeature.name, colorFeature);
-		
-		/*colorFeature.destroy();
-		colorFeature = null;*/
 		
 		stashAndDirtyData();
 		loadSkin(entity_graphics.skinName);	//reload the skin
@@ -1078,8 +1068,6 @@ class State_Animator extends FlxUIState
 	public override function getEvent(id:String, sender:IFlxUIWidget, data:Dynamic, ?params:Array<Dynamic>):Void {
 		var str:String = "";
 		
-		trace("getEvent(" + id + "," + sender + "," + data + "," + params);
-		
 		var arr:Array<Dynamic>;
 		
 		switch(id) {
@@ -1090,7 +1078,7 @@ class State_Animator extends FlxUIState
 				var colorFeature:ColorFeature = cast data;
 				doNewColorFeature(colorFeature);
 			case "popup_color_index_change":
-				trace("color index changed!");
+				//trace("color index changed!");
 			case FlxUIPopup.CLICK_EVENT:
 				var p:FlxUIPopup = cast sender;
 				var popBtn:Int = Std.int(data);
@@ -1139,7 +1127,6 @@ class State_Animator extends FlxUIState
 				}
 			case FlxUIColorSwatchSelecter.CLICK_EVENT:
 				var swatch:SwatchData = cast data;
-				trace("Clicked on swatch(" + swatch + ")");
 				var swatchSelecter:FlxUIColorSwatchSelecter = cast sender;
 				entity_graphics.skin.changeColorFeature(swatchSelecter.id, swatch);
 				refreshSprite();

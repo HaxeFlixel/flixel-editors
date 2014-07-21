@@ -20,4 +20,10 @@
 		<exact_size width="100" height="50"/>
 	</button>
 
+	<button id="btn_default" label="USE DEFAULT" y="15">
+		<anchor x="btn_browse.center" x-flush="center" y="btn_browse.bottom" y-flush="top"/>
+		<param type="String" value="default"/>
+		<exact_size width="100" height="25"/>
+	</button>
+	
 </data>

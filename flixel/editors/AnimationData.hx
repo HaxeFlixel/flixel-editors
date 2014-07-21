@@ -1,6 +1,8 @@
 package flixel.editors;
 import flixel.FlxSprite;
-import flixel.interfaces.IFlxDestroyable;
+import flixel.math.FlxPoint;
+import flixel.util.FlxDestroyUtil;
+import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 
 /**
  * Stores Animation MetaData for an EntitySprite. 
@@ -14,7 +16,7 @@ class AnimationData implements IFlxDestroyable
 	public var name:String = "";						//name of the animation, unique string identifier
 	
 	public var frames:Array<Int> = null;				//raw frame data
-	public var sweets:Map<Int,AnimSweetSpot> = null;	//sweet spots in the animation, keyed by index
+	public var sweets:Array<AnimSweetSpot> = null;		//sweet spots in the animation, keyed by index
 	
 	public var frameRate:Int = 30;
 	public var looped:Bool = false;
@@ -24,15 +26,9 @@ class AnimationData implements IFlxDestroyable
 		frames = [];
 	}
 	
-	public function destroy():Void {
-		frames = null;
-		if (sweets != null) 
-		{
-			for (key in sweets.keys()) 
-			{
-				sweets.remove(key);
-			}
-		}
+	public function destroy():Void
+	{
+		FlxDestroyUtil.destroyArray(sweets);
 		sweets = null;
 	}
 	
@@ -43,10 +39,11 @@ class AnimationData implements IFlxDestroyable
 	 */
 	
 	public function setSweetSpot(i:Int, Sweet:AnimSweetSpot):Void {
-		if (sweets == null) {
-			sweets = new Map<Int, AnimSweetSpot>();
+		if (sweets == null)
+		{
+			sweets = [];
 		}
-		sweets.set(i, Sweet);
+		sweets[i] = Sweet;
 	}
 	
 	/**
@@ -58,14 +55,20 @@ class AnimationData implements IFlxDestroyable
 	 */
 	
 	public function editSweetSpot(i:Int,Name:String,X:Float,Y:Float):Void {
-		if (sweets == null) {
-			sweets = new Map<Int,AnimSweetSpot>();
+		if (sweets == null)
+		{
+			sweets = [];
 		}
-		var s:AnimSweetSpot = sweets.get(i);
-		if (s == null) {
+		
+		var s:AnimSweetSpot = (sweets.length > i) ? sweets[i] : null;
+		
+		if (s == null)
+		{
 			s = new AnimSweetSpot(Name, X, Y);
-			sweets.set(i, s);
-		}else {
+			sweets[i] = s;
+		}
+		else
+		{
 			s.name = Name;
 			s.x = X;
 			s.y = Y;
@@ -78,11 +81,15 @@ class AnimationData implements IFlxDestroyable
 	 */
 	
 	public function removeSweetSpot(i:Int):Void {
-		if (sweets == null) {
+		if (sweets == null)
+		{
 			return;
-		}else {
-			if (sweets.exists(i)) {
-				sweets.remove(i);
+		}
+		else
+		{
+			if (sweets.length > i)
+			{
+				sweets.splice(i, 1);
 			}
 		}
 	}
@@ -94,7 +101,8 @@ class AnimationData implements IFlxDestroyable
 	 */
 	
 	public function hasSweetSpot(i:Int):Bool {
-		if (sweets != null && sweets.exists(i)) {
+		if (sweets != null && sweets.length > i && sweets[i] != null)
+		{
 			return true;
 		}
 		return false;
@@ -107,10 +115,10 @@ class AnimationData implements IFlxDestroyable
 	 */
 	
 	public function getSweetSpot(i:Int):AnimSweetSpot{
-		if (sweets == null) {
+		if (sweets == null || sweets.length <= i)
+		{
 			return null;
 		}
-		return sweets.get(i);
+		return sweets[i];
 	}
-	
 }

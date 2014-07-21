@@ -1,6 +1,6 @@
 package com.leveluplabs.tools.animator;
 import flixel.FlxG;
-import flixel.util.FlxRandom;
+import flixel.math.FlxRandom;
 import flixel.editors.EntitySprite;
 import flixel.editors.EntityGraphics;
 /**
@@ -24,8 +24,8 @@ class StressSprite extends EntitySprite
 			speedMultiplier = 5000;
 		}
 		
-		velocity.x = speedMultiplier * FlxRandom.floatRanged( -5, 5);
-		velocity.y = speedMultiplier * FlxRandom.floatRanged( -7.5, 2.5);
+		velocity.x = speedMultiplier * FlxRandom.float( -5, 5);
+		velocity.y = speedMultiplier * FlxRandom.float( -7.5, 2.5);
 		acceleration.y = 5;
 		elasticity = 1;
 		
@@ -62,7 +62,7 @@ class StressSprite extends EntitySprite
 		
 			if (FlxRandom.chanceRoll())
 			{
-				velocity.y -= FlxRandom.floatRanged(3, 7);
+				velocity.y -= FlxRandom.float(3, 7);
 			}
 		}
 		else if (y < 0)

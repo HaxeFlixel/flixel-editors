@@ -30,15 +30,20 @@ class Popup_Input extends FlxUIPopup
 				switch(id) {
 					case "click_button":
 						var param0:String = Std.string(params[0]);
-						if (param0 == "browse") {
-							var path:String = Dialogs.folder("Browse to your game's assets folder!", "MESSAGE!");
-							
-							//FlxUI.event("choose_path", this, path);
-							var parent = castParent();
-							close();
-							if (parent != null) {
-								parent.getEvent("choose_path", this, path);
-							}
+						var path:String = "";
+						if (param0 == "browse")
+						{
+							path = Dialogs.folder("Browse to your game's assets folder!", "MESSAGE!");
+						}
+						else if (param0 == "default")
+						{
+							path = "assets";
+						}
+						var parent = castParent();
+						close();
+						if (parent != null)
+						{
+							parent.getEvent("choose_path", this, path);
 						}
 				}
 			}

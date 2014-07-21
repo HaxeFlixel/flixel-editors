@@ -55,7 +55,7 @@ class Do
 	{
 		var ci:ColorIndex= null;
 		ci = new ColorIndex();
-		var xml:Fast = U.readFast(Reg.path_index + Reg.path_colors + "\\" + "colors.xml");
+		var xml:Fast = U.readFast(Reg.path_index + Reg.path_entities + "\\" + "colors.xml");
 		if (xml != null)
 		{
 			ci.fromXML(xml);
