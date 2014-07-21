@@ -10,7 +10,9 @@ import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 import haxe.xml.Fast;
 import openfl.Assets;
+#if sys
 import sys.FileSystem;
+#end
 
 /**
  * All the MetaData you need to make an EntitySprite

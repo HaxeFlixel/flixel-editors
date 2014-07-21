@@ -13,8 +13,10 @@ import flixel.util.FlxColor;
 import flixel.util.loaders.CachedGraphics;
 import openfl.Assets;
 import openfl.geom.Matrix;
+#if sys
 import sys.FileSystem;
 import sys.io.File;
+#end
 
 /**
  * An extension of FlxSprite with some extra power -- namely extra metadata for animation,
@@ -107,7 +109,11 @@ class EntitySprite extends FlxSprite
 				var the_src:String = U.gfx(G.asset_src);
 				loadGraphic(the_src, true, s.width, s.height);
 			}else {
+				#if sys
 				loadGraphic(BitmapData.load(G.remotePath + G.asset_src), true, s.width, s.height);
+				#else
+				loadGraphic(G.remotePath + G.asset_src, true, s.width, s.height);
+				#end
 			}
 		}
 	}
@@ -361,8 +367,12 @@ class EntitySprite extends FlxSprite
 					piece.loadGraphic(U.gfx(G.skin.path + "/" + layer.asset_src));
 				}else 
 				{
+					#if sys
 					var pieceBmp:BitmapData = BitmapData.load(G.remotePath + G.skin.path + "/" + layer.asset_src + ".png");
 					piece.loadGraphic(pieceBmp);
+					#else
+					piece.loadGraphic(G.remotePath + G.skin.path + "/" + layer.asset_src + ".png");
+					#end
 				}
 				
 				//Grab the color from the skin
