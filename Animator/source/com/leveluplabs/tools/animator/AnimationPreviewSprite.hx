@@ -39,7 +39,7 @@ class AnimationPreviewSprite extends FlxSpriteGroup
 	
 	private var _canvas:FlxSprite;
 	private var _backing:FlxSprite;
-	private var _rect:Rectangle;
+	private var _myRect:Rectangle;
 	private var _btn:FlxButton;
 	private var _hilight:FlxSprite;
 	private var _hilight2:FlxSprite;
@@ -60,7 +60,7 @@ class AnimationPreviewSprite extends FlxSpriteGroup
 		_callback = null;
 		_canvas = null;
 		_backing = null;
-		_rect = null;
+		_myRect = null;
 		_btn = null;
 		_hilight = null;
 		_hilight2 = null;
@@ -69,7 +69,7 @@ class AnimationPreviewSprite extends FlxSpriteGroup
 	
 	public function new(entity:FlxSprite,anim:AnimationData,maxW:Float,maxH:Float,?Callback:Int->Void)
 	{
-		_rect = new Rectangle();
+		_myRect = new Rectangle();
 		_sweet = new FlxSprite(0, 0, U.gfx("ui/sweet"));
 		_callback = Callback;
 		
@@ -154,13 +154,13 @@ class AnimationPreviewSprite extends FlxSpriteGroup
 			
 			_hilight.makeGraphic(Math.round(_cellWidth),Math.round(_cellHeight), 0xFFFFFFFF, true);
 			_hilight2.makeGraphic(Math.round(_cellWidth),Math.round(_cellHeight), 0xFFFFFFFF, true);
-			_rect.x = 1;
-			_rect.y = 1;
-			_rect.width = Math.round(_cellWidth - 2);
-			_rect.height = Math.round(_cellHeight - 2);
+			_myRect.x = 1;
+			_myRect.y = 1;
+			_myRect.width = Math.round(_cellWidth - 2);
+			_myRect.height = Math.round(_cellHeight - 2);
 			
-			_hilight.pixels.fillRect(_rect, FlxColor.TRANSPARENT);
-			_hilight2.pixels.fillRect(_rect, FlxColor.TRANSPARENT);
+			_hilight.pixels.fillRect(_myRect, FlxColor.TRANSPARENT);
+			_hilight2.pixels.fillRect(_myRect, FlxColor.TRANSPARENT);
 			
 			hilightColor = hilightColor;
 			hilightColor2 = hilightColor2;
@@ -277,10 +277,10 @@ class AnimationPreviewSprite extends FlxSpriteGroup
 	
 	private function drawOutlinesAndFills(pt:Point,w:Float,h:Float,cellX:Int,cellY:Int):Void {
 		
-		_rect.x = pt.x;
-		_rect.y = pt.y;
-		_rect.width = w;
-		_rect.height = h;
+		_myRect.x = pt.x;
+		_myRect.y = pt.y;
+		_myRect.width = w;
+		_myRect.height = h;
 		
 		var fillColor:Int = cellCheckColor1;
 		if (cellY % 2 == 0) {
@@ -294,16 +294,16 @@ class AnimationPreviewSprite extends FlxSpriteGroup
 		}
 		
 		if (cellOutlineColor != FlxColor.TRANSPARENT) {
-			_backing.pixels.fillRect(_rect, cellOutlineColor);
-			_rect.x += 1;
-			_rect.y += 1;
-			_rect.width -= 2;
-			_rect.height -= 2;
-			_backing.pixels.fillRect(_rect, fillColor);		//fill with color, even if transparent
+			_backing.pixels.fillRect(_myRect, cellOutlineColor);
+			_myRect.x += 1;
+			_myRect.y += 1;
+			_myRect.width -= 2;
+			_myRect.height -= 2;
+			_backing.pixels.fillRect(_myRect, fillColor);		//fill with color, even if transparent
 			
 		}else {
 			if (fillColor != FlxColor.TRANSPARENT) {		//check for transparent b/c we don't need to since there's no border to cut out
-				_backing.pixels.fillRect(_rect, fillColor);
+				_backing.pixels.fillRect(_myRect, fillColor);
 			}
 		}
 		_backing.dirty = true;

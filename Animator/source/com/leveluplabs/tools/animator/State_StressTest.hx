@@ -218,7 +218,7 @@ class State_StressTest extends FlxUIState
 				var arr:Array<Int> = [];
 				for (i in 0...custom_colors)						//Create a new color array at random
 				{
-					var new_color = FlxRandom.color(0, 255, 0);
+					var new_color = FlxG.random.color(0x000000, 0xFFFFFF);
 					arr.push(new_color);
 				}
 				s.list_colors = arr;

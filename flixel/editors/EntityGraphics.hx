@@ -37,6 +37,8 @@ class EntityGraphics implements IFlxDestroyable
 	public var scaleX:Float = 1.0;
 	public var scaleY:Float = 1.0;
 	
+	public var scaleSmooth:Bool = true;
+	
 	public var colorKey(get, null):String;				//Returns a unique identifier for the current skin (combination of asset file(s) + custom color rules)
 														//examples: 
 														//  "assets/gfx/defenders/dude+pants#FF0000+hat#0000FF+shirt#00FF00" (HD layered sprite)
@@ -280,15 +282,26 @@ class EntityGraphics implements IFlxDestroyable
 					{
 						var use_default:Bool = U.xml_bool(skinNode.node.colors.x, "use_default");
 						
+						var copySkin:EntitySkin = null;
+						
 						if (use_default) {
 							s.using_default_structure = true;
 							//if it wants to use default layer structure, 
 							//grab & copy that from the default skin
-							var defaultSkin:EntitySkin = getDefaultSkin();
-							
+							copySkin = getDefaultSkin();
+						}
+						
+						var use_structure:String = U.xml_str(skinNode.node.colors.x, "use_structure");
+						if (use_structure != "")
+						{
+							s.using_structure = use_structure;
+							copySkin = map_skins.get(use_structure);
+						}
+						
+						if (copySkin != null && copySkin.list_color_layers != null)
+						{
 							s.list_color_layers = [];
-							
-							for (ecl in defaultSkin.list_color_layers) {
+							for (ecl in copySkin.list_color_layers) {
 								s.list_color_layers.push(copyEntityColorLayer(ecl));
 							}
 						}
@@ -323,11 +336,11 @@ class EntityGraphics implements IFlxDestroyable
 								}
 								s.list_original_pixel_colors.push(pix_color);
 							}
+							
+							//destroy bitmap data information (it's safe b/c we didn't cache it!)
+							b.dispose();
+							b = null;
 						}
-						
-						//destroy bitmap data information (it's safe b/c we didn't cache it!)
-						b.dispose();
-						b = null;
 					}
 					
 					//If color data is supplied in the skin
@@ -423,20 +436,30 @@ class EntityGraphics implements IFlxDestroyable
 						//Otherwise, check to see if it's using the default setup
 						var use_default:Bool = U.xml_bool(skinNode.node.colors.x, "use_default");
 						
+						var copySkin:EntitySkin = null;
+						
 						if (use_default) {
-							s.list_color_features = [];
 							//if it wants to use default feature structure, 
 							//grab & copy that from the default skin
-							var defaultSkin:EntitySkin = getDefaultSkin();
-							if (defaultSkin.list_color_features != null) 
+							copySkin = getDefaultSkin();
+						}
+						
+						var use_structure:String = U.xml_str(skinNode.node.colors.x, "use_structure");
+						if (use_structure != "")
+						{
+							s.using_structure = use_structure;
+							copySkin = map_skins.get(use_structure);
+						}
+						
+						if (copySkin != null && copySkin.list_color_features != null)
+						{
+							s.list_color_features = [];
+							var colorFeature:ColorFeature;
+							for (colorFeature in copySkin.list_color_features) 
 							{
-								var colorFeature:ColorFeature;
-								for (colorFeature in defaultSkin.list_color_features) 
-								{
-									if (colorFeature != null) {
-										var colorFeatureCopy:ColorFeature = colorFeature.copy();
-										s.list_color_features.push(colorFeatureCopy);
-									}
+								if (colorFeature != null) {
+									var colorFeatureCopy:ColorFeature = colorFeature.copy();
+									s.list_color_features.push(colorFeatureCopy);
 								}
 							}
 						}

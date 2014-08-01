@@ -30,6 +30,8 @@ class EntitySkin implements IFlxDestroyable
 	public var list_original_pixel_colors:Array<Int>;						//original pixels for color change (optional: COLOR_CHANGE_PIXELS mode only)
 	public var list_color_layers:Array<EntityGraphics.EntityColorLayer>;	//layer structure for color change (optional: COLOR_CHANGE_LAYERS mode only)
 	public var list_color_features:Array<ColorFeature>;						//palette structure for color change
+	
+	public var using_structure:String = "";
 	public var using_default_structure:Bool=false;							//whether we loaded our color structure from the default layout
 	
 	public function new() 
@@ -92,7 +94,7 @@ class EntitySkin implements IFlxDestroyable
 				}
 			}
 			
-			if (match != null) 
+			if (match != null && list_colors != null) 
 			{
 				var swatch:SwatchData = new SwatchData("",[0x00000000,0x00000000,0x00000000,0x00000000]);
 				if(swatch.colors != null){
@@ -253,6 +255,7 @@ class EntitySkin implements IFlxDestroyable
 		copy.list_colors = U.copy_shallow_arr_i(list_colors);
 		copy.list_color_features = null;
 		copy.using_default_structure = using_default_structure;
+		copy.using_structure = using_structure;
 		
 		if (list_color_features != null)
 		{
@@ -293,9 +296,19 @@ class EntitySkin implements IFlxDestroyable
 				colors.set("mode", "pixels");
 			}
 			
-			if (using_default_structure) {
-				colors.set("use_default", "true");
-			}else {
+			if (using_default_structure || using_structure != "")
+			{
+				if (using_default_structure)
+				{
+					colors.set("use_default", "true");
+				}
+				else
+				{
+					colors.set("use_structure", using_structure);
+				}
+			}
+			else
+			{
 				if (list_color_features != null) {
 					var cf:ColorFeature;
 					for (cf in list_color_features) {

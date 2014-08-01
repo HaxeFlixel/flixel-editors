@@ -46,7 +46,8 @@ class EntitySprite extends FlxSprite
 		}
 	}
 	
-	public function addAnimation(anim:AnimationData):Void {
+	public function addAnimation(anim:AnimationData):Void
+	{
 		animation.add(anim.name, anim.frames, anim.frameRate, anim.looped);
 		if (anim.sweets != null) {
 			if (_sweetSpotMap == null) {
@@ -128,17 +129,20 @@ class EntitySprite extends FlxSprite
 		var newWidth:Int = frameWidth * framesWide;
 		var newHeight:Int = frameHeight * framesTall;
 		var scaleKey:String = cachedGraphics.key + "_" + newWidth + "x" + newHeight;
+		
+		//TODO: if there's issues with off-by-one factors in frame boundaries due to scaling, perhaps use UU.scaleTileBMP instead
+		
 		if(FlxG.bitmap.checkCache(scaleKey) == false)
 		{
 			var scaledPixels:BitmapData = new BitmapData(newWidth, newHeight,true,0x00000000);
 			var matrix:Matrix = new Matrix();
 			matrix.scale(newWidth / pixels.width, newHeight / pixels.height);
-			scaledPixels.draw(pixels, matrix, null, null, null, true);
-			loadGraphic(scaledPixels, true, newWidth, newHeight, false, scaleKey);
+			scaledPixels.draw(pixels, matrix, null, null, null, G.scaleSmooth);
+			loadGraphic(scaledPixels, true, frameWidth, frameHeight, false, scaleKey);
 		}
 		else
 		{
-			loadGraphic(scaleKey, true, newWidth, newHeight);
+			loadGraphic(scaleKey, true, frameWidth, frameHeight);
 		}
 	}
 	
@@ -353,7 +357,7 @@ class EntitySprite extends FlxSprite
 		//Load the base copy into our graphic and cache it with our custom color key
 		loadGraphic(baseCopy, true, G.skin.width, G.skin.height, false, G.colorKey);
 		
-		if (G.skin.list_colors != null)
+		if (G.skin.list_colors != null && G.skin.list_color_layers != null)
 		{
 			var i:Int = 0;
 			

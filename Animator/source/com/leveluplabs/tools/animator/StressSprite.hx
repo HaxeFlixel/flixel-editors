@@ -24,8 +24,8 @@ class StressSprite extends EntitySprite
 			speedMultiplier = 5000;
 		}
 		
-		velocity.x = speedMultiplier * FlxRandom.float( -5, 5);
-		velocity.y = speedMultiplier * FlxRandom.float( -7.5, 2.5);
+		velocity.x = speedMultiplier * FlxG.random.float( -5, 5);
+		velocity.y = speedMultiplier * FlxG.random.float( -7.5, 2.5);
 		acceleration.y = 5;
 		elasticity = 1;
 		
@@ -60,9 +60,9 @@ class StressSprite extends EntitySprite
 			velocity.y *= -0.8;
 			y = FlxG.height-height;
 		
-			if (FlxRandom.chanceRoll())
+			if (FlxG.random.sign() == 1)
 			{
-				velocity.y -= FlxRandom.float(3, 7);
+				velocity.y -= FlxG.random.float(3, 7);
 			}
 		}
 		else if (y < 0)
