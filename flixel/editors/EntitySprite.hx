@@ -365,32 +365,44 @@ class EntitySprite extends FlxSprite
 			for (layer in G.skin.list_color_layers) 
 			{
 				//Grab a piece
-				var piece:FlxSprite = new FlxSprite();
-				if (G.remotePath == "")
+				if (layer.asset_src != null && layer.asset_src != "")
 				{
-					piece.loadGraphic(U.gfx(G.skin.path + "/" + layer.asset_src));
-				}else 
-				{
-					#if sys
-					var pieceBmp:BitmapData = BitmapData.load(G.remotePath + G.skin.path + "/" + layer.asset_src + ".png");
-					piece.loadGraphic(pieceBmp);
-					#else
-					piece.loadGraphic(G.remotePath + G.skin.path + "/" + layer.asset_src + ".png");
-					#end
+					var piece:FlxSprite = null;
+					if (G.remotePath == "")
+					{
+						var asset_loc:String = U.gfx(G.skin.path + "/" + layer.asset_src);
+						if (Assets.exists(asset_loc))
+						{
+							piece = new FlxSprite();
+							piece.loadGraphic(asset_loc);
+						}
+					}
+					else 
+					{
+						piece = new FlxSprite();
+						#if sys
+						var pieceBmp:BitmapData = BitmapData.load(G.remotePath + G.skin.path + "/" + layer.asset_src + ".png");
+						piece.loadGraphic(pieceBmp);
+						#else
+						piece.loadGraphic(G.remotePath + G.skin.path + "/" + layer.asset_src + ".png");
+						#end
+					}
+					
+					if (piece != null)
+					{
+						//Grab the color from the skin
+						if(G.skin.list_colors.length > i){
+							piece.color = G.skin.list_colors[i];
+						}
+						
+						//Stamp it on the base
+						stamp(piece);
+						
+						//destroy piece
+						piece.destroy();
+						piece = null;
+					}
 				}
-				
-				//Grab the color from the skin
-				if(G.skin.list_colors.length > i){
-					piece.color = G.skin.list_colors[i];
-				}
-				
-				//Stamp it on the base
-				stamp(piece);
-				
-				//destroy piece
-				piece.destroy();
-				piece = null;
-				
 				i++;
 			}
 		}
