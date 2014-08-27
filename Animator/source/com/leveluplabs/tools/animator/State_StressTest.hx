@@ -102,10 +102,10 @@ class State_StressTest extends FlxUIState
 		changeColors();
 	}
 	
-	public override function update():Void {
-		super.update();
+	public override function update(elapsed:Float):Void {
+		super.update(elapsed);
 		
-		var t = Lib.getTimer();
+		var t = FlxG.game.ticks;
 		
 		var now:Float = t / 1000;
 		_times.push(now);
