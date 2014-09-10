@@ -1,4 +1,5 @@
 package flixel.editors;
+import com.leveluplabs.tdrpg.EntityParams;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.editors.EntityGraphics.EntityColorLayer;
 import flixel.editors.EntitySkin;
@@ -26,6 +27,7 @@ import sys.io.File;
 class EntitySprite extends FlxSprite
 {
 	public var name:String;
+	public var recycled:Bool = false;
 	
 	/**
 	 * Callback for when a sweet-spot animation frame is played, parameters:
@@ -40,9 +42,13 @@ class EntitySprite extends FlxSprite
 	{
 		super(X, Y);
 		
-		var s:EntitySkin = cast G.map_skins.get(G.skinName);
-		if (s != null) {
-			loadEntityGraphics(G);
+		if (G != null)
+		{
+			var s:EntitySkin = cast G.map_skins.get(G.skinName);
+			if (s != null)
+			{
+				loadEntityGraphics(G);
+			}
 		}
 	}
 	
@@ -78,8 +84,8 @@ class EntitySprite extends FlxSprite
 	{
 		basicLoad(G);
 		
-		offset.x = G.skin.off_x;
-		offset.y = G.skin.off_y;
+		offset.x = G.skin.off_x * G.scaleX;
+		offset.y = G.skin.off_y * G.scaleY;
 		
 		if (G.scaleX != 1.0 || G.scaleY != 1.0)
 		{
@@ -371,7 +377,7 @@ class EntitySprite extends FlxSprite
 					if (G.remotePath == "")
 					{
 						var asset_loc:String = U.gfx(G.skin.path + "/" + layer.asset_src);
-						if (Assets.exists(asset_loc))
+						if (Assets.exists(asset_loc,AssetType.IMAGE))
 						{
 							piece = new FlxSprite();
 							piece.loadGraphic(asset_loc);

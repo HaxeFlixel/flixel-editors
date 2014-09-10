@@ -30,6 +30,9 @@ class EntityGraphics implements IFlxDestroyable
 	public var map_skins:Map<String,EntitySkin>;		//all possible skins, maps string names ("hero") to skin data
 	public var animations:Map<String,AnimationData>;	//all animations, maps string names ("walk_left") to animation data
 	
+	public var facings:Array<Facing>;
+	public var defaultFacing:Facing = Facing.NONE;
+	
 	public static inline var COLOR_CHANGE_NONE:Int = 0;				//don't change colors on the base asset
 	public static inline var COLOR_CHANGE_LAYERS:Int = 1;			//it's an "HD style" layered sprite, change colors by colorizing & compositing layers
 	public static inline var COLOR_CHANGE_PIXEL_PALETTE:Int = 2;	//it's a pixel-sprite, change colors by palette-swapping exact pixel color values
@@ -185,6 +188,20 @@ class EntityGraphics implements IFlxDestroyable
 		return strIds;
 	}
 	
+	public function copy():EntityGraphics
+	{
+		//TODO: not exactly optimized....
+		
+		var eg:EntityGraphics = new EntityGraphics();
+		eg.fromXML(toXML());
+		eg.scaleX = scaleX;
+		eg.scaleY = scaleY;
+		eg.scaleSmooth = scaleSmooth;
+		eg.ignoreColor = ignoreColor;
+		eg.skinName = skinName;
+		return eg;
+	}
+	
 	public function toXML():Fast {
 		
 		var root:Xml = Xml.createDocument();
@@ -194,6 +211,23 @@ class EntityGraphics implements IFlxDestroyable
 		gfxXml.set("name", name);
 		
 		root.addChild(gfxXml);
+		
+		var facingXml:Xml = Xml.createElement("facing");
+		var facingStr:String = "";
+		var f:Facing;
+		var i:Int = 0;
+		for (f in facings)
+		{
+			facingStr += f.toDirectionStr();
+			if (i != facings.length - 1)
+			{
+				facingStr += ",";
+			}
+			i++;
+		}
+		facingXml.set("value", facingStr);
+		facingXml.set("default", defaultFacing.toDirectionStr());
+		gfxXml.addChild(facingXml);
 		
 		for (key in animations.keys()) {
 			var anim:AnimationData = animations.get(key);
@@ -248,6 +282,33 @@ class EntityGraphics implements IFlxDestroyable
 		_skinsFromXML(xml);
 		_colorsFromXML(xml);
 		_animsFromXML(xml);
+		_facingsFromXML(xml);
+	}
+
+	private function _facingsFromXML(xml:Fast):Void
+	{
+		facings = [];
+		if (xml.hasNode.facing)
+		{
+			for (facingNode in xml.nodes.facing)
+			{
+				var values:String = U.xml_str(facingNode.x, "value");
+				if (values != "")
+				{
+					var valueArr:Array<String> = values.split(",");
+					if (valueArr != null && valueArr.length > 1)
+					{
+						for (valueStr in valueArr)
+						{
+							var facing:Facing = Facing.fromStr(valueStr);
+							facings.push(facing);
+						}
+					}
+				}
+				var defaultValue:String = U.xml_str(facingNode.x, "default");
+				defaultFacing = Facing.fromStr(defaultValue);
+			}
+		}
 	}
 	
 	/**
@@ -266,7 +327,6 @@ class EntityGraphics implements IFlxDestroyable
 				
 				if (skinNode.hasNode.colors) 
 				{
-					
 					//Determine the color change mode of this skin
 					var mode:String = U.xml_str(skinNode.node.colors.x, "mode", true);
 					
@@ -703,7 +763,6 @@ class EntityGraphics implements IFlxDestroyable
 		return copy;
 	}
 }
-
 
 typedef EntityColorLayer = {
 	name:String,					//the user-facing name (or localization flag) of this color value, "Hair", "Pants"
