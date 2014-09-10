@@ -3,13 +3,9 @@ import flixel.FlxG;
 import flixel.math.FlxRandom;
 import flixel.editors.EntitySprite;
 import flixel.editors.EntityGraphics;
-/**
- * ...
- * @author 
- */
+
 class StressSprite extends EntitySprite
 {
-
 	public function new(X:Float,Y:Float,G:EntityGraphics) 
 	{
 		super(X, Y, G);
@@ -32,9 +28,9 @@ class StressSprite extends EntitySprite
 		return this;
 	}
 	
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
-		super.update();
+		super.update(elapsed);
 		
 		if (!State_StressTest.offscreen)
 		{
