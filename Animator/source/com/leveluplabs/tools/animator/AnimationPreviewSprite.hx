@@ -2,7 +2,7 @@ package com.leveluplabs.tools.animator;
 import flixel.editors.AnimationData;
 import flixel.editors.AnimSweetSpot;
 import flash.display.BitmapData;
-import flash.geom.Matrix;
+import flixel.math.FlxMatrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flixel.addons.ui.FlxClickArea;
@@ -14,7 +14,6 @@ import flixel.group.FlxSpriteGroup;
 import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
 import flixel.math.FlxPoint;
-import flixel.util.loaders.CachedGraphics;
 
 /**
  * This is just a big sprite-sheet that shows the exact frames of an animation, including duplicated frames, all in one big sheet
@@ -144,8 +143,8 @@ class AnimationPreviewSprite extends FlxSpriteGroup
 			_cellWidth = frameW * _scale;
 			_cellHeight = frameH * _scale;
 
-			var cg:CachedGraphics = FlxG.bitmap.get("anim_preview_" + anim.name);
-			if (cg != null) {
+			var gfx = FlxG.bitmap.get("anim_preview_" + anim.name);
+			if (gfx != null) {
 				FlxG.bitmap.remove("anim_preview_" + anim.name);
 			}
 			
@@ -245,13 +244,13 @@ class AnimationPreviewSprite extends FlxSpriteGroup
 	}
 	
 	private function pasteFrame(source:FlxSprite, frame:Int, cellX:Int, cellY:Int, scale:Float= 1, i:Int=0, hasSweet:Bool=false):Void {
-		var bmp:BitmapData = source.framesData.frames[frame].getBitmap();
+		var bmp:BitmapData = source.frames.frames[frame].getBitmap();
 		
 		if (_flashPoint == null) {
 			_flashPoint = new Point();
 		}
 		if (_matrix == null) {
-			_matrix = new Matrix();
+			_matrix = new FlxMatrix();
 		}
 		_flashPoint.x = cellX * (bmp.width * scale);
 		_flashPoint.y = cellY * (bmp.height * scale);

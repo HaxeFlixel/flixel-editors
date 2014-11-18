@@ -47,6 +47,9 @@ class EntityGraphics implements IFlxDestroyable
 														//  "assets/gfx/defenders/dude+pants#FF0000+hat#0000FF+shirt#00FF00" (HD layered sprite)
 														//  "assets/gfx/defenders/dude#FF0000+#0000FF+#00FF00"				 (pixel sprite)
 	
+	public var scaledColorKey(get, null):String;		//Returns a unique identifier for the current skin AT the current scale
+	
+														
 	public var ignoreColor:Null<FlxColor>=null;	//color that should be ignored during replacement logic
 	
 	/**********GETTER/SETTERS*************/
@@ -78,9 +81,17 @@ class EntityGraphics implements IFlxDestroyable
 		{
 			for (layer in skin.list_color_layers) 
 			{
-				if(i < skin.list_colors.length){
+				if (i < skin.list_colors.length)
+				{
 					color = skin.list_colors[i];
-					key += "+" + layer.asset_src + "#" + StringTools.hex(color, 6);
+					if (layer.asset_src != null && layer.asset_src != "")
+					{
+						key += "+" + layer.asset_src + "#" + StringTools.hex(color, 6);
+					}
+					else
+					{
+						key += "+_";
+					}
 					//Returns e.g. "assets/gfx/defenders/dude+pants#FF0000+hat#0000FF+shirt#00FF00"
 				}
 				i++;
@@ -97,6 +108,11 @@ class EntityGraphics implements IFlxDestroyable
 		return key;
 	}
 	
+	public function get_scaledColorKey():String
+	{
+		var ck:String = colorKey;
+		return ck + "_sX:" + scaleX + "_sY:" + scaleY;
+	}
 	
 	public function new() 
 	{

@@ -783,7 +783,7 @@ class State_Animator extends FlxUIState
 		
 		var ad:AnimationData = new AnimationData();
 		ad.name = "raw_frames";
-		for (i in 0...entity_sprite.frames) {
+		for (i in 0...entity_sprite.frames.frames.length) {
 			ad.frames.push(i);
 		}
 		
@@ -1349,7 +1349,7 @@ class State_Animator extends FlxUIState
 		var ad:AnimationData = new AnimationData();
 		ad.name = "raw_frames";
 		ad.frameRate = 0;
-		for (i in 0...entity_sprite.frames) {
+		for (i in 0...entity_sprite.frames.frames.length) {
 			ad.frames.push(i);
 		}
 		return ad;
