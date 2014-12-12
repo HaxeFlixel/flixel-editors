@@ -290,8 +290,10 @@ class EntitySkin implements IFlxDestroyable
 		xml.set("off_y", Std.string(off_y));
 		if (color_change_mode != EntityGraphics.COLOR_CHANGE_NONE) {
 			var colors:Xml = Xml.createElement("colors");
-			if (color_change_mode == EntityGraphics.COLOR_CHANGE_LAYERS) {
-				colors.set("mode", "layers");
+			if (color_change_mode == EntityGraphics.COLOR_CHANGE_LAYERS_BAKED) {
+				colors.set("mode", "layers_baked");
+			}else if (color_change_mode == EntityGraphics.COLOR_CHANGE_LAYERS_STACKED) {
+				colors.set("mode", "layers_stacked");
 			}else if(color_change_mode == EntityGraphics.COLOR_CHANGE_PIXEL_PALETTE) {
 				colors.set("mode", "pixels");
 			}

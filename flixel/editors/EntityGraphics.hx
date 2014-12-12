@@ -34,8 +34,9 @@ class EntityGraphics implements IFlxDestroyable
 	public var defaultFacing:Facing = Facing.NONE;
 	
 	public static inline var COLOR_CHANGE_NONE:Int = 0;				//don't change colors on the base asset
-	public static inline var COLOR_CHANGE_LAYERS:Int = 1;			//it's an "HD style" layered sprite, change colors by colorizing & compositing layers
+	public static inline var COLOR_CHANGE_LAYERS_BAKED:Int = 1;		//it's an "HD style" layered sprite, change colors by colorizing & compositing layers
 	public static inline var COLOR_CHANGE_PIXEL_PALETTE:Int = 2;	//it's a pixel-sprite, change colors by palette-swapping exact pixel color values
+	public static inline var COLOR_CHANGE_LAYERS_STACKED:Int = 3;	//it's an "HD style" layered sprite, change colors by colorizing & stacking layers
 	
 	public var scaleX:Float = 1.0;
 	public var scaleY:Float = 1.0;
@@ -77,9 +78,9 @@ class EntityGraphics implements IFlxDestroyable
 		var i:Int = 0;
 		var color:Int = 0;
 		
-		if (skin.color_change_mode == COLOR_CHANGE_LAYERS && skin.list_color_layers != null && skin.list_colors != null) 
+		if ((skin.color_change_mode == COLOR_CHANGE_LAYERS_BAKED) && skin.list_color_layers != null && skin.list_colors != null) 
 		{
-			for (layer in skin.list_color_layers) 
+			for (layer in skin.list_color_layers)
 			{
 				if (i < skin.list_colors.length)
 				{
@@ -105,13 +106,21 @@ class EntityGraphics implements IFlxDestroyable
 				//Returns e.g. "assets/gfx/defenders/dude+#FF0000+#0000FF+#00FF00"
 			}
 		}
+		
+		//for COLOR_CHANGE_LAYERS_STACKED, return the base asset key alone -- no special baking required
+		
 		return key;
+	}
+	
+	public function getScaleSuffix():String
+	{
+		return "_sX:" + scaleX + "_sY:" + scaleY;
 	}
 	
 	public function get_scaledColorKey():String
 	{
 		var ck:String = colorKey;
-		return ck + "_sX:" + scaleX + "_sY:" + scaleY;
+		return ck + getScaleSuffix();
 	}
 	
 	public function new() 
@@ -346,15 +355,17 @@ class EntityGraphics implements IFlxDestroyable
 					//Determine the color change mode of this skin
 					var mode:String = U.xml_str(skinNode.node.colors.x, "mode", true);
 					
-					if (mode == "layers") {
-						s.color_change_mode = COLOR_CHANGE_LAYERS;
+					if (mode == "layers" || mode == "layers_baked" || mode == "baked") {
+						s.color_change_mode = COLOR_CHANGE_LAYERS_BAKED;
 					}else if (mode == "pixels") {
 						s.color_change_mode = COLOR_CHANGE_PIXEL_PALETTE;
+					}else if (mode == "stacked" || mode == "layers_stacked") {
+						s.color_change_mode = COLOR_CHANGE_LAYERS_STACKED;
 					}else {
 						s.color_change_mode = COLOR_CHANGE_NONE;
 					}
 					
-					if (s.color_change_mode == COLOR_CHANGE_LAYERS)
+					if (s.color_change_mode == COLOR_CHANGE_LAYERS_BAKED || s.color_change_mode == COLOR_CHANGE_LAYERS_STACKED)
 					{
 						var use_default:Bool = U.xml_bool(skinNode.node.colors.x, "use_default");
 						
@@ -437,7 +448,7 @@ class EntityGraphics implements IFlxDestroyable
 								insert = index;
 							}
 							
-							if (s.color_change_mode == COLOR_CHANGE_LAYERS) 
+							if (s.color_change_mode == COLOR_CHANGE_LAYERS_BAKED || s.color_change_mode == COLOR_CHANGE_LAYERS_STACKED) 
 							{
 								//Get name value too
 								var lName = U.xml_str(colorNode.x, "name", true, "");
@@ -670,7 +681,7 @@ class EntityGraphics implements IFlxDestroyable
 				if (a.name == "") {
 					a.name = U.xml_str(animNode.x, "id");
 				}
-				a.looped = U.xml_bool(animNode.x, "looped");
+				a.looped = U.xml_bool(animNode.x, "looped") || U.xml_bool(animNode.x,"loop");
 				a.frameRate = U.xml_i(animNode.x, "framerate");
 				if (animNode.hasNode.frame) {
 					var i:Int = 0;

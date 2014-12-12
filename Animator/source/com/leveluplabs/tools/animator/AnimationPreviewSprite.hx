@@ -14,6 +14,7 @@ import flixel.group.FlxSpriteGroup;
 import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
 import flixel.math.FlxPoint;
+import flixel.graphics.FlxGraphic;
 
 /**
  * This is just a big sprite-sheet that shows the exact frames of an animation, including duplicated frames, all in one big sheet
@@ -144,8 +145,9 @@ class AnimationPreviewSprite extends FlxSpriteGroup
 			_cellHeight = frameH * _scale;
 
 			var gfx = FlxG.bitmap.get("anim_preview_" + anim.name);
-			if (gfx != null) {
-				FlxG.bitmap.remove("anim_preview_" + anim.name);
+			if (gfx != null)
+			{
+				FlxG.bitmap.remove(FlxGraphic.fromAssetKey("anim_preview_" + anim.name));
 			}
 			
 			_canvas.makeGraphic(w, h, FlxColor.TRANSPARENT, true, "anim_preview_"+anim.name);			//start with blank fresh canvas

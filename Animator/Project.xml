@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
+	
+	<meta title="TDRPG Animator" name="Animator" description="Animator" package="com.leveluplabs.tools.animator" version="0.0.0" company="LevelUpLabs" />
 	<app title="TDRPG Animator" file="Animator" main="Main" version="0.0.0" company="Level Up Labs"/>
 	
 	<window width="1024" height="768" fps="30" orientation="landscape" fullscreen="false"/>
  	
-	<set name="BUILD_DIR" value="export" />
-	
 	<!--<setenv name="no_console" value="1" />-->
 	
-	<classpath name="source" />
+	<source path="source" />
 	<assets path="assets" />
 	
 	<!--<haxedef name="kong"/>-->
@@ -23,7 +23,6 @@
 
 	<haxedef name="FLX_BMP_DEBUG"/>
 	<haxedef name="FLX_NO_DEBUG" unless="debug"/>
-	
 	
 	<haxedef name="HXCPP_STACK_LINE" />  <!--if you want line numbers-->
 	<haxedef name="HXCPP_STACK_TRACE"/>  <!--if you want stack traces-->

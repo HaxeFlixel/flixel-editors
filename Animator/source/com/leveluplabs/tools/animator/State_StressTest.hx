@@ -17,6 +17,7 @@ import flixel.group.FlxGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.math.FlxRandom;
+import flixel.graphics.FlxGraphic;
 import openfl.Assets;
 
 
@@ -169,7 +170,7 @@ class State_StressTest extends FlxUIState
 		
 		//Clear our old custom color cache
 		for (key in _list_keys) {
-			FlxG.bitmap.remove(key);
+			FlxG.bitmap.remove(FlxGraphic.fromAssetKey(key));
 		}
 		
 		_list_keys = [];
