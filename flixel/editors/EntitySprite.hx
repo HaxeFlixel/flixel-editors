@@ -93,12 +93,31 @@ class EntitySprite extends FlxSprite
 		
 		var isStack = G.skin.color_change_mode == EntityGraphics.COLOR_CHANGE_LAYERS_STACKED;
 		
+		var existScale = false;
+		
+		var skey:String = "";
+		
+		if (isStack && hasScale)
+		{
+			skey = U.gfx(G.skin.path + "/" + G.skin.asset_src) + G.getScaleSuffix();
+			existScale = FlxG.bitmap.checkCache(skey);
+		}
+		else if(hasScale)
+		{
+			existScale = FlxG.bitmap.checkCache(G.scaledColorKey);
+		}
+		
 		//We don't need to load it if we have a cached scale key
-		if (hasScale && FlxG.bitmap.checkCache(G.scaledColorKey))
+		if (existScale)
 		{
 			skipLoad = true;
 			var frameWidth:Int = Math.round(G.skin.width*G.scaleX);
 			var frameHeight:Int = Math.round(G.skin.height * G.scaleY);
+			
+			if (skey != "")
+			{
+				key = skey;
+			}
 			
 			//Load the base image
 			loadGraphic(key, true, frameWidth, frameHeight);
@@ -108,24 +127,28 @@ class EntitySprite extends FlxSprite
 			{
 				//initialize layers
 				_layerSprites = new FlxSpriteGroup();
+				_layerSpriteProperties = [];
 				var j:Int = 0;
 				for (i in 0...G.skin.list_color_layers.length)
 				{
 					if (G.skin.list_color_layers[i].asset_src != "")
 					{
-						var lkey = G.skin.path + "/" + G.skin.list_color_layers[i].asset_src + ".png"+G.getScaleSuffix();
-						var lgfx = FlxG.bitmap.get(lkey);
-						
-						var lf:FlxSprite = null;
-						lf = new FlxSprite(0, 0).loadGraphic(lgfx, true, frameWidth, frameHeight);
-						lf.color = G.skin.list_colors[i];
-						
-						_layerSprites.add(lf);
-						
-						j++;
+						skey = U.gfx(G.skin.path + "/" + G.skin.list_color_layers[i].asset_src) + G.getScaleSuffix();
+						if (FlxG.bitmap.checkCache(skey))
+						{
+							var lf:FlxSprite = null;
+							lf = new FlxSprite(0, 0).loadGraphic(skey, true, frameWidth, frameHeight);
+							
+							_layerSprites.add(lf);
+							_layerSpriteProperties.push({color:G.skin.list_colors[i],alpha:1,blend:BlendMode.NORMAL});
+							
+							j++;
+						}
 					}
 				}
 			}
+			
+			color = 0xFFFFFF;
 		}
 		
 		if (!skipLoad)
@@ -212,10 +235,12 @@ class EntitySprite extends FlxSprite
 		}
 		else
 		{
+			
 			//Scale to appropriate size
 			var scaledPixels:BitmapData = new BitmapData(newWidth, newHeight,true,0x00000000);
 			var matrix:Matrix = new Matrix();
 			matrix.scale(newWidth / pixels.width, newHeight / pixels.height);
+			
 			scaledPixels.draw(pixels, matrix, null, null, null, G.scaleSmooth);
 			
 			//Load resulting image
@@ -227,6 +252,7 @@ class EntitySprite extends FlxSprite
 				//Scale the various layers
 				for (i in 0..._layerSprites.members.length)
 				{
+					
 					scaledPixels = new BitmapData(newWidth, newHeight, true, 0x00000000);
 					scaledPixels.draw(_layerSprites.members[i].graphic.bitmap, matrix, null, null, null, G.scaleSmooth);
 					
@@ -242,6 +268,12 @@ class EntitySprite extends FlxSprite
 	
 	public function loadCustomColors(G:EntityGraphics):Void {
 		
+		if (_layerSprites != null)
+		{
+			_layerSprites.destroy();
+			_layerSprites = null;
+		}
+		
 		//Get the unique key for this colorized sprite permutation
 		var customColorKey:String = G.colorKey;
 		
@@ -251,8 +283,6 @@ class EntitySprite extends FlxSprite
 			loadGraphic(customColorKey, true, G.skin.width, G.skin.height);
 			return;
 		}
-		
-		var time:Float = Lib.getTimer();
 		
 		//Else, construct it from scratch using the proper method and cache it
 		if (G.skin.color_change_mode == EntityGraphics.COLOR_CHANGE_LAYERS_BAKED) 
@@ -275,10 +305,6 @@ class EntitySprite extends FlxSprite
 				FlxG.bitmap.add(pixels, false, customColorKey);
 			}
 		}
-		
-		time = Lib.getTimer() - time;
-		
-		trace("***( t="+time+" ) loadCustomColors(" + G.colorKey + ")");
 	}
 	
 	public function loadAnimations(Anims:Map<String,AnimationData>, destroyOld:Bool=true):Void {
@@ -352,9 +378,13 @@ class EntitySprite extends FlxSprite
 	public override function destroy():Void
 	{
 		super.destroy();
-		_layerSprites.destroy();
+		if (_layerSprites != null)
+		{
+			_layerSprites.destroy();
+		}
 		_layerSprites = null;
 	}
+	
 	
 	override public function update(elapsed:Float):Void
 	{
@@ -380,9 +410,72 @@ class EntitySprite extends FlxSprite
 		{
 			_layerSprites.draw();
 		}
-		
 	}
 	
+	public override function set_flipX(Value:Bool):Bool
+	{
+		Value = super.set_flipX(Value);
+		if (_layerSprites != null)
+		{
+			_layerSprites.flipX = Value;
+		}
+		return Value;
+	}
+	
+	public override function set_flipY(Value:Bool):Bool
+	{
+		Value = super.set_flipY(Value);
+		if (_layerSprites != null)
+		{
+			_layerSprites.flipY = Value;
+		}
+		return Value;
+	}
+	
+	public override function set_alpha(Alpha:Float):Float
+	{
+		Alpha = super.set_alpha(Alpha);
+		if (_layerSprites != null)
+		{
+			for (i in 0..._layerSpriteProperties.length)
+			{
+				var layerAlpha = _layerSpriteProperties[i].alpha;
+				layerAlpha *= Alpha;
+				_layerSprites.members[i].alpha = layerAlpha;
+			}
+		}
+		return Alpha;
+	}
+	
+	public override function set_blend(Blend:BlendMode):BlendMode
+	{
+		super.set_blend(Blend);
+		if (_layerSprites != null)
+		{
+			_layerSprites.blend = Blend;
+		}
+		return Blend;
+	}
+	
+	public override function set_color(Color:FlxColor):FlxColor
+	{
+		super.set_color(Color);
+		if (_layerSprites != null)
+		{
+			var c_r:Float = Color.redFloat;
+			var c_g:Float = Color.greenFloat;
+			var c_b:Float = Color.blueFloat;
+			for (i in 0..._layerSpriteProperties.length)
+			{
+				var layerColor:FlxColor = _layerSpriteProperties[i].color;
+				layerColor.redFloat *= c_r;
+				layerColor.greenFloat *= c_g;
+				layerColor.blueFloat *= c_b;
+				_layerSprites.members[i].color = layerColor;
+			}
+		}
+		return Color;
+	}
 	
 	/**PRIVATE**/
 	
@@ -390,6 +483,7 @@ class EntitySprite extends FlxSprite
 	private var _sweetSpotMap:Map<String,Array<AnimSweetSpot>> = null;
 	
 	private var _layerSprites:FlxSpriteGroup;
+	private var _layerSpriteProperties:Array<LayerSpriteProperty>;
 	
 	/**
 	 * Callback for animation stuffs
@@ -531,9 +625,10 @@ class EntitySprite extends FlxSprite
 				if (_layerSprites == null)
 				{
 					_layerSprites = new FlxSpriteGroup();
+					_layerSpriteProperties = [];
 				}
-				//Grab a piece
 				
+				//Grab a piece
 				if (layer.asset_src != null && layer.asset_src != "")
 				{
 					var piece:BitmapData = null;
@@ -571,7 +666,7 @@ class EntitySprite extends FlxSprite
 							c = G.skin.list_colors[i];
 						}
 						
-						var lkey = G.skin.path + "/" + layer.asset_src + ".png";
+						var lkey = U.gfx(G.skin.path + "/" + layer.asset_src + ".png");
 						var lgfx:FlxGraphic = null;
 						if (FlxG.bitmap.checkCache(lkey) == false)
 						{
@@ -579,14 +674,13 @@ class EntitySprite extends FlxSprite
 						}
 						
 						var fs = new FlxSprite().loadGraphic(lgfx, true, frameWidth, frameHeight);
-						fs.color = c;
+						
 						_layerSprites.add(fs);
+						_layerSpriteProperties.push({color:c,alpha:1.0,blend:BlendMode.NORMAL});
 					}
 				}
 				
-				resetFrameBitmaps();
-				dirty = true;
-				calcFrame();
+				color = 0xFFFFFF;
 				
 				i++;
 			}
@@ -753,4 +847,11 @@ class EntitySprite extends FlxSprite
 		}
 		return piece;
 	}
+}
+
+typedef LayerSpriteProperty = 
+{
+	var color:FlxColor;
+	var alpha:Float;
+	var blend:BlendMode;
 }
