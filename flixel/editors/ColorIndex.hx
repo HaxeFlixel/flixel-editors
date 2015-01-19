@@ -1,5 +1,5 @@
 package flixel.editors;
-import flixel.addons.ui.StrIdLabel;
+import flixel.addons.ui.StrNameLabel;
 import flixel.addons.ui.SwatchData;
 import flixel.addons.ui.U;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
@@ -111,11 +111,11 @@ class ColorIndex implements IFlxDestroyable
 		return arr;
 	}
 	
-	public function getPaletteList():Array<StrIdLabel>{
-		var arr:Array<StrIdLabel> = [];
+	public function getPaletteList():Array<StrNameLabel>{
+		var arr:Array<StrNameLabel> = [];
 		for (key in _map_palettes.keys())
 		{
-			arr.push(new StrIdLabel(key, key));
+			arr.push(new StrNameLabel(key, key));
 		}
 		return arr;
 	}

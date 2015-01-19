@@ -8,7 +8,7 @@ import flixel.addons.ui.FlxUIGroup;
 import flixel.addons.ui.FlxUIInputText;
 import flixel.addons.ui.FlxUIPopup;
 import flixel.addons.ui.FlxUIText;
-import flixel.addons.ui.StrIdLabel;
+import flixel.addons.ui.StrNameLabel;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.util.FlxStringUtil;
@@ -37,8 +37,8 @@ class Popup_ChangeColorFeature extends FlxUIPopup
 	private var group_colorFeatures:FlxUIGroup;
 	private var btn_add:FlxUIButton;
 	
-	private var swatchData:Array<StrIdLabel>;
-	private var spriteData:Array<StrIdLabel>;
+	private var swatchData:Array<StrNameLabel>;
+	private var spriteData:Array<StrNameLabel>;
 	
 	private var input:FlxUIInputText;
 	private var inputName:String = "";
@@ -85,7 +85,7 @@ class Popup_ChangeColorFeature extends FlxUIPopup
 		var data_list = color_index.getPaletteList();
 			
 		if (paletteName == "") {
-			paletteName = data_list[0].id;
+			paletteName = data_list[0].name;
 		}
 		var colorPalette:ColorPalette = color_index.getPalette(paletteName);
 		
@@ -126,16 +126,16 @@ class Popup_ChangeColorFeature extends FlxUIPopup
 		
 		swatchData = 
 		[
-			new StrIdLabel("0", "0 Hilight"),
-			new StrIdLabel("1", "1 Midtone"),
-			new StrIdLabel("2", "2 ShadowMid"),
-			new StrIdLabel("3", "3 ShadowDark"),
-			new StrIdLabel("4", "4 Other"),
-			new StrIdLabel("5", "5 Other"),
-			new StrIdLabel("6", "6 Other"),
-			new StrIdLabel("7", "7 Other"),
-			new StrIdLabel("8", "8 Other"),
-			new StrIdLabel("9", "9 Other")
+			new StrNameLabel("0", "0 Hilight"),
+			new StrNameLabel("1", "1 Midtone"),
+			new StrNameLabel("2", "2 ShadowMid"),
+			new StrNameLabel("3", "3 ShadowDark"),
+			new StrNameLabel("4", "4 Other"),
+			new StrNameLabel("5", "5 Other"),
+			new StrNameLabel("6", "6 Other"),
+			new StrNameLabel("7", "7 Other"),
+			new StrNameLabel("8", "8 Other"),
+			new StrNameLabel("9", "9 Other")
 		];
 		
 		spriteData = [];
@@ -143,17 +143,17 @@ class Popup_ChangeColorFeature extends FlxUIPopup
 			if(entity.skin.list_original_pixel_colors != null){
 				for (i in 0...entity.skin.list_original_pixel_colors.length) {
 					var pix:Int = entity.skin.list_original_pixel_colors[i];
-					spriteData.push(new StrIdLabel(Std.string(i), "0x" + StringTools.hex(pix, 6)));
+					spriteData.push(new StrNameLabel(Std.string(i), "0x" + StringTools.hex(pix, 6)));
 				}
 			}else if (entity.skin.list_color_layers != null) {
 				for (i in 0...entity.skin.list_color_layers.length) {
 					var eclName:String = entity.skin.list_color_layers[i].name;
-					spriteData.push(new StrIdLabel(Std.string(i), eclName));
+					spriteData.push(new StrNameLabel(Std.string(i), eclName));
 				}
 			}
 		}else{
 			for (i in 0...16) {
-				spriteData.push(new StrIdLabel(Std.string(i), Std.string(i)));
+				spriteData.push(new StrNameLabel(Std.string(i), Std.string(i)));
 			}
 		}
 		
@@ -161,7 +161,7 @@ class Popup_ChangeColorFeature extends FlxUIPopup
 		if(createMode){
 			thing = new ColorFeatureThingy(0, YY, spriteData, swatchData, true);
 			thing.x = back.x + (back.width - thing.width) / 2;
-			thing.id = "0";
+			thing.name = "0";
 			thing.ID = 0;
 			
 			thing.button.visible = thing.button.active = false;
@@ -186,7 +186,7 @@ class Popup_ChangeColorFeature extends FlxUIPopup
 						thing = new ColorFeatureThingy(0, YY, spriteData, swatchData, count == 0);
 						thing.x = back.x + (back.width - thing.width) / 2;
 						
-						thing.id = Std.string(count);
+						thing.name = Std.string(count);
 						thing.ID = count;
 						
 						thing.button.visible = thing.button.active = (count != 0);
@@ -266,11 +266,11 @@ class Popup_ChangeColorFeature extends FlxUIPopup
 	}
 	
 	
-	private function deleteColorFeature(id:String):Void {
+	private function deleteColorFeature(Name:String):Void {
 		var thing:ColorFeatureThingy;
 		for (sprite in group_colorFeatures.members) {
 			thing = cast sprite;
-			if (thing.id == id) {
+			if (thing.name == Name) {
 				group_colorFeatures.remove(thing, true);
 				thing.destroy();
 				thing = null;

@@ -10,7 +10,7 @@ import flixel.addons.ui.FlxUIGroup;
 import flixel.addons.ui.FlxUIInputText;
 import flixel.addons.ui.FlxUINumericStepper;
 import flixel.addons.ui.FlxUIText;
-import flixel.addons.ui.StrIdLabel;
+import flixel.addons.ui.StrNameLabel;
 import flixel.addons.ui.U;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
@@ -26,7 +26,7 @@ class ColorFeatureThingy extends FlxUIGroup
 	public var button:FlxUIButton;
 	public var headersExist(default, null):Bool;
 	
-	public function new(X:Float,Y:Float,spriteData:Array<StrIdLabel>,swatchData:Array<StrIdLabel>,?hasHeaders:Bool=false) 
+	public function new(X:Float,Y:Float,spriteData:Array<StrNameLabel>,swatchData:Array<StrNameLabel>,?hasHeaders:Bool=false) 
 	{
 		headersExist = hasHeaders;
 		super(X, Y);
@@ -117,7 +117,7 @@ class ColorFeatureThingy extends FlxUIGroup
 	}
 	
 	private function onClick():Void {
-		FlxUI.event("color_feature_click_delete", this, id);
+		FlxUI.event("color_feature_click_delete", this, name);
 	}
 	
 }

@@ -19,7 +19,7 @@ import flixel.addons.ui.FlxUITabMenu;
 import flixel.addons.ui.FlxUIText;
 import flixel.addons.ui.FlxUITypedButton.FlxUITypedButton;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
-import flixel.addons.ui.StrIdLabel;
+import flixel.addons.ui.StrNameLabel;
 import flixel.addons.ui.SwatchData;
 import flixel.addons.ui.U;
 import flixel.animation.FlxAnimation;
@@ -256,17 +256,17 @@ class State_Animator extends FlxUIState
 		}
 		
 		var reg_animations_dd:IFlxUIWidget = cast _ui.getAsset("reg_animations_dd");
-		dd_anims = new FlxUIDropDownMenu(reg_animations_dd.x, reg_animations_dd.y, [new StrIdLabel("null","null")],new FlxUIDropDownHeader(Std.int(reg_animations_dd.width)));
+		dd_anims = new FlxUIDropDownMenu(reg_animations_dd.x, reg_animations_dd.y, [new StrNameLabel("null","null")],new FlxUIDropDownHeader(Std.int(reg_animations_dd.width)));
 		_ui.addAsset(dd_anims, "dd_anims");
 		_ui.removeAsset("reg_animations_dd");
 		
 		var reg_sprite_dd:IFlxUIWidget = cast _ui.getAsset("reg_sprites_dd");
-		dd_sprites = new FlxUIDropDownMenu(reg_sprite_dd.x, reg_sprite_dd.y, [new StrIdLabel("null", "null")]);
+		dd_sprites = new FlxUIDropDownMenu(reg_sprite_dd.x, reg_sprite_dd.y, [new StrNameLabel("null", "null")]);
 		_ui.addAsset(dd_sprites, "dd_sprites");
 		_ui.removeAsset("reg_sprites_dd");
 		
 		var reg_skins_dd:IFlxUIWidget = cast _ui.getAsset("reg_skins_dd");
-		dd_skins = new FlxUIDropDownMenu(reg_skins_dd.x, reg_skins_dd.y, [new StrIdLabel("null","null")]);
+		dd_skins = new FlxUIDropDownMenu(reg_skins_dd.x, reg_skins_dd.y, [new StrNameLabel("null","null")]);
 		_ui.addAsset(dd_skins, "dd_skins");
 		_ui.removeAsset("reg_skins_dd");
 		
@@ -280,9 +280,9 @@ class State_Animator extends FlxUIState
 		
 	private function setupSprite():Void
 	{
-		var files:Array<StrIdLabel> = getStrIdList(list_files);
+		var files:Array<StrNameLabel> = getStrIdList(list_files);
 		dd_sprites.setData(files);
-		loadSprite(files[0].id);
+		loadSprite(files[0].name);
 	}
 	
 	private function loadSkin(skinName:String):Void {
@@ -327,10 +327,10 @@ class State_Animator extends FlxUIState
 				entity_graphics.skinName = entity_graphics.getDefaultSkin().name;
 			}
 			
-			var anims:Array<StrIdLabel> = entity_graphics.getAnimationList();
+			var anims:Array<StrNameLabel> = entity_graphics.getAnimationList();
 			dd_anims.setData(anims);
 			
-			var skins:Array<StrIdLabel> = entity_graphics.getSkinList();
+			var skins:Array<StrNameLabel> = entity_graphics.getSkinList();
 			dd_skins.setData(skins);
 			
 			dd_skins.header.text.text = entity_graphics.skinName;
@@ -356,7 +356,7 @@ class State_Animator extends FlxUIState
 				frame_sprite = null;
 			}
 			
-			selectAnim(anims[0].id);
+			selectAnim(anims[0].name);
 			
 			clickAnimPreview(0,false);
 			
@@ -373,7 +373,7 @@ class State_Animator extends FlxUIState
 	private function makeTabMenu():Void {
 		var reg_colors = _ui.getAsset("reg_colors");
 		
-		var tabs = [{id:"colors", label:"Colors"},{id:"sweets", label:"SweetSpots"}];
+		var tabs = [{name:"colors", label:"Colors"},{name:"sweets", label:"SweetSpots"}];
 		tab_menu = new FlxUITabMenu(null, tabs, true);
 		tab_menu.x = reg_colors.x;
 		tab_menu.y = reg_colors.y;
@@ -385,13 +385,13 @@ class State_Animator extends FlxUIState
 		if (group_color_stuff == null)
 		{
 			group_color_stuff = new FlxUIGroup();
-			group_color_stuff.id = "colors";
+			group_color_stuff.name = "colors";
 			tab_menu.addGroup(group_color_stuff);
 		}
 		
 		if(radio_color_modes == null){
 			radio_color_modes = new FlxUIRadioGroup(0, 0,
-					[Std.string(EntityGraphics.COLOR_CHANGE_NONE), Std.string(EntityGraphics.COLOR_CHANGE_LAYERS), Std.string(EntityGraphics.COLOR_CHANGE_PIXEL_PALETTE)],
+					[Std.string(EntityGraphics.COLOR_CHANGE_NONE), Std.string(EntityGraphics.COLOR_CHANGE_LAYERS_BAKED), Std.string(EntityGraphics.COLOR_CHANGE_PIXEL_PALETTE)],
 					["None", "Layers", "Pixels"], onColorModeRadio, 15);
 			
 			radio_color_modes.x = 4;
@@ -404,14 +404,14 @@ class State_Animator extends FlxUIState
 			btn.x = 100;
 			btn.y = 10;
 			
-			btn.id = "btn_color_index";
+			btn.name = "btn_color_index";
 			
 			group_color_stuff.add(btn);
 			group_color_stuff.add(radio_color_modes);
 		}
 		
 		group_sweet = new FlxUIGroup();
-		group_sweet.id = "sweets";
+		group_sweet.name = "sweets";
 		
 		label_curr_frame = new FlxUIText(5, 5, 200, "Select an animation frame!");
 		label_curr_frame.setBorderStyle(FlxTextBorderStyle.OUTLINE_FAST, 0);
@@ -467,8 +467,8 @@ class State_Animator extends FlxUIState
 		switch(Std.parseInt(mode)) {
 			case EntityGraphics.COLOR_CHANGE_NONE:
 				entity_graphics.skin.color_change_mode = EntityGraphics.COLOR_CHANGE_NONE;
-			case EntityGraphics.COLOR_CHANGE_LAYERS:
-				entity_graphics.skin.color_change_mode = EntityGraphics.COLOR_CHANGE_LAYERS;
+			case EntityGraphics.COLOR_CHANGE_LAYERS_BAKED:
+				entity_graphics.skin.color_change_mode = EntityGraphics.COLOR_CHANGE_LAYERS_BAKED;
 			case EntityGraphics.COLOR_CHANGE_PIXEL_PALETTE:
 				entity_graphics.skin.color_change_mode = EntityGraphics.COLOR_CHANGE_PIXEL_PALETTE;
 		}
@@ -625,7 +625,7 @@ class State_Animator extends FlxUIState
 						btn.y = label.y;
 						btn.resize(30, label.height);
 						btn.label.text = "...";
-						btn.id = "btn_change_color_feature";
+						btn.name = "btn_change_color_feature";
 						btn.params = [feature.palette_name,feature.name];
 						
 						var btn2:FlxUIButton = getColorStuffButton();
@@ -639,7 +639,7 @@ class State_Animator extends FlxUIState
 						btn2.y = btn.y;
 						btn2.label.text = "X";
 						btn2.resize(20, label.height);
-						btn2.id = "btn_delete_color_feature";
+						btn2.name = "btn_delete_color_feature";
 						btn2.params = [feature.name,i];
 						
 						var palette:ColorPalette = Reg.color_index.getPalette(feature.palette_name);
@@ -662,7 +662,7 @@ class State_Animator extends FlxUIState
 								
 								swatchSelecter.x = xx;
 								swatchSelecter.y = yy + label.height + 1;
-								swatchSelecter.id = feature.name;
+								swatchSelecter.name = feature.name;
 								
 								var currSwatch:SwatchData = entity_graphics.skin.getSwatchFromColorFeature(feature.name);
 								if (currSwatch != null)
@@ -703,7 +703,7 @@ class State_Animator extends FlxUIState
 			btn3.resize(75, 16);
 			btn3.x = input_color_feature.x + input_color_feature.width + 4;
 			btn3.y = yy;
-			btn3.id = "btn_new_color_feature";
+			btn3.name = "btn_new_color_feature";
 		}
 	}
 	
@@ -720,13 +720,13 @@ class State_Animator extends FlxUIState
 		return null;
 	}
 	
-	private function getColorStuffButton(id:String=""):FlxUIButton {
+	private function getColorStuffButton(Name:String=""):FlxUIButton {
 		for (thing in group_color_stuff.members) {
 			if (Std.is(thing, FlxUIButton)) {
 				var b:FlxUIButton = cast thing;
 				if (b.visible == false && b.active == false) {
-					if (id != "") {
-						if (b.id == id) {
+					if (Name != "") {
+						if (b.name == Name) {
 							b.visible = true;
 							b.active = true;
 							return b;
@@ -768,12 +768,12 @@ class State_Animator extends FlxUIState
 		return null;
 	}
 	
-	private function getStrIdList(list:Array<String>):Array<StrIdLabel>
+	private function getStrIdList(list:Array<String>):Array<StrNameLabel>
 	{
-		var silist:Array<StrIdLabel> = [];
+		var silist:Array<StrNameLabel> = [];
 		for (str in list)
 		{
-			silist.push(new StrIdLabel(str, str));
+			silist.push(new StrNameLabel(str, str));
 		}
 		return silist;
 	}
@@ -966,7 +966,7 @@ class State_Animator extends FlxUIState
 					newAnim.sweets = null;
 					entity_graphics.animations.set(animName, newAnim);
 					
-					var anims:Array<StrIdLabel> = entity_graphics.getAnimationList();
+					var anims:Array<StrNameLabel> = entity_graphics.getAnimationList();
 					dd_anims.setData(anims);
 					dd_anims.header.text.text = animName;
 					selectAnim(animName);
@@ -983,7 +983,7 @@ class State_Animator extends FlxUIState
 			anim.name = input_new.text;
 			entity_graphics.animations.set(anim.name, anim);
 			
-			var anims:Array<StrIdLabel> = entity_graphics.getAnimationList();
+			var anims:Array<StrNameLabel> = entity_graphics.getAnimationList();
 			dd_anims.setData(anims);
 			dd_anims.header.text.text = anim.name;
 		}
@@ -1002,7 +1002,7 @@ class State_Animator extends FlxUIState
 	private function confirm(confirmId:String, title:String, message:String, buttons:Array<String>, ?Params:Array<Dynamic>):Void {
 		var p:FlxUIPopup = new FlxUIPopup();
 		p.quickSetup(title, message, buttons);
-		p.id = confirmId;
+		p.name = confirmId;
 		p.params = Params;
 		openSubState(p);
 	}
@@ -1012,10 +1012,10 @@ class State_Animator extends FlxUIState
 		entity_graphics.animations.remove(ad.name);
 		ad.destroy();
 		ad = null;
-		var anims:Array<StrIdLabel> = entity_graphics.getAnimationList();
+		var anims:Array<StrNameLabel> = entity_graphics.getAnimationList();
 		dd_anims.setData(anims);
 		if(anims.length > 0){
-			selectAnim(anims[0].id);
+			selectAnim(anims[0].name);
 		}
 	}
 	
@@ -1024,7 +1024,7 @@ class State_Animator extends FlxUIState
 		
 		p.params = [featureName];
 		p.quickSetup("Confirm", "Are you sure you want to delete this color feature?", ["Yes", "No"]);
-		p.id = "confirm_delete_color_feature";
+		p.name = "confirm_delete_color_feature";
 		
 		openSubState(p);
 	}
@@ -1082,16 +1082,16 @@ class State_Animator extends FlxUIState
 			case FlxUIPopup.CLICK_EVENT:
 				var p:FlxUIPopup = cast sender;
 				var popBtn:Int = Std.int(data);
-				if (p.id == "confirm_delete_animation") {
+				if (p.name == "confirm_delete_animation") {
 					if(popBtn == 0) {
 						doDeleteAnimation();
 					}
-				}else if (p.id == "confirm_delete_color_feature") {
+				}else if (p.name == "confirm_delete_color_feature") {
 					if (popBtn == 0) {
 						var featureName:String = cast params[1];
 						doDeleteColorFeature(featureName);
 					}
-				}else if (p.id == "confirm_color_mode_none") {
+				}else if (p.name == "confirm_color_mode_none") {
 					if (popBtn == 0){
 						doColorModeRadio(Std.string(EntityGraphics.COLOR_CHANGE_NONE));
 					}else {
@@ -1115,20 +1115,20 @@ class State_Animator extends FlxUIState
 					deleteAnimation();
 				}else if (sender == btn_anim_rename) {
 					renameAnimation();
-				}else if (sender.id == "btn_change_color_feature") {
+				}else if (sender.name == "btn_change_color_feature") {
 					var paletteName:String = cast params[0];
 					var featureName:String = cast params[1];
 					changeColorFeature(featureName,paletteName);
-				}else if (sender.id == "btn_delete_color_feature") {
+				}else if (sender.name == "btn_delete_color_feature") {
 					var featureName:String = cast params[0];
 					deleteColorFeature(featureName);
-				}else if (sender.id == "btn_new_color_feature") {
+				}else if (sender.name == "btn_new_color_feature") {
 					newColorFeature();
 				}
 			case FlxUIColorSwatchSelecter.CLICK_EVENT:
 				var swatch:SwatchData = cast data;
 				var swatchSelecter:FlxUIColorSwatchSelecter = cast sender;
-				entity_graphics.skin.changeColorFeature(swatchSelecter.id, swatch);
+				entity_graphics.skin.changeColorFeature(swatchSelecter.name, swatch);
 				refreshSprite();
 			case FlxUITabMenu.CLICK_EVENT:
 				var tabId:String = cast data;
@@ -1274,23 +1274,23 @@ class State_Animator extends FlxUIState
 		}
 	}
 	
-	public function setCurrAnimName(name:String):Void {
+	public function setCurrAnimName(Name:String):Void {
 		var oldName:String = curr_anim_name;
 		
 		var anim = fetchAnim(oldName);
 		
 		var btn:FlxUIButton = dd_anims.getBtnById(oldName);
-		btn.id = name;			//update both id and label
-		btn.label.text = name;
+		btn.name = Name;			//update both id and label
+		btn.label.text = Name;
 		
 		if (anim != null) {
 			entity_graphics.animations.remove(oldName);
-			entity_graphics.animations.set(name, anim);
+			entity_graphics.animations.set(Name, anim);
 		
-			anim.name = name;
-			curr_anim_name = name;
-			loadAnimation(name);
-			dd_anims.header.text.text = name;
+			anim.name = Name;
+			curr_anim_name = Name;
+			loadAnimation(Name);
+			dd_anims.header.text.text = Name;
 		}
 	}
 	

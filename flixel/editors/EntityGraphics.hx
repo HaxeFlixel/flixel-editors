@@ -3,7 +3,7 @@ import flixel.editors.EntityGraphics.EntityColorLayer;
 import flixel.editors.EntitySkin;
 import flash.display.BitmapData;
 import flash.geom.ColorTransform;
-import flixel.addons.ui.StrIdLabel;
+import flixel.addons.ui.StrNameLabel;
 import flixel.addons.ui.U;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxColor;
@@ -170,16 +170,16 @@ class EntityGraphics implements IFlxDestroyable
 		return null;								//this should never happen if everything works correctly
 	}
 	
-	public function getAnimationList():Array<StrIdLabel>
+	public function getAnimationList():Array<StrNameLabel>
 	{
-		var strIds:Array<StrIdLabel> = [];
+		var strNames:Array<StrNameLabel> = [];
 		for (key in animations.keys())
 		{
-			var strId:StrIdLabel = new StrIdLabel(key, key);
-			strIds.push(strId);
+			var strName:StrNameLabel = new StrNameLabel(key, key);
+			strNames.push(strName);
 		}
-		strIds.sort(StrIdLabel.sortByLabel);
-		return strIds;
+		strNames.sort(StrNameLabel.sortByLabel);
+		return strNames;
 	}
 	
 	public function hasSkin(name:String):Bool
@@ -205,14 +205,14 @@ class EntityGraphics implements IFlxDestroyable
 		return arr;
 	}
 	
-	public function getSkinList():Array<StrIdLabel> {
-		var strIds:Array<StrIdLabel> = [];
+	public function getSkinList():Array<StrNameLabel> {
+		var strNames:Array<StrNameLabel> = [];
 		for (key in map_skins.keys()) {
-			var strId:StrIdLabel = new StrIdLabel(key, key);
-			strIds.push(strId);
+			var strId:StrNameLabel = new StrNameLabel(key, key);
+			strNames.push(strId);
 		}
-		strIds.sort(StrIdLabel.sortByLabel);
-		return strIds;
+		strNames.sort(StrNameLabel.sortByLabel);
+		return strNames;
 	}
 	
 	public function copy():EntityGraphics

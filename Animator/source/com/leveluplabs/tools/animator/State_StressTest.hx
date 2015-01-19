@@ -152,7 +152,7 @@ class State_StressTest extends FlxUIState
 		var target_colors:Int = cast step_colors.value;
 		var custom_colors:Int = 0;
 		
-		if (gfx.skin.color_change_mode == EntityGraphics.COLOR_CHANGE_LAYERS) 
+		if (gfx.skin.color_change_mode == EntityGraphics.COLOR_CHANGE_LAYERS_BAKED) 
 		{
 			if (gfx.skin.list_color_layers == null) { return; }
 			custom_colors = gfx.skin.list_color_layers.length;
