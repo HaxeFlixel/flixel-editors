@@ -7,6 +7,7 @@ import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 import haxe.xml.Fast;
+import openfl.display.BlendMode;
 
 /**
  * EntityGraphics objects let you share one set of AnimationData with multiple "skins" -- different looks for the same sprite.
@@ -25,6 +26,7 @@ class EntitySkin implements IFlxDestroyable
 	public var off_y:Int;						//y offset
 	public var asset_src:String;				//filename sans extension
 	public var isDefault:Bool;					//is this the default skin
+	public var blend:BlendMode;					//blend mode this skin uses
 	public var color_change_mode:Int;			//color change method: COLOR_CHANGE_NONE, COLOR_CHANGE_LAYERS, COLOR_CHANGE_PIXELS
 	public var list_colors:Array<Int>;			//color change values, in correct sorting order (optional: works with PIXELS and LAYERS )
 	public var list_original_pixel_colors:Array<Int>;						//original pixels for color change (optional: COLOR_CHANGE_PIXELS mode only)

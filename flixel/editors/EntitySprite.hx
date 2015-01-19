@@ -60,13 +60,16 @@ class EntitySprite extends FlxSprite
 	public function addAnimation(anim:AnimationData):Void
 	{
 		animation.add(anim.name, anim.frames, anim.frameRate, anim.looped);
-		if (anim.sweets != null) {
-			if (_sweetSpotMap == null) {
+		if (anim.sweets != null)
+		{
+			if (_sweetSpotMap == null)
+			{
 				_hasSweetSpots = true;
 				_sweetSpotMap = new Map < String, Array<AnimSweetSpot> > ();
 			}
 			
-			if (!_sweetSpotMap.exists(anim.name)) {
+			if (!_sweetSpotMap.exists(anim.name))
+			{
 				_sweetSpotMap.set(anim.name, new Array<AnimSweetSpot>());
 			}
 			
@@ -118,6 +121,9 @@ class EntitySprite extends FlxSprite
 			{
 				key = skey;
 			}
+			
+			//Fixes a bug on where callbacks get called on recycle but not on construction
+			animation.callback = null;
 			
 			//Load the base image
 			loadGraphic(key, true, frameWidth, frameHeight);
@@ -173,8 +179,6 @@ class EntitySprite extends FlxSprite
 		
 		loadAnimations(G.animations);
 	}
-	
-	
 	
 	private function basicLoad(G:EntityGraphics):Void
 	{
@@ -307,11 +311,14 @@ class EntitySprite extends FlxSprite
 		}
 	}
 	
-	public function loadAnimations(Anims:Map<String,AnimationData>, destroyOld:Bool=true):Void {
-		if (destroyOld) {
+	public function loadAnimations(Anims:Map<String,AnimationData>, destroyOld:Bool = true):Void
+	{
+		if (destroyOld)
+		{
 			animation.destroyAnimations();
 		}
-		for (key in Anims.keys()) {
+		for (key in Anims.keys())
+		{
 			addAnimation(Anims.get(key));
 		}
 		animation.callback = animationCallback;
