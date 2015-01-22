@@ -81,7 +81,7 @@ class Popup_EditColorIndex extends FlxUIPopup
 	
 	private function setup():Void {
 		
-		id = "confirm_color_index_change";
+		name = "confirm_color_index_change";
 		
 		var back = _ui.getAsset("back");
 		
