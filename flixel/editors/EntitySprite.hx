@@ -343,7 +343,7 @@ class EntitySprite extends FlxSprite
 		{
 			return null;
 		}
-		if (!_sweetSpotMap.exists(animationName))
+		if (_sweetSpotMap == null || !_sweetSpotMap.exists(animationName))
 		{
 			return null;
 		}
