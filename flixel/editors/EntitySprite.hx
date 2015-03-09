@@ -785,7 +785,6 @@ class EntitySprite extends FlxSprite
 					}
 				}
 				
-				resetFrameBitmaps();
 				dirty = true;
 				calcFrame();
 				
