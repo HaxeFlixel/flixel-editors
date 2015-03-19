@@ -195,7 +195,11 @@ class EntitySprite extends FlxSprite
 				loadGraphic(the_src, true, s.width, s.height);
 			}else {
 				#if sys
-				loadGraphic(BitmapData.load(G.remotePath + G.asset_src), true, s.width, s.height);
+					#if lime_legacy
+						loadGraphic(BitmapData.load(G.remotePath + G.asset_src), true, s.width, s.height);
+					#else
+						loadGraphic(BitmapData.fromFile(G.remotePath + G.asset_src), true, s.width, s.height);
+					#end
 				#else
 				loadGraphic(G.remotePath + G.asset_src, true, s.width, s.height);
 				#end
@@ -539,7 +543,11 @@ class EntitySprite extends FlxSprite
 				var daPath:String = G.remotePath + G.asset_src + ".png";
 				if (FileSystem.exists(daPath))
 				{
-					baseLayer = BitmapData.load(daPath);
+					#if lime_legacy
+						baseLayer = BitmapData.load(daPath);
+					#else
+						baseLayer = BitmapData.fromFile(daPath);
+					#end
 				}
 			#end
 		}
@@ -612,7 +620,11 @@ class EntitySprite extends FlxSprite
 		else
 		{
 			#if sys
-				baseLayer = BitmapData.load(G.remotePath + G.asset_src + ".png");
+				#if lime_legacy
+					baseLayer = BitmapData.load(G.remotePath + G.asset_src + ".png");
+				#else
+					baseLayer = BitmapData.fromFile(G.remotePath + G.asset_src + ".png");
+				#end
 			#end
 		}
 		
@@ -659,7 +671,11 @@ class EntitySprite extends FlxSprite
 					else 
 					{
 						#if sys
-							piece = BitmapData.load(G.remotePath + G.skin.path + "/" + layer.asset_src + ".png");
+							#if lime_legacy
+								piece = BitmapData.load(G.remotePath + G.skin.path + "/" + layer.asset_src + ".png");
+							#else
+								piece = BitmapData.fromFile(G.remotePath + G.skin.path + "/" + layer.asset_src + ".png");
+							#end
 						#else
 							piece = Assets.getBitmapData(G.remotePath + G.skin.path + "/" + layer.asset_src + ".png");
 						#end
@@ -707,7 +723,7 @@ class EntitySprite extends FlxSprite
 		else
 		{
 			#if sys
-				baseLayer = BitmapData.load(G.remotePath + G.asset_src + ".png");
+				baseLayer = BitmapData.fromFile(G.remotePath + G.asset_src + ".png");
 			#end
 		}
 		
@@ -745,7 +761,11 @@ class EntitySprite extends FlxSprite
 					else 
 					{
 						#if sys
-							piece = BitmapData.load(G.remotePath + G.skin.path + "/" + layer.asset_src + ".png");
+							#if lime_legacy
+								piece = BitmapData.load(G.remotePath + G.skin.path + "/" + layer.asset_src + ".png");
+							#else
+								piece = BitmapData.fromFile(G.remotePath + G.skin.path + "/" + layer.asset_src + ".png");
+							#end
 						#else
 							piece = Assets.getBitmapData(G.remotePath + G.skin.path + "/" + layer.asset_src + ".png");
 						#end
