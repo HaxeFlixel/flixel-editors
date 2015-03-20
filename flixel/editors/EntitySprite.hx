@@ -723,7 +723,11 @@ class EntitySprite extends FlxSprite
 		else
 		{
 			#if sys
-				baseLayer = BitmapData.fromFile(G.remotePath + G.asset_src + ".png");
+				#if lime_legacy
+					baseLayer = BitmapData.load(G.remotePath + G.asset_src + ".png");
+				#else
+					baseLayer = BitmapData.fromFile(G.remotePath + G.asset_src + ".png");
+				#end
 			#end
 		}
 		
