@@ -195,7 +195,7 @@ class EntitySprite extends FlxSprite
 				loadGraphic(the_src, true, s.width, s.height);
 			}else {
 				#if sys
-					#if lime_legacy
+					#if (lime_legacy || hybrid)
 						loadGraphic(BitmapData.load(G.remotePath + G.asset_src), true, s.width, s.height);
 					#else
 						loadGraphic(BitmapData.fromFile(G.remotePath + G.asset_src), true, s.width, s.height);
@@ -543,7 +543,7 @@ class EntitySprite extends FlxSprite
 				var daPath:String = G.remotePath + G.asset_src + ".png";
 				if (FileSystem.exists(daPath))
 				{
-					#if lime_legacy
+					#if (lime_legacy || hybrid)
 						baseLayer = BitmapData.load(daPath);
 					#else
 						baseLayer = BitmapData.fromFile(daPath);
@@ -620,7 +620,7 @@ class EntitySprite extends FlxSprite
 		else
 		{
 			#if sys
-				#if lime_legacy
+				#if (lime_legacy || hybrid)
 					baseLayer = BitmapData.load(G.remotePath + G.asset_src + ".png");
 				#else
 					baseLayer = BitmapData.fromFile(G.remotePath + G.asset_src + ".png");
@@ -671,7 +671,7 @@ class EntitySprite extends FlxSprite
 					else 
 					{
 						#if sys
-							#if lime_legacy
+							#if (lime_legacy || hybrid)
 								piece = BitmapData.load(G.remotePath + G.skin.path + "/" + layer.asset_src + ".png");
 							#else
 								piece = BitmapData.fromFile(G.remotePath + G.skin.path + "/" + layer.asset_src + ".png");
@@ -723,7 +723,7 @@ class EntitySprite extends FlxSprite
 		else
 		{
 			#if sys
-				#if lime_legacy
+				#if (lime_legacy || hybrid)
 					baseLayer = BitmapData.load(G.remotePath + G.asset_src + ".png");
 				#else
 					baseLayer = BitmapData.fromFile(G.remotePath + G.asset_src + ".png");
@@ -765,7 +765,7 @@ class EntitySprite extends FlxSprite
 					else 
 					{
 						#if sys
-							#if lime_legacy
+							#if (lime_legacy || hybrid)
 								piece = BitmapData.load(G.remotePath + G.skin.path + "/" + layer.asset_src + ".png");
 							#else
 								piece = BitmapData.fromFile(G.remotePath + G.skin.path + "/" + layer.asset_src + ".png");

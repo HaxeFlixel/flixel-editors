@@ -764,7 +764,7 @@ class EntityGraphics implements IFlxDestroyable
 			{
 				if (FileSystem.exists(remotePath + asset_src + ".png"))
 				{
-					#if lime_legacy
+					#if (lime_legacy || hybrid)
 						b = BitmapData.load(remotePath + asset_src + ".png");
 					#else
 						b = BitmapData.fromFile(remotePath + asset_src + ".png");
