@@ -25,6 +25,7 @@ class EntitySkin implements IFlxDestroyable
 	public var off_x:Int;						//x offset
 	public var off_y:Int;						//y offset
 	public var asset_src:String;				//filename sans extension
+	public var asset_meta:String;				//metadata file (w/ extension), for atlases
 	public var isDefault:Bool;					//is this the default skin
 	public var blend:BlendMode;					//blend mode this skin uses
 	public var color_change_mode:Int;			//color change method: COLOR_CHANGE_NONE, COLOR_CHANGE_LAYERS, COLOR_CHANGE_PIXELS
@@ -250,6 +251,7 @@ class EntitySkin implements IFlxDestroyable
 		copy.off_x = off_x;
 		copy.off_y = off_y;
 		copy.asset_src = asset_src;
+		copy.asset_meta = asset_meta;
 		copy.isDefault = isDefault;
 		copy.color_change_mode = color_change_mode;
 		copy.list_color_layers = null;
@@ -285,6 +287,7 @@ class EntitySkin implements IFlxDestroyable
 		xml.set("name", name);
 		xml.set("default", Std.string(isDefault));
 		xml.set("asset_src", asset_src);
+		xml.set("asset_meta", asset_meta);
 		xml.set("path", path);
 		xml.set("width", Std.string(width));
 		xml.set("height", Std.string(height));
@@ -338,6 +341,7 @@ class EntitySkin implements IFlxDestroyable
 						var layerXml:Xml = Xml.createElement("layer");
 						layerXml.set("name", ecl.name);
 						layerXml.set("asset_src", ecl.asset_src);
+						layerXml.set("asset_meta", ecl.asset_meta);
 						if(ecl.alpha < 1){
 							layerXml.set("alpha", Std.string(ecl.alpha));
 						}

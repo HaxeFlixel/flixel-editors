@@ -9,6 +9,8 @@ import flixel.addons.ui.U;
 import flixel.animation.FlxAnimation;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.graphics.frames.FlxAtlasFrames;
+import flixel.graphics.frames.FlxTileFrames;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxPoint;
 import flixel.util.FlxArrayUtil;
@@ -57,9 +59,24 @@ class EntitySprite extends FlxSprite
 		}
 	}
 	
-	public function addAnimation(anim:AnimationData):Void
+	public function addAnimation(anim:AnimationData, fromAtlas:Bool=false):Void
 	{
-		animation.add(anim.name, anim.frames, anim.frameRate, anim.looped);
+		if (!fromAtlas) {
+			
+			animation.add(anim.name, anim.frames, anim.frameRate, anim.looped);
+			
+		}
+		else {
+			
+			var fNames = [];
+			for (i in 0...anim.frames.length)
+			{
+				fNames.push(Std.string(anim.frames[i]));
+			}
+			animation.addByNames(anim.name, fNames, anim.frameRate, anim.looped);
+			
+		}
+		
 		if (anim.sweets != null)
 		{
 			if (_sweetSpotMap == null)
@@ -97,6 +114,7 @@ class EntitySprite extends FlxSprite
 		var isStack = G.skin.color_change_mode == EntityGraphics.COLOR_CHANGE_LAYERS_STACKED;
 		
 		var existScale = false;
+		var fromAtlas = false;
 		
 		var skey:String = "";
 		
@@ -109,6 +127,8 @@ class EntitySprite extends FlxSprite
 		{
 			existScale = FlxG.bitmap.checkCache(G.scaledColorKey);
 		}
+		
+		var fromAtlas = G.skin.asset_meta != "";
 		
 		//We don't need to load it if we have a cached scale key
 		if (existScale)
@@ -125,8 +145,27 @@ class EntitySprite extends FlxSprite
 			//Fixes a bug on where callbacks get called on recycle but not on construction
 			animation.callback = null;
 			
-			//Load the base image
-			loadGraphic(key, true, frameWidth, frameHeight);
+			if (G.skin.asset_meta != "")
+			{
+				if (G.skin.asset_meta.indexOf(".xml") != -1)
+				{
+					var xmlStr = Assets.getText(G.skin.path + "/" + G.skin.asset_meta);
+					var imgSrc = U.gfx(G.skin.path + "/" + G.skin.asset_src);
+					
+					var tex = FlxAtlasFrames.fromSparrow(imgSrc, xmlStr);
+					frames = tex;
+					
+					scale.set(G.scaleX, G.scaleY);
+					width = frameWidth;
+					height = frameHeight;
+					updateHitbox();
+				}
+			}
+			else
+			{
+				//Load the base image
+				loadGraphic(key, true, frameWidth, frameHeight);
+			}
 			
 			//If it's a sprite stack
 			if (isStack && G.skin.list_color_layers != null)
@@ -165,7 +204,7 @@ class EntitySprite extends FlxSprite
 		offset.x = G.skin.off_x * G.scaleX;
 		offset.y = G.skin.off_y * G.scaleY;
 		
-		if (hasScale && !skipLoad)
+		if (hasScale && !skipLoad && !fromAtlas)
 		{
 			if (G.skin != null)
 			{
@@ -177,7 +216,7 @@ class EntitySprite extends FlxSprite
 			}
 		}
 		
-		loadAnimations(G.animations);
+		loadAnimations(G.animations, fromAtlas);
 	}
 	
 	private function basicLoad(G:EntityGraphics):Void
@@ -191,8 +230,28 @@ class EntitySprite extends FlxSprite
 		else 
 		{
 			if (G.remotePath == "") {
-				var the_src:String = U.gfx(G.asset_src);
-				loadGraphic(the_src, true, s.width, s.height);
+				if (G.skin.asset_meta != "" && G.skin.asset_meta != null)
+				{
+					if (G.skin.asset_meta.indexOf(".xml") != -1)
+					{
+						var xmlStr = Assets.getText("assets/gfx/"+G.skin.path + "/" + G.skin.asset_meta);
+						var imgSrc = U.gfx(G.skin.path + "/" + G.skin.asset_src);
+						
+						var tex = FlxAtlasFrames.fromSparrow(imgSrc, xmlStr);
+						frames = tex;
+						
+						scale.set(G.scaleX, G.scaleY);
+						width = frameWidth;
+						height = frameHeight;
+						updateHitbox();
+					}
+				}
+				else
+				{
+					var the_src:String = U.gfx(G.asset_src);
+					loadGraphic(the_src, true, s.width, s.height);
+				}
+				
 			}else {
 				#if sys
 					#if (lime_legacy || hybrid)
@@ -315,7 +374,7 @@ class EntitySprite extends FlxSprite
 		}
 	}
 	
-	public function loadAnimations(Anims:Map<String,AnimationData>, destroyOld:Bool = true):Void
+	public function loadAnimations(Anims:Map<String,AnimationData>, fromAtlas:Bool, destroyOld:Bool = true):Void
 	{
 		if (destroyOld)
 		{
@@ -323,7 +382,7 @@ class EntitySprite extends FlxSprite
 		}
 		for (key in Anims.keys())
 		{
-			addAnimation(Anims.get(key));
+			addAnimation(Anims.get(key), fromAtlas);
 		}
 		animation.callback = animationCallback;
 	}

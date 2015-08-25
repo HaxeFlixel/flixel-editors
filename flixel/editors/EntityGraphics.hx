@@ -366,6 +366,7 @@ class EntityGraphics implements IFlxDestroyable
 				}
 				
 				var sAsset_src = U.xml_str(skinNode.x, "asset_src");
+				var sAsset_meta = U.xml_str(skinNode.x, "asset_meta");
 				var sPath= U.xml_str(skinNode.x, "path");
 				var sWidth = U.xml_i(skinNode.x, "width");
 				var sHeight= U.xml_i(skinNode.x, "height");
@@ -397,6 +398,7 @@ class EntityGraphics implements IFlxDestroyable
 				s.color_change_mode = COLOR_CHANGE_NONE;
 				s.isDefault = sIsDefault;
 				s.asset_src = sAsset_src;
+				s.asset_meta = sAsset_meta;
 				
 				//Add the layer color structure if it exists
 				if (skinNode.hasNode.colors && skinNode.node.colors.hasNode.layer) 
@@ -410,6 +412,7 @@ class EntityGraphics implements IFlxDestroyable
 						var lName = U.xml_str(layerNode.x, "name", true, "");
 						var lValue = U.parseHex(U.xml_str(layerNode.x, "value", true, "0xffffffff"), true, true, 0x00000000);
 						var lAssetSrc = U.xml_str(layerNode.x, "asset_src");
+						var lAssetMeta = U.xml_str(layerNode.x, "asset_mea");
 						var lAlpha = U.xml_f(layerNode.x, "alpha", 1);
 						var lSort = U.xml_i(layerNode.x, "sort", 0);
 						
@@ -417,6 +420,7 @@ class EntityGraphics implements IFlxDestroyable
 						var ecl:EntityColorLayer = {
 							name:lName,
 							asset_src:lAssetSrc,
+							asset_meta:lAssetMeta,
 							alpha:lAlpha,
 							sort:lSort
 						}
@@ -814,6 +818,7 @@ class EntityGraphics implements IFlxDestroyable
 		var copy:EntityColorLayer = {
 			name:ecl.name,
 			asset_src:ecl.asset_src,
+			asset_meta:ecl.asset_meta,
 			alpha:ecl.alpha,
 			sort:ecl.sort
 		};
@@ -824,6 +829,7 @@ class EntityGraphics implements IFlxDestroyable
 typedef EntityColorLayer = {
 	name:String,					//the user-facing name (or localization flag) of this color value, "Hair", "Pants"
 	asset_src:String,				//mask asset filename sans extension
+	asset_meta:String, 				
 	alpha:Float,					//alpha value between 1 and 0
 	sort:Int,						//sorting index
 }
