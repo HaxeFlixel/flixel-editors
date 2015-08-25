@@ -128,7 +128,7 @@ class EntitySprite extends FlxSprite
 			existScale = FlxG.bitmap.checkCache(G.scaledColorKey);
 		}
 		
-		var fromAtlas = G.skin.asset_meta != "";
+		fromAtlas = (G.skin.asset_meta != "" && G.skin.asset_meta != null);
 		
 		//We don't need to load it if we have a cached scale key
 		if (existScale)
@@ -145,7 +145,7 @@ class EntitySprite extends FlxSprite
 			//Fixes a bug on where callbacks get called on recycle but not on construction
 			animation.callback = null;
 			
-			if (G.skin.asset_meta != "")
+			if (G.skin.asset_meta != "" && G.skin.asset_meta != null)
 			{
 				if (G.skin.asset_meta.indexOf(".xml") != -1)
 				{
@@ -216,7 +216,7 @@ class EntitySprite extends FlxSprite
 			}
 		}
 		
-		loadAnimations(G.animations, fromAtlas);
+		loadAnimations(G.animations, true, fromAtlas);
 	}
 	
 	private function basicLoad(G:EntityGraphics):Void
@@ -374,7 +374,7 @@ class EntitySprite extends FlxSprite
 		}
 	}
 	
-	public function loadAnimations(Anims:Map<String,AnimationData>, fromAtlas:Bool, destroyOld:Bool = true):Void
+	public function loadAnimations(Anims:Map<String,AnimationData>, destroyOld:Bool = true, fromAtlas:Bool = false):Void
 	{
 		if (destroyOld)
 		{
