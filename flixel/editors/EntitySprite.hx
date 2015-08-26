@@ -104,7 +104,7 @@ class EntitySprite extends FlxSprite
 			}
 		}
 	}
-
+	
 	public function loadEntityGraphics(G:EntityGraphics):Void
 	{
 		var hasScale:Bool = (G.scaleX != 1.0 || G.scaleY != 1.0);
@@ -114,21 +114,22 @@ class EntitySprite extends FlxSprite
 		var isStack = G.skin.color_change_mode == EntityGraphics.COLOR_CHANGE_LAYERS_STACKED;
 		
 		var existScale = false;
-		var fromAtlas = false;
+		var hasAtlas = checkHasAtlas(G.skin.path, G.skin.asset_meta);
 		
 		var skey:String = "";
 		
-		if (isStack && hasScale)
+		if (!hasAtlas)		//only check for software scaling if we're not doing atlases
 		{
-			skey = U.gfx(G.skin.path + "/" + G.skin.asset_src) + G.getScaleSuffix();
-			existScale = FlxG.bitmap.checkCache(skey);
+			if (isStack && hasScale)
+			{
+				skey = U.gfx(G.skin.path + "/" + G.skin.asset_src) + G.getScaleSuffix();
+				existScale = FlxG.bitmap.checkCache(skey);
+			}
+			else if(hasScale)
+			{
+				existScale = FlxG.bitmap.checkCache(G.scaledColorKey);
+			}
 		}
-		else if(hasScale)
-		{
-			existScale = FlxG.bitmap.checkCache(G.scaledColorKey);
-		}
-		
-		fromAtlas = (G.skin.asset_meta != "" && G.skin.asset_meta != null);
 		
 		//We don't need to load it if we have a cached scale key
 		if (existScale)
@@ -137,35 +138,12 @@ class EntitySprite extends FlxSprite
 			var frameWidth:Int = Math.round(G.skin.width*G.scaleX);
 			var frameHeight:Int = Math.round(G.skin.height * G.scaleY);
 			
-			if (skey != "")
-			{
-				key = skey;
-			}
+			if (skey != "") key = skey;
 			
 			//Fixes a bug on where callbacks get called on recycle but not on construction
 			animation.callback = null;
 			
-			if (G.skin.asset_meta != "" && G.skin.asset_meta != null)
-			{
-				if (G.skin.asset_meta.indexOf(".xml") != -1)
-				{
-					var xmlStr = Assets.getText(G.skin.path + "/" + G.skin.asset_meta);
-					var imgSrc = U.gfx(G.skin.path + "/" + G.skin.asset_src);
-					
-					var tex = FlxAtlasFrames.fromSparrow(imgSrc, xmlStr);
-					frames = tex;
-					
-					scale.set(G.scaleX, G.scaleY);
-					width = frameWidth;
-					height = frameHeight;
-					updateHitbox();
-				}
-			}
-			else
-			{
-				//Load the base image
-				loadGraphic(key, true, frameWidth, frameHeight);
-			}
+			loadGraphic(key, true, frameWidth, frameHeight);
 			
 			//If it's a sprite stack
 			if (isStack && G.skin.list_color_layers != null)
@@ -173,22 +151,20 @@ class EntitySprite extends FlxSprite
 				//initialize layers
 				_layerSprites = new FlxSpriteGroup();
 				_layerSpriteProperties = [];
-				var j:Int = 0;
+				
 				for (i in 0...G.skin.list_color_layers.length)
 				{
 					if (G.skin.list_color_layers[i].asset_src != "")
 					{
+						var lf:FlxSprite = new FlxSprite(0, 0);
 						skey = U.gfx(G.skin.path + "/" + G.skin.list_color_layers[i].asset_src) + G.getScaleSuffix();
 						if (FlxG.bitmap.checkCache(skey))
 						{
-							var lf:FlxSprite = null;
-							lf = new FlxSprite(0, 0).loadGraphic(skey, true, frameWidth, frameHeight);
-							
-							_layerSprites.add(lf);
-							_layerSpriteProperties.push({color:G.skin.list_colors[i],alpha:1,blend:BlendMode.NORMAL});
-							
-							j++;
+							lf.loadGraphic(skey, true, frameWidth, frameHeight);
 						}
+						
+						_layerSprites.add(lf);
+						_layerSpriteProperties.push({color:G.skin.list_colors[i],alpha:1,blend:BlendMode.NORMAL});
 					}
 				}
 			}
@@ -204,7 +180,7 @@ class EntitySprite extends FlxSprite
 		offset.x = G.skin.off_x * G.scaleX;
 		offset.y = G.skin.off_y * G.scaleY;
 		
-		if (hasScale && !skipLoad && !fromAtlas)
+		if (hasScale && !skipLoad && !hasAtlas)
 		{
 			if (G.skin != null)
 			{
@@ -216,7 +192,85 @@ class EntitySprite extends FlxSprite
 			}
 		}
 		
-		loadAnimations(G.animations, true, fromAtlas);
+		loadAnimations(G.animations, true, hasAtlas);
+	}
+	
+	private function checkHasAtlas(path:String, file:String, useAssets:Bool=true):Bool
+	{
+		if (file == null || file == "") return false;
+		if (file.indexOf(".xml") == -1) return false;
+		if(useAssets) {
+			if (!Assets.exists("assets/gfx/" + path + "/" + file)) {
+				return false;
+			}
+		}
+		else {
+			if (FileSystem.exists("assets/gfx/" + path + "/" + file)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	private function getBmp(file:String, remotePath:String=""):BitmapData
+	{
+		if (remotePath == "" || remotePath == null)
+		{
+			var daPath = U.gfx(file);
+			if (Assets.exists(daPath, AssetType.IMAGE))
+			{
+				return Assets.getBitmapData(daPath);
+			}
+		}
+		else
+		{
+			var daPath = remotePath + file + ".png";
+			#if sys
+				if (FileSystem.exists(daPath))
+				{
+					#if (lime_legacy || hybrid)
+						return BitmapData.load(daPath);
+					#else
+						return BitmapData.fromFile(daPath);
+					#end
+				}
+			#else
+				if (Assets.exists(daPath))
+				{
+					return Assets.getBitmapData(daPath);
+				}
+			#end
+		}
+		return null;
+	}
+	
+	private function getAtlasXmlStr(path:String, file:String, useAssets:Bool=true):String
+	{
+		if (!hasAtlas(path, file, useAssets)) return "";
+		
+		if(useAssets) {
+			return Assets.getText("assets/gfx/" + path + "/" + file);
+		}
+		else {
+			return File.getContent("assets/gfx/" + path + "/" + file);
+		}
+		
+		return "";
+	}
+	
+	private function loadAtlasFrames(sprite:FlxSprite, gfx:EntityGraphics, xmlStr:String):Void
+	{
+		var skin = gfx.skin;
+		var xmlStr = Assets.getText("assets/gfx/" + skin.path + "/" + skin.asset_meta);
+		var imgSrc = U.gfx(skin.path + "/" + skin.asset_src);
+		
+		var tex = FlxAtlasFrames.fromSparrow(imgSrc, xmlStr);
+		frames = tex;
+		
+		sprite.scale.set(gfx.scaleX, gfx.scaleY);
+		sprite.width = sprite.frameWidth;
+		sprite.height = sprite.frameHeight;
+		sprite.updateHitbox();
 	}
 	
 	private function basicLoad(G:EntityGraphics):Void
@@ -229,39 +283,15 @@ class EntitySprite extends FlxSprite
 		}
 		else 
 		{
-			if (G.remotePath == "") {
-				if (G.skin.asset_meta != "" && G.skin.asset_meta != null)
-				{
-					if (G.skin.asset_meta.indexOf(".xml") != -1)
-					{
-						var xmlStr = Assets.getText("assets/gfx/"+G.skin.path + "/" + G.skin.asset_meta);
-						var imgSrc = U.gfx(G.skin.path + "/" + G.skin.asset_src);
-						
-						var tex = FlxAtlasFrames.fromSparrow(imgSrc, xmlStr);
-						frames = tex;
-						
-						scale.set(G.scaleX, G.scaleY);
-						width = frameWidth;
-						height = frameHeight;
-						updateHitbox();
-					}
-				}
-				else
-				{
-					var the_src:String = U.gfx(G.asset_src);
-					loadGraphic(the_src, true, s.width, s.height);
-				}
-				
-			}else {
-				#if sys
-					#if (lime_legacy || hybrid)
-						loadGraphic(BitmapData.load(G.remotePath + G.asset_src), true, s.width, s.height);
-					#else
-						loadGraphic(BitmapData.fromFile(G.remotePath + G.asset_src), true, s.width, s.height);
-					#end
-				#else
-				loadGraphic(G.remotePath + G.asset_src, true, s.width, s.height);
-				#end
+			var xmlStr = getAtlasXmlStr(G.skin.path, G.skin.asset_meta);
+			if (xmlStr != "")
+			{
+				loadAtlasFrames(this, G, xmlStr);
+			}
+			else
+			{
+				var the_src:String = U.gfx(G.asset_src);
+				loadGraphic(getBmp(G.asset_src, G.remotePath), true, s.width, s.height);
 			}
 		}
 	}
@@ -344,14 +374,16 @@ class EntitySprite extends FlxSprite
 		//Get the unique key for this colorized sprite permutation
 		var customColorKey:String = G.colorKey;
 		
-		//See if it already exists and if so return early
-		if (G.skin.color_change_mode != EntityGraphics.COLOR_CHANGE_LAYERS_STACKED && FlxG.bitmap.checkCache(customColorKey)) 
+		var hasAtlas = checkHasAtlas(G.skin.path, G.skin.asset_meta);
+		
+		//If not an atlas, see if it already exists and if so return early
+		if (!hasAtlas && G.skin.color_change_mode != EntityGraphics.COLOR_CHANGE_LAYERS_STACKED && FlxG.bitmap.checkCache(customColorKey)) 
 		{
 			loadGraphic(customColorKey, true, G.skin.width, G.skin.height);
 			return;
 		}
 		
-		//Else, construct it from scratch using the proper method and cache it
+		//Else, construct it from scratch using the proper method
 		if (G.skin.color_change_mode == EntityGraphics.COLOR_CHANGE_LAYERS_BAKED) 
 		{
 			loadCustomColorLayersBaked(G);	//colorize layers and composite them -- "HD style" sprites
@@ -594,23 +626,7 @@ class EntitySprite extends FlxSprite
 	{
 		//Get the base layer
 		
-		var baseLayer:BitmapData = null;
-		if (G.remotePath == "") {
-			baseLayer = Assets.getBitmapData(U.gfx(G.asset_src));
-		}else {
-			#if sys
-				var daPath:String = G.remotePath + G.asset_src + ".png";
-				if (FileSystem.exists(daPath))
-				{
-					#if (lime_legacy || hybrid)
-						baseLayer = BitmapData.load(daPath);
-					#else
-						baseLayer = BitmapData.fromFile(daPath);
-					#end
-				}
-			#end
-		}
-		
+		var baseLayer:BitmapData = getBmp(G.asset_src,G.remotePath);
 		var baseCopy = baseLayer.clone();
 		
 		baseLayer = null;
@@ -669,23 +685,8 @@ class EntitySprite extends FlxSprite
 		//Get the base layer
 		var baseLayer:BitmapData = null;
 		
-		var baseKey:String =  G.skin.path + "/" + G.asset_src + ".png";
-		
-		if (G.remotePath == "")
-		{
-			var basePath = U.gfx(G.asset_src);
-			baseLayer = Assets.getBitmapData(basePath);
-		}
-		else
-		{
-			#if sys
-				#if (lime_legacy || hybrid)
-					baseLayer = BitmapData.load(G.remotePath + G.asset_src + ".png");
-				#else
-					baseLayer = BitmapData.fromFile(G.remotePath + G.asset_src + ".png");
-				#end
-			#end
-		}
+		var baseKey:String = G.skin.path + "/" + G.asset_src + ".png";
+		var baseLayer = getBmp(G.asset_src, G.remotePath);
 		
 		//Load the base copy into our graphic
 		loadGraphic(baseLayer, true, G.skin.width, G.skin.height, false, baseKey);
@@ -719,25 +720,9 @@ class EntitySprite extends FlxSprite
 						piece = FlxG.bitmap.get(gskinpath).bitmap;
 						exists = true;
 					}
-					else if (G.remotePath == "")
+					else
 					{
-						var asset_loc:String = U.gfx(G.skin.path + "/" + layer.asset_src);
-						if (Assets.exists(asset_loc,AssetType.IMAGE))
-						{
-							piece = Assets.getBitmapData(asset_loc);
-						}
-					}
-					else 
-					{
-						#if sys
-							#if (lime_legacy || hybrid)
-								piece = BitmapData.load(G.remotePath + G.skin.path + "/" + layer.asset_src + ".png");
-							#else
-								piece = BitmapData.fromFile(G.remotePath + G.skin.path + "/" + layer.asset_src + ".png");
-							#end
-						#else
-							piece = Assets.getBitmapData(G.remotePath + G.skin.path + "/" + layer.asset_src + ".png");
-						#end
+						piece = getBmp(layer.asset_src, G.remotePath);
 					}
 					
 					if (piece != null)
@@ -772,23 +757,7 @@ class EntitySprite extends FlxSprite
 	private function loadCustomColorLayersBaked(G:EntityGraphics):Void
 	{
 		//Get the base layer
-		var baseLayer:BitmapData = null;
-		
-		if (G.remotePath == "")
-		{
-			var basePath = U.gfx(G.asset_src);
-			baseLayer = Assets.getBitmapData(basePath);
-		}
-		else
-		{
-			#if sys
-				#if (lime_legacy || hybrid)
-					baseLayer = BitmapData.load(G.remotePath + G.asset_src + ".png");
-				#else
-					baseLayer = BitmapData.fromFile(G.remotePath + G.asset_src + ".png");
-				#end
-			#end
-		}
+		var baseLayer:BitmapData = getBmp(G.asset_src, G.remotePath);
 		
 		//Clone pixels so we don't overwrite the original bitmap data
 		var baseCopy = baseLayer.clone();
@@ -812,27 +781,7 @@ class EntitySprite extends FlxSprite
 				
 				if (layer.asset_src != null && layer.asset_src != "")
 				{
-					var piece:BitmapData=null;
-					if (G.remotePath == "")
-					{
-						var asset_loc:String = U.gfx(G.skin.path + "/" + layer.asset_src);
-						if (Assets.exists(asset_loc,AssetType.IMAGE))
-						{
-							piece = Assets.getBitmapData(asset_loc);
-						}
-					}
-					else 
-					{
-						#if sys
-							#if (lime_legacy || hybrid)
-								piece = BitmapData.load(G.remotePath + G.skin.path + "/" + layer.asset_src + ".png");
-							#else
-								piece = BitmapData.fromFile(G.remotePath + G.skin.path + "/" + layer.asset_src + ".png");
-							#end
-						#else
-							piece = Assets.getBitmapData(G.remotePath + G.skin.path + "/" + layer.asset_src + ".png");
-						#end
-					}
+					var piece:BitmapData = getBmp(G.skin.path + "/" + layer.asset_src, G.remotePath);
 					
 					if (piece != null)
 					{
