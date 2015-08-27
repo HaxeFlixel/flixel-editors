@@ -412,7 +412,7 @@ class EntityGraphics implements IFlxDestroyable
 						var lName = U.xml_str(layerNode.x, "name", true, "");
 						var lValue = U.parseHex(U.xml_str(layerNode.x, "value", true, "0xffffffff"), true, true, 0x00000000);
 						var lAssetSrc = U.xml_str(layerNode.x, "asset_src");
-						var lAssetMeta = U.xml_str(layerNode.x, "asset_mea");
+						var lAssetMeta = U.xml_str(layerNode.x, "asset_meta");
 						var lAlpha = U.xml_f(layerNode.x, "alpha", 1);
 						var lSort = U.xml_i(layerNode.x, "sort", 0);
 						

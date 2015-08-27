@@ -68,12 +68,7 @@ class EntitySprite extends FlxSprite
 		}
 		else {
 			
-			var fNames = [];
-			for (i in 0...anim.frames.length)
-			{
-				fNames.push(Std.string(anim.frames[i]));
-			}
-			animation.addByNames(anim.name, fNames, anim.frameRate, anim.looped);
+			addAtlasAnimation(this, anim);
 			
 		}
 		
@@ -115,6 +110,8 @@ class EntitySprite extends FlxSprite
 		
 		var existScale = false;
 		var hasAtlas = checkHasAtlas(G.skin.path, G.skin.asset_meta);
+		
+		_usingAtlas = hasAtlas;
 		
 		var skey:String = "";
 		
@@ -177,8 +174,8 @@ class EntitySprite extends FlxSprite
 			basicLoad(G);
 		}
 		
-		offset.x = G.skin.off_x * G.scaleX;
-		offset.y = G.skin.off_y * G.scaleY;
+		offset.x = Std.int(G.skin.off_x * G.scaleX);
+		offset.y = Std.int(G.skin.off_y * G.scaleY);
 		
 		if (hasScale && !skipLoad && !hasAtlas)
 		{
@@ -195,19 +192,35 @@ class EntitySprite extends FlxSprite
 		loadAnimations(G.animations, true, hasAtlas);
 	}
 	
+	private function addAtlasAnimation(sprite:FlxSprite, anim:AnimationData):Void
+	{
+		var fNames = [];
+		for (i in 0...anim.frames.length)
+		{
+			fNames.push(Std.string(anim.frames[i]));
+		}
+		sprite.animation.addByNames(anim.name, fNames, anim.frameRate, anim.looped);
+	}
+	
 	private function checkHasAtlas(path:String, file:String, useAssets:Bool=true):Bool
 	{
+		var sys = false;
+		#if sys
+			sys = true;
+		#end
 		if (file == null || file == "") return false;
 		if (file.indexOf(".xml") == -1) return false;
-		if(useAssets) {
+		if(!sys || useAssets) {
 			if (!Assets.exists("assets/gfx/" + path + "/" + file)) {
 				return false;
 			}
 		}
 		else {
+			#if sys
 			if (FileSystem.exists("assets/gfx/" + path + "/" + file)) {
 				return false;
 			}
+			#end
 		}
 		return true;
 	}
@@ -246,26 +259,31 @@ class EntitySprite extends FlxSprite
 	
 	private function getAtlasXmlStr(path:String, file:String, useAssets:Bool=true):String
 	{
-		if (!hasAtlas(path, file, useAssets)) return "";
+		var sys = false;
+		#if sys
+			sys = true;
+		#end
+		if (!checkHasAtlas(path, file, useAssets)) return "";
 		
-		if(useAssets) {
+		if(!sys || useAssets) {
 			return Assets.getText("assets/gfx/" + path + "/" + file);
 		}
 		else {
-			return File.getContent("assets/gfx/" + path + "/" + file);
+			#if sys
+				return File.getContent("assets/gfx/" + path + "/" + file);
+			#end
 		}
 		
 		return "";
 	}
 	
-	private function loadAtlasFrames(sprite:FlxSprite, gfx:EntityGraphics, xmlStr:String):Void
+	private function loadAtlasFrames(sprite:FlxSprite, gfx:EntityGraphics, asset_src:String, xmlStr:String):Void
 	{
 		var skin = gfx.skin;
-		var xmlStr = Assets.getText("assets/gfx/" + skin.path + "/" + skin.asset_meta);
-		var imgSrc = U.gfx(skin.path + "/" + skin.asset_src);
+		var imgSrc = U.gfx(skin.path + "/" + asset_src);
 		
 		var tex = FlxAtlasFrames.fromSparrow(imgSrc, xmlStr);
-		frames = tex;
+		sprite.frames = tex;
 		
 		sprite.scale.set(gfx.scaleX, gfx.scaleY);
 		sprite.width = sprite.frameWidth;
@@ -286,12 +304,11 @@ class EntitySprite extends FlxSprite
 			var xmlStr = getAtlasXmlStr(G.skin.path, G.skin.asset_meta);
 			if (xmlStr != "")
 			{
-				loadAtlasFrames(this, G, xmlStr);
+				loadAtlasFrames(this, G, s.asset_src, xmlStr);
 			}
 			else
 			{
-				var the_src:String = U.gfx(G.asset_src);
-				loadGraphic(getBmp(G.asset_src, G.remotePath), true, s.width, s.height);
+				loadGraphic(getBmp(s.path + "/" + s.asset_src, G.remotePath), true, s.width, s.height);
 			}
 		}
 	}
@@ -377,10 +394,13 @@ class EntitySprite extends FlxSprite
 		var hasAtlas = checkHasAtlas(G.skin.path, G.skin.asset_meta);
 		
 		//If not an atlas, see if it already exists and if so return early
-		if (!hasAtlas && G.skin.color_change_mode != EntityGraphics.COLOR_CHANGE_LAYERS_STACKED && FlxG.bitmap.checkCache(customColorKey)) 
+		if (!hasAtlas)
 		{
-			loadGraphic(customColorKey, true, G.skin.width, G.skin.height);
-			return;
+			if(G.skin.color_change_mode != EntityGraphics.COLOR_CHANGE_LAYERS_STACKED && FlxG.bitmap.checkCache(customColorKey)) 
+			{
+				loadGraphic(customColorKey, true, G.skin.width, G.skin.height);
+				return;
+			}
 		}
 		
 		//Else, construct it from scratch using the proper method
@@ -417,6 +437,21 @@ class EntitySprite extends FlxSprite
 			addAnimation(Anims.get(key), fromAtlas);
 		}
 		animation.callback = animationCallback;
+		
+		if (_layerSprites != null)
+		{
+			for (i in 0..._layerSprites.members.length)
+			{
+				if (destroyOld)
+				{
+					_layerSprites.members[i].animation.destroyAnimations();
+				}
+				for (key in Anims.keys())
+				{
+					addAtlasAnimation(_layerSprites.members[i], Anims.get(key));
+				}
+			}
+		}
 	}
 	
 	/**
@@ -487,10 +522,12 @@ class EntitySprite extends FlxSprite
 		_layerSprites = null;
 	}
 	
+	var frameDataNames = [];
 	
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
+	
 		if (_layerSprites != null)
 		{
 			_layerSprites.x = x;
@@ -499,7 +536,33 @@ class EntitySprite extends FlxSprite
 			_layerSprites.update(elapsed);
 			for (i in 0..._layerSprites.members.length)
 			{
-				_layerSprites.members[i].animation.frameIndex = animation.frameIndex;
+				if (_usingAtlas)
+				{
+					_layerSprites.members[i].animation.frameName = animation.frameName;
+				}
+				else
+				{
+					_layerSprites.members[i].animation.frameIndex = animation.frameIndex;
+				}
+			}
+		}
+		
+		var dirtyFrame = false;
+		if (frameDataNames.indexOf(animation.frameName) == -1)
+		{
+			dirtyFrame = true;
+			frameDataNames.push(animation.frameName);
+		}
+		
+		if (dirtyFrame)
+		{
+			FlxG.bitmapLog.add(framePixels, animation.frameName);
+			if (_layerSprites != null)
+			{
+				for(i in 0..._layerSprites.members.length)
+				{
+					FlxG.bitmapLog.add(_layerSprites.members[i].framePixels, i+":"+animation.frameName);
+				}
 			}
 		}
 	}
@@ -581,6 +644,7 @@ class EntitySprite extends FlxSprite
 	
 	/**PRIVATE**/
 	
+	private var _usingAtlas:Bool = false;
 	private var _hasSweetSpots:Bool = false;
 	private var _sweetSpotMap:Map<String,Array<AnimSweetSpot>> = null;
 	
@@ -682,14 +746,23 @@ class EntitySprite extends FlxSprite
 	
 	private function loadCustomColorLayersStacked(G:EntityGraphics):Void
 	{
-		//Get the base layer
-		var baseLayer:BitmapData = null;
+		//Load the base layer first
 		
 		var baseKey:String = G.skin.path + "/" + G.asset_src + ".png";
-		var baseLayer = getBmp(G.asset_src, G.remotePath);
 		
-		//Load the base copy into our graphic
-		loadGraphic(baseLayer, true, G.skin.width, G.skin.height, false, baseKey);
+		var xmlStr = getAtlasXmlStr(G.skin.path, G.skin.asset_meta);
+		var hasAtlas = (xmlStr != "");
+		
+		if (hasAtlas)
+		{
+			loadAtlasFrames(this, G, G.skin.asset_src, xmlStr);
+		}
+		else
+		{
+			loadGraphic(getBmp(G.skin.asset_src, G.remotePath), true, G.skin.width, G.skin.height, false, baseKey);
+		}
+		
+		//Then load each of the other layers
 		
 		var t:ColorTransform = null;
 		var zpt:Point = new Point();
@@ -698,7 +771,7 @@ class EntitySprite extends FlxSprite
 		{
 			var i:Int = 0;
 			
-			//Loop through color layers, colorize and stamp them onto the graphic
+			//Loop through color layers, colorize them, and add them as layers
 			for (layer in G.skin.list_color_layers) 
 			{
 				if (_layerSprites == null)
@@ -715,14 +788,17 @@ class EntitySprite extends FlxSprite
 					
 					var gskinpath:String = G.skin.path + "/" + layer.asset_src + ".png";
 					
-					if (FlxG.bitmap.checkCache(gskinpath))
+					var layerXmlStr = getAtlasXmlStr(G.skin.path, layer.asset_meta);
+					var layerHasAtlas = (xmlStr != "");
+					
+					if (!layerHasAtlas && FlxG.bitmap.checkCache(gskinpath))
 					{
 						piece = FlxG.bitmap.get(gskinpath).bitmap;
 						exists = true;
 					}
 					else
 					{
-						piece = getBmp(layer.asset_src, G.remotePath);
+						piece = getBmp(gskinpath, G.remotePath);
 					}
 					
 					if (piece != null)
@@ -733,14 +809,22 @@ class EntitySprite extends FlxSprite
 							c = G.skin.list_colors[i];
 						}
 						
-						var lkey = U.gfx(G.skin.path + "/" + layer.asset_src + ".png");
-						var lgfx:FlxGraphic = null;
-						if (FlxG.bitmap.checkCache(lkey) == false)
-						{
-							lgfx = FlxG.bitmap.add(piece, false, lkey);
-						}
+						var fs = new FlxSprite();
 						
-						var fs = new FlxSprite().loadGraphic(lgfx, true, frameWidth, frameHeight);
+						if (!hasAtlas)
+						{
+							var lkey = U.gfx(G.skin.path + "/" + layer.asset_src + ".png");
+							var lgfx:FlxGraphic = null;
+							if (FlxG.bitmap.checkCache(lkey) == false)
+							{
+								lgfx = FlxG.bitmap.add(piece, false, lkey);
+							}
+							loadGraphic(lgfx, true, frameWidth, frameHeight);
+						}
+						else
+						{
+							loadAtlasFrames(fs, G, layer.asset_src, layerXmlStr);
+						}
 						
 						_layerSprites.add(fs);
 						_layerSpriteProperties.push({color:c,alpha:1.0,blend:BlendMode.NORMAL});
