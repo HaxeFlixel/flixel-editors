@@ -132,7 +132,7 @@ class EntitySprite extends FlxSprite
 		if (existScale)
 		{
 			skipLoad = true;
-			var frameWidth:Int = Math.round(G.skin.width*G.scaleX);
+			var frameWidth:Int = Math.round(G.skin.width * G.scaleX);
 			var frameHeight:Int = Math.round(G.skin.height * G.scaleY);
 			
 			if (skey != "") key = skey;
@@ -174,8 +174,18 @@ class EntitySprite extends FlxSprite
 			basicLoad(G);
 		}
 		
-		offset.x = Std.int(G.skin.off_x * G.scaleX);
-		offset.y = Std.int(G.skin.off_y * G.scaleY);
+		offset.set(0, 0);
+		
+		if (hasAtlas)
+		{
+			origin.x = Std.int((origin.x * G.scaleX));
+			origin.y = Std.int((origin.y * G.scaleY));
+			
+			updateHitbox();
+		}
+		
+		offset.x += Std.int(G.skin.off_x * G.scaleX);
+		offset.y += Std.int(G.skin.off_y * G.scaleY);
 		
 		if (hasScale && !skipLoad && !hasAtlas)
 		{
@@ -286,8 +296,8 @@ class EntitySprite extends FlxSprite
 		sprite.frames = tex;
 		
 		sprite.scale.set(gfx.scaleX, gfx.scaleY);
-		sprite.width = sprite.frameWidth;
-		sprite.height = sprite.frameHeight;
+		sprite.width = Std.int(gfx.scaleX * gfx.skin.width); // sprite.frameWidth;
+		sprite.height = Std.int(gfx.scaleY * gfx.skin.height); // sprite.frameHeight;
 		sprite.updateHitbox();
 	}
 	
@@ -522,18 +532,14 @@ class EntitySprite extends FlxSprite
 		_layerSprites = null;
 	}
 	
-	var frameDataNames = [];
-	
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
-	
 		if (_layerSprites != null)
 		{
 			_layerSprites.x = x;
 			_layerSprites.y = y;
 			_layerSprites.offset.set(offset.x, offset.y);
-			_layerSprites.update(elapsed);
 			for (i in 0..._layerSprites.members.length)
 			{
 				if (_usingAtlas)
@@ -545,25 +551,8 @@ class EntitySprite extends FlxSprite
 					_layerSprites.members[i].animation.frameIndex = animation.frameIndex;
 				}
 			}
-		}
-		
-		var dirtyFrame = false;
-		if (frameDataNames.indexOf(animation.frameName) == -1)
-		{
-			dirtyFrame = true;
-			frameDataNames.push(animation.frameName);
-		}
-		
-		if (dirtyFrame)
-		{
-			FlxG.bitmapLog.add(framePixels, animation.frameName);
-			if (_layerSprites != null)
-			{
-				for(i in 0..._layerSprites.members.length)
-				{
-					FlxG.bitmapLog.add(_layerSprites.members[i].framePixels, i+":"+animation.frameName);
-				}
-			}
+			_layerSprites.dirty = dirty;
+			_layerSprites.update(elapsed);
 		}
 	}
 	
