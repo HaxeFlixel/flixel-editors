@@ -532,37 +532,44 @@ class EntitySprite extends FlxSprite
 		_layerSprites = null;
 	}
 	
-	override public function update(elapsed:Float):Void
+	override function updateMotion(elapsed:Float):Void 
 	{
-		super.update(elapsed);
+		super.updateMotion(elapsed);
 		if (_layerSprites != null)
 		{
 			_layerSprites.x = x;
 			_layerSprites.y = y;
 			_layerSprites.offset.set(offset.x, offset.y);
+			_layerSprites.updateMotion(elapsed);
+		}
+	}
+	
+	override function updateAnimation(elapsed:Float):Void 
+	{
+		super.updateAnimation(elapsed);
+		if (_layerSprites != null)
+		{
 			for (i in 0..._layerSprites.members.length)
 			{
-				if (_usingAtlas)
+				_layerSprites.members[i].updateAnimation(elapsed);
+				if (animation.curAnim != null && _layerSprites.members[i].animation.curAnim == null)
 				{
-					_layerSprites.members[i].animation.frameName = animation.frameName;
-				}
-				else
-				{
-					_layerSprites.members[i].animation.frameIndex = animation.frameIndex;
+					_layerSprites.members[i].animation.play(animation.curAnim.name, true, false, animation.curAnim.curFrame);
 				}
 			}
-			_layerSprites.dirty = dirty;
-			_layerSprites.update(elapsed);
 		}
 	}
 	
 	override public function draw():Void
 	{
 		super.draw();
-		
 		if (_layerSprites != null)
 		{
-			_layerSprites.draw();
+			for (i in 0..._layerSprites.members.length)
+			{
+				_layerSprites.members[i].animation.frameIndex = animation.frameIndex;
+				_layerSprites.members[i].draw();
+			}
 		}
 	}
 	
@@ -632,6 +639,8 @@ class EntitySprite extends FlxSprite
 	}
 	
 	/**PRIVATE**/
+	
+	private var _dirtyAnim:String = "";
 	
 	private var _usingAtlas:Bool = false;
 	private var _hasSweetSpots:Bool = false;
