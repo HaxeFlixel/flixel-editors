@@ -16,6 +16,7 @@ import flixel.math.FlxPoint;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxColor;
 import flixel.graphics.FlxGraphic;
+import flixel.util.FlxDestroyUtil;
 import openfl.geom.Rectangle;
 import openfl.geom.Point;
 import openfl.Assets;
@@ -74,9 +75,10 @@ class EntitySprite extends FlxSprite
 		
 		if (anim.sweets != null)
 		{
+			_hasSweetSpots = true;
+			
 			if (_sweetSpotMap == null)
 			{
-				_hasSweetSpots = true;
 				_sweetSpotMap = new Map < String, Array<AnimSweetSpot> > ();
 			}
 			
@@ -178,9 +180,6 @@ class EntitySprite extends FlxSprite
 		
 		if (hasAtlas)
 		{
-			origin.x = Std.int((origin.x * G.scaleX));
-			origin.y = Std.int((origin.y * G.scaleY));
-			
 			updateHitbox();
 		}
 		
@@ -442,6 +441,15 @@ class EntitySprite extends FlxSprite
 		{
 			animation.destroyAnimations();
 		}
+		if (_sweetSpotMap != null)
+		{
+			for (key in _sweetSpotMap.keys())
+			{
+				var arr = _sweetSpotMap.get(key);
+				FlxDestroyUtil.destroyArray(arr);
+				_sweetSpotMap.remove(key);
+			}
+		}
 		for (key in Anims.keys())
 		{
 			addAnimation(Anims.get(key), fromAtlas);
@@ -649,18 +657,21 @@ class EntitySprite extends FlxSprite
 	private var _layerSprites:FlxSpriteGroup;
 	private var _layerSpriteProperties:Array<LayerSpriteProperty>;
 	
+	private var _lastAnimFrame:Int = 0;
+	private var _lastAnimName:String = "";
+	
 	/**
 	 * Callback for animation stuffs
 	 * @param	Name			Name of the animation
 	 * @param	AnimFrame		Index of the frame in the current animation
-	 * @param	SpriteFrame		Index of the frame in the Sprite Sheet
+	 * @param	SpriteFrame		Index of the frameR in the Sprite Sheet
 	 */
 	
 	private function animationCallback(Name:String, AnimFrame:Int, SpriteFrame:Int):Void
 	{
 		if (_hasSweetSpots && _sweetSpotMap.exists(Name)) 				//If we have at least one sweet spot for this animation
 		{
-			if (onSweetSpotCallback != null)
+			if (onSweetSpotCallback != null && (AnimFrame != _lastAnimFrame || Name != _lastAnimName))
 			{
 				var arr:Array<AnimSweetSpot> = _sweetSpotMap.get(Name);		//Get the list of sweet spots
 				if (AnimFrame < arr.length) 
@@ -673,10 +684,14 @@ class EntitySprite extends FlxSprite
 				}
 			}
 		}
+		
 		if (animation.finished)
 		{
 			onAnimationFinish(Name);
 		}
+		
+		_lastAnimFrame = AnimFrame;
+		_lastAnimName  = Name;
 	}
 	
 	private function onAnimationFinish(Name:String):Void
