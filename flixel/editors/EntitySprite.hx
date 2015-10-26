@@ -708,18 +708,25 @@ class EntitySprite extends FlxSprite
 		
 		baseLayer = null;
 		
-		var orig_color:FlxColor;
-		var pix_color:FlxColor;
-		var replace_color:FlxColor;
+		var orig_color:FlxColor=0;
+		var pix_color:FlxColor=0;
+		var replace_color:FlxColor=0;
 		
 		var i:Int = 0;
 		
+		var origNull = G.skin.list_original_pixel_colors == null;
+		
+		var length = (!origNull ? G.skin.list_original_pixel_colors.length : 16);
+		 
 		//Strip off the palette data in the image
-		for (i in 0...G.skin.list_original_pixel_colors.length) 
+		for (i in 0...length) 
 		{
-			orig_color = G.skin.list_original_pixel_colors[i];
-			pix_color = baseCopy.getPixel32(0, i);
-			if (pix_color == orig_color) 
+			if (!origNull)
+			{
+				orig_color = G.skin.list_original_pixel_colors[i];
+				pix_color = baseCopy.getPixel32(0, i);
+			}
+			if (origNull || pix_color == orig_color) 
 			{
 				baseCopy.setPixel32(0, i, 0x00000000);
 			}
