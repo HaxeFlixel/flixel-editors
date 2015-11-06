@@ -36,6 +36,7 @@ class EntitySprite extends FlxSprite
 {
 	public var name:String;
 	public var recycled:Bool = false;
+	public var destroyed(default, null):Bool = false;
 	
 	/**
 	 * Callback for when a sweet-spot animation frame is played, parameters:
@@ -104,7 +105,10 @@ class EntitySprite extends FlxSprite
 	
 	public function loadEntityGraphics(G:EntityGraphics):Void
 	{
-		var hasScale:Bool = (G.scaleX != 1.0 || G.scaleY != 1.0);
+		var sX:Float = G.scaleX * G.skin.scaleX;
+		var sY:Float = G.scaleY * G.skin.scaleY;
+		
+		var hasScale:Bool = (sX != 1.0 || sY != 1.0);
 		var skipLoad:Bool = false;
 		var key = G.scaledColorKey;
 		
@@ -134,8 +138,8 @@ class EntitySprite extends FlxSprite
 		if (existScale)
 		{
 			skipLoad = true;
-			var frameWidth:Int = Math.round(G.skin.width * G.scaleX);
-			var frameHeight:Int = Math.round(G.skin.height * G.scaleY);
+			var frameWidth:Int = Math.round(G.skin.width * sX);
+			var frameHeight:Int = Math.round(G.skin.height * sY);
 			
 			if (skey != "") key = skey;
 			
@@ -183,8 +187,8 @@ class EntitySprite extends FlxSprite
 			updateHitbox();
 		}
 		
-		offset.x += Std.int(G.skin.off_x * G.scaleX);
-		offset.y += Std.int(G.skin.off_y * G.scaleY);
+		offset.x += Std.int(G.skin.off_x * sX);
+		offset.y += Std.int(G.skin.off_y * sY);
 		
 		if (hasScale && !skipLoad && !hasAtlas)
 		{
@@ -294,9 +298,12 @@ class EntitySprite extends FlxSprite
 		var tex = FlxAtlasFrames.fromSparrow(imgSrc, xmlStr);
 		sprite.frames = tex;
 		
-		sprite.scale.set(gfx.scaleX, gfx.scaleY);
-		sprite.width = Std.int(gfx.scaleX * gfx.skin.width); // sprite.frameWidth;
-		sprite.height = Std.int(gfx.scaleY * gfx.skin.height); // sprite.frameHeight;
+		var sX:Float = gfx.scaleX * gfx.skin.scaleX;
+		var sY:Float = gfx.scaleY * gfx.skin.scaleY;
+		
+		sprite.scale.set(sX, sY);
+		sprite.width = Std.int(sX * gfx.skin.width); // sprite.frameWidth;
+		sprite.height = Std.int(sY * gfx.skin.height); // sprite.frameHeight;
 		sprite.updateHitbox();
 	}
 	
@@ -325,8 +332,13 @@ class EntitySprite extends FlxSprite
 	private function doScale(G:EntityGraphics):Void
 	{
 		var s:EntitySkin = G.skin;
-		var fWidth:Int = Math.round(s.width*G.scaleX);
-		var fHeight:Int = Math.round(s.height*G.scaleY);
+		
+		var sX:Float = G.scaleX * G.skin.scaleX;
+		var sY:Float = G.scaleX * G.skin.scaleY;
+		
+		var fWidth:Int = Math.round(s.width * sX);
+		var fHeight:Int = Math.round(s.height * sY);
+		
 		var framesWide:Int = Std.int(pixels.width / s.width);
 		var framesTall:Int = Std.int(pixels.height / s.height);
 		var newWidth:Int = fWidth * framesWide;
@@ -532,6 +544,7 @@ class EntitySprite extends FlxSprite
 	
 	public override function destroy():Void
 	{
+		destroyed = true;
 		super.destroy();
 		if (_layerSprites != null)
 		{

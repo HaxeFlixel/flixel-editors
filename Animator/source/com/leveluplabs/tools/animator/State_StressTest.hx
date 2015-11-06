@@ -8,7 +8,7 @@ import flash.Lib;
 import flixel.addons.ui.FlxUIButton;
 import flixel.addons.ui.FlxUINumericStepper;
 import flixel.addons.ui.FlxUIState;
-import flixel.addons.ui.FlxUITypedButton.FlxUITypedButton;
+import flixel.addons.ui.FlxUITypedButton;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.U;
 import flixel.FlxG;
@@ -124,7 +124,7 @@ class State_StressTest extends FlxUIState
 				if (sender == step_colors) {
 					changeColors();
 				}
-			case FlxUITypedButton.CLICK_EVENT:
+			case FlxUIButton.CLICK_EVENT:
 				var str:String = "";
 				if (params != null && params.length >= 1) {
 					str = cast params[0];

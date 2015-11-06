@@ -24,6 +24,8 @@ class EntitySkin implements IFlxDestroyable
 	public var height:Int;						//height of frame
 	public var off_x:Int;						//x offset
 	public var off_y:Int;						//y offset
+	public var scaleX:Float=1;
+	public var scaleY:Float=1;
 	public var asset_src:String;				//filename sans extension
 	public var asset_meta:String;				//metadata file (w/ extension), for atlases
 	public var isDefault:Bool;					//is this the default skin
@@ -260,6 +262,8 @@ class EntitySkin implements IFlxDestroyable
 		copy.list_color_features = null;
 		copy.using_default_structure = using_default_structure;
 		copy.using_structure = using_structure;
+		copy.scaleX = scaleX;
+		copy.scaleY = scaleY;
 		
 		if (list_color_features != null)
 		{
@@ -293,6 +297,8 @@ class EntitySkin implements IFlxDestroyable
 		xml.set("height", Std.string(height));
 		xml.set("off_x", Std.string(off_x));
 		xml.set("off_y", Std.string(off_y));
+		xml.set("scale_x", Std.string(scaleX));
+		xml.set("scale_y", Std.string(scaleY));
 		if (color_change_mode != EntityGraphics.COLOR_CHANGE_NONE) {
 			var colors:Xml = Xml.createElement("colors");
 			if (color_change_mode == EntityGraphics.COLOR_CHANGE_LAYERS_BAKED) {

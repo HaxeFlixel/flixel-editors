@@ -1098,7 +1098,7 @@ class State_Animator extends FlxUIState
 						doColorModeRadio(Std.string(entity_graphics.skin.color_change_mode));
 					}
 				}
-			case FlxUITypedButton.CLICK_EVENT:
+			case FlxUIButton.CLICK_EVENT:
 				if (sender == btn_insert) {
 					insertFrame();
 				}else if (sender == btn_remove) {

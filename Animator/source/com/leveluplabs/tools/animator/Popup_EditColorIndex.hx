@@ -3,14 +3,13 @@ import flixel.editors.ColorIndex;
 import flash.geom.Rectangle;
 import flixel.addons.ui.FlxSlider;
 import flixel.addons.ui.FlxUI;
-import flixel.addons.ui.FlxUIButton;
 import flixel.addons.ui.FlxUIColorSwatch;
 import flixel.addons.ui.FlxUIColorSwatchSelecter;
 import flixel.addons.ui.FlxUIDropDownMenu;
 import flixel.addons.ui.FlxUIGroup;
 import flixel.addons.ui.FlxUIPopup;
 import flixel.addons.ui.FlxUIText;
-import flixel.addons.ui.FlxUITypedButton.FlxUITypedButton;
+import flixel.addons.ui.FlxUITypedButton;
 import flixel.addons.ui.SwatchData;
 import flixel.addons.ui.U;
 import flixel.FlxSprite;
@@ -240,7 +239,7 @@ class Popup_EditColorIndex extends FlxUIPopup
 			case FlxUIColorSwatchSelecter.CLICK_EVENT:
 				var swatchData:SwatchData = cast data;
 				onSwatchClick(swatchData);
-			case FlxUITypedButton.CLICK_EVENT:
+			case FlxUIButton.CLICK_EVENT:
 				if (sender == btn_save) {
 					updateSwatch();
 				}else if(params != null){

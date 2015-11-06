@@ -114,7 +114,14 @@ class EntityGraphics implements IFlxDestroyable
 	
 	public function getScaleSuffix():String
 	{
-		return "_sX:" + scaleX + "_sY:" + scaleY;
+		var sX:Float = scaleX;
+		var sY:Float = scaleY;
+		if (skin != null)
+		{
+			sX *= skin.scaleX;
+			sY *= skin.scaleY;
+		}
+		return "_sX:" + sX + "_sY:" + sY;
 	}
 	
 	public function get_scaledColorKey():String
