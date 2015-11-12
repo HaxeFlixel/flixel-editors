@@ -588,6 +588,11 @@ class EntitySprite extends FlxSprite
 		{
 			for (i in 0..._layerSprites.members.length)
 			{
+				if (_layerSprites.x != x || _layerSprites.y != y) {
+					_layerSprites.x = x;
+					_layerSprites.y = y;
+					_layerSprites.offset.set(offset.x, offset.y);
+				}
 				_layerSprites.members[i].animation.frameIndex = animation.frameIndex;
 				_layerSprites.members[i].draw();
 			}
