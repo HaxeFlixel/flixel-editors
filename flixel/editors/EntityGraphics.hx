@@ -498,6 +498,8 @@ class EntityGraphics implements IFlxDestroyable
 				}
 				a.looped = U.xml_bool(animNode.x, "looped") || U.xml_bool(animNode.x,"loop");
 				a.frameRate = U.xml_i(animNode.x, "framerate");
+				a.flipX = U.xml_bool(animNode.x, "flipX");
+				a.flipY = U.xml_bool(animNode.x, "flipY");
 				if (animNode.hasNode.frame) {
 					var i:Int = 0;
 					for (frameNode in animNode.nodes.frame)

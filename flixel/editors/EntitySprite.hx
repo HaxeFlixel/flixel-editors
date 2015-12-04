@@ -10,9 +10,11 @@ import flixel.animation.FlxAnimation;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
+import flixel.graphics.frames.FlxFrame;
 import flixel.graphics.frames.FlxTileFrames;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxPoint;
+import flixel.math.FlxRect;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxColor;
 import flixel.graphics.FlxGraphic;
@@ -65,7 +67,7 @@ class EntitySprite extends FlxSprite
 	{
 		if (!fromAtlas) {
 			
-			animation.add(anim.name, anim.frames, anim.frameRate, anim.looped);
+			animation.add(anim.name, anim.frames, anim.frameRate, anim.looped, anim.flipX, anim.flipY);
 			
 		}
 		else {
@@ -212,7 +214,7 @@ class EntitySprite extends FlxSprite
 		{
 			fNames.push(Std.string(anim.frames[i]));
 		}
-		sprite.animation.addByNames(anim.name, fNames, anim.frameRate, anim.looped);
+		sprite.animation.addByNames(anim.name, fNames, anim.frameRate, anim.looped, anim.flipX, anim.flipY);
 	}
 	
 	private function checkHasAtlas(path:String, file:String, useAssets:Bool=true):Bool
@@ -290,7 +292,17 @@ class EntitySprite extends FlxSprite
 		return "";
 	}
 	
-	private function loadAtlasFrames(sprite:FlxSprite, gfx:EntityGraphics, asset_src:String, xmlStr:String):Void
+	public function logFrames():Void
+	{
+		var i:Int = 0;
+		for (flxFrame in frames.frames)
+		{
+			FlxG.bitmapLog.add(flxFrame.paint(), "frame:" + i);
+			i++;
+		}
+	}
+	
+	private function loadAtlasFrames(sprite:FlxSprite, gfx:EntityGraphics, asset_src:String, xmlStr:String, bakeScale:Bool=true):Void
 	{
 		var skin = gfx.skin;
 		var imgSrc = U.gfx(skin.path + "/" + asset_src);
@@ -581,6 +593,7 @@ class EntitySprite extends FlxSprite
 		}
 	}
 	
+	@:access(flixel.animation.FlxAnimation)
 	override public function draw():Void
 	{
 		super.draw();
@@ -594,6 +607,11 @@ class EntitySprite extends FlxSprite
 					_layerSprites.offset.set(offset.x, offset.y);
 				}
 				_layerSprites.members[i].animation.frameIndex = animation.frameIndex;
+				if (animation.curAnim != null && _layerSprites.members[i].animation.curAnim != null)
+				{
+					_layerSprites.members[i].animation.curAnim.flipX = animation.curAnim.flipX;
+					_layerSprites.members[i].animation.curAnim.flipY = animation.curAnim.flipY;
+				}
 				_layerSprites.members[i].draw();
 			}
 		}
@@ -665,6 +683,9 @@ class EntitySprite extends FlxSprite
 	}
 	
 	/**PRIVATE**/
+	
+	private var _animFlipX:Bool = false;
+	private var _animFlipY:Bool = false;
 	
 	private var _dirtyAnim:String = "";
 	

@@ -21,6 +21,9 @@ class AnimationData implements IFlxDestroyable
 	public var frameRate:Int = 30;
 	public var looped:Bool = false;
 	
+	public var flipX:Bool = false;
+	public var flipY:Bool = false;
+	
 	public function new() 
 	{
 		frames = [];
