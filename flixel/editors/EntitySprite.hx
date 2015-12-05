@@ -140,6 +140,14 @@ class EntitySprite extends FlxSprite
 		if (existScale)
 		{
 			skipLoad = true;
+			
+			var scaleIsOne = Math.abs(sX - 1.0) < 0.00000001 && Math.abs(sY - 1.0) < 0.00000001;
+			
+			if (!scaleIsOne && G.scaleSmooth)
+			{
+				antialiasing = true;
+			}
+			
 			var frameWidth:Int = Math.round(G.skin.width * sX);
 			var frameHeight:Int = Math.round(G.skin.height * sY);
 			
@@ -205,6 +213,15 @@ class EntitySprite extends FlxSprite
 		}
 		
 		loadAnimations(G.animations, true, hasAtlas);
+		
+		if (_layerSprites != null && _layerSprites.members != null) {
+			for (i in 0..._layerSprites.members.length)
+			{
+				if (_layerSprites.members[i] != null) {
+					_layerSprites.members[i].antialiasing = antialiasing;
+				}
+			}
+		}
 	}
 	
 	private function addAtlasAnimation(sprite:FlxSprite, anim:AnimationData):Void
@@ -302,7 +319,7 @@ class EntitySprite extends FlxSprite
 		}
 	}
 	
-	private function loadAtlasFrames(sprite:FlxSprite, gfx:EntityGraphics, asset_src:String, xmlStr:String, bakeScale:Bool=true):Void
+	private function loadAtlasFrames(sprite:FlxSprite, gfx:EntityGraphics, asset_src:String, xmlStr:String):Void
 	{
 		var skin = gfx.skin;
 		var imgSrc = U.gfx(skin.path + "/" + asset_src);
@@ -313,11 +330,130 @@ class EntitySprite extends FlxSprite
 		var sX:Float = gfx.scaleX * gfx.skin.scaleX;
 		var sY:Float = gfx.scaleY * gfx.skin.scaleY;
 		
+		var scaleIsOne = Math.abs(sX - 1.0) < 0.00000001 && Math.abs(sY - 1.0) < 0.00000001;
+		
+		if (!scaleIsOne && gfx.scaleSmooth)
+		{
+			antialiasing = true;
+		}
+		
 		sprite.scale.set(sX, sY);
-		sprite.width = Std.int(sX * gfx.skin.width); // sprite.frameWidth;
+		sprite.width  = Std.int(sX * gfx.skin.width);  // sprite.frameWidth;
 		sprite.height = Std.int(sY * gfx.skin.height); // sprite.frameHeight;
 		sprite.updateHitbox();
+		
+		return;
+		
+		/**
+		 * Probably totally unecessary now:
+		 * 
+		if (bakeScale && !(scaleIsOne)) {
+			
+			var imgKey = imgSrc + "_scale:" + sX + "x" + sY;
+			
+			var timer = Lib.getTimer();
+			if (!FlxG.bitmap.checkCache(imgKey))
+			{
+				var imgOrig = FlxG.bitmap.get(imgSrc).bitmap;
+				var W = Std.int(sX * imgOrig.width);
+				var H = Std.int(sY * imgOrig.height);
+				
+				var bmp2:BitmapData = new BitmapData(W, H, true, 0x00000000);
+				
+				var rect = new Rectangle();
+				
+				//make a bitmap data to hold each frame image
+				
+				var frameBmp:BitmapData  = new BitmapData(gfx.skin.width, gfx.skin.height, true, 0x00000000);
+				//new BitmapData(Std.int(rect.width), Std.int(rect.height), true, 0x00000000);
+				
+				var frameBmp2:BitmapData = null;// new BitmapData(Std.int(frameBmp.width * sX), Std.int(frameBmp.height * sY), true, 0x00000000);
+				var zeroPt = new Point();
+				var destPt = new Point();
+				var matrix = new Matrix();
+				
+				var i:Int = 0;
+				for (frame in tex.frames) {
+					
+					//copy to the frame bitmap
+					frameBmp = framePaint(frame, frameBmp);
+					
+					//draw scaled down to the separate buffer
+					var sw = Std.int(frameBmp.width  * sX + 0.5);
+					var sh = Std.int(frameBmp.height * sY + 0.5);
+					var sx = Std.int(frame.offset.x * sX);
+					var sy = Std.int(frame.offset.y * sY);
+					if (frameBmp2 != null && (frameBmp2.width < sw || frameBmp2.height < sh)) frameBmp2 = null;
+					if (frameBmp2 == null) {
+						frameBmp2 = new BitmapData(sw, sh, true, 0x00000000);
+					}
+					matrix.identity();
+					matrix.scale(sX, sY);
+					frameBmp2.fillRect(frameBmp2.rect, 0x00000000);
+					rect.setTo(sx, sy, sw, sh);
+					frameBmp2.draw(frameBmp, matrix, null, null, rect, true);
+					
+					//copy to the final atlas location
+					rect.setTo(sx, sy, Std.int(frame.frame.width * sX + 0.5), Std.int(frame.frame.height * sY + 0.5));
+					destPt.setTo(Std.int(frame.frame.x * sX + 0.5), Std.int(frame.frame.y * sY + 0.5));
+					bmp2.copyPixels(frameBmp2, rect, destPt, null, null, true);
+					i++;
+					
+				}
+				
+				FlxG.bitmap.add(bmp2, false, imgKey);
+				var totalTime = Lib.getTimer() - timer;
+				#if sys
+					Sys.println("totalTime to scale atlas = " + totalTime);
+				#end
+			}
+			
+			var gfx = FlxG.bitmap.get(imgKey);
+			
+			var newFrames = new FlxAtlasFrames(gfx);
+			for (frame in tex.frames) {
+				var r:FlxRect = new FlxRect(Std.int(frame.frame.x * sX+0.5), Std.int(frame.frame.y * sY+0.5), Std.int(frame.frame.width * sX + 0.5), Std.int(frame.frame.height * sY + 0.5));
+				var o:FlxPoint = new FlxPoint(Std.int(frame.offset.x * sX), Std.int(frame.offset.y * sY));
+				var s:FlxPoint = new FlxPoint(Std.int(frame.sourceSize.x * sX), Std.int(frame.sourceSize.y * sY));
+				newFrames.addAtlasFrame(r, s, o, frame.name, frame.angle, frame.flipX, frame.flipY);
+			}
+			sprite.frames = newFrames;
+		}
+		
+		*/
 	}
+	
+	private function framePaint(frame:FlxFrame, bmd:BitmapData = null):BitmapData
+	{
+		var w:Int = Std.int(frame.sourceSize.x);
+		var h:Int = Std.int(frame.sourceSize.y);
+		
+		if (frame.offset.x + frame.frame.width  > w) w = Std.int(frame.offset.x + frame.frame.width);
+		if (frame.offset.y + frame.frame.height > h) h = Std.int(frame.offset.y + frame.frame.height);
+		
+		if (bmd != null)
+		{
+			if (bmd.width != w || bmd.height != h)
+			{
+				bmd = null;
+			}
+			else
+			{
+				bmd.fillRect(bmd.rect, FlxColor.TRANSPARENT);
+			}
+		}
+		
+		if (bmd == null)
+		{
+			bmd = new BitmapData(w, h, true, FlxColor.TRANSPARENT);
+		}
+		
+		frame.offset.copyToFlash(FlxPoint.point2);
+		bmd.copyPixels(frame.parent.bitmap, frame.frame.copyToFlash(FlxRect.rect), FlxPoint.point2);
+		
+		return bmd;
+	}
+	
 	
 	private function basicLoad(G:EntityGraphics):Void
 	{
@@ -347,6 +483,12 @@ class EntitySprite extends FlxSprite
 		
 		var sX:Float = G.scaleX * G.skin.scaleX;
 		var sY:Float = G.scaleX * G.skin.scaleY;
+		
+		var scaleIsOne = Math.abs(sX - 1.0) < 0.00000001 && Math.abs(sY - 1.0) < 0.00000001;
+		if (!scaleIsOne && G.scaleSmooth)
+		{
+			antialiasing = true;
+		}
 		
 		var fWidth:Int = Math.round(s.width * sX);
 		var fHeight:Int = Math.round(s.height * sY);
