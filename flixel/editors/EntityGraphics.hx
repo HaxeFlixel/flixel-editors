@@ -269,6 +269,8 @@ class EntityGraphics implements IFlxDestroyable
 			animXml.set("name", anim.name);
 			animXml.set("framerate", Std.string(anim.frameRate));
 			animXml.set("looped", Std.string(anim.looped));
+			animXml.set("flipX", Std.string(anim.flipX));
+			animXml.set("flipY", Std.string(anim.flipY));
 			for (i in 0...anim.frames.length) {
 				var frameXml:Xml = Xml.createElement("frame");
 				frameXml.set("value", Std.string(anim.frames[i]));

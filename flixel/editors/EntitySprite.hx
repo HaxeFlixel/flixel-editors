@@ -632,7 +632,10 @@ class EntitySprite extends FlxSprite
 				}
 				for (key in Anims.keys())
 				{
-					addAtlasAnimation(_layerSprites.members[i], Anims.get(key));
+					if (fromAtlas)
+					{
+						addAtlasAnimation(_layerSprites.members[i], Anims.get(key));
+					}
 				}
 			}
 		}
