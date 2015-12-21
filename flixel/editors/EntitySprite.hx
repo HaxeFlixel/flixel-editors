@@ -148,8 +148,8 @@ class EntitySprite extends FlxSprite
 				antialiasing = true;
 			}
 			
-			var frameWidth:Int = Math.round(G.skin.width * sX);
-			var frameHeight:Int = Math.round(G.skin.height * sY);
+			var frameWidth:Int = Std.int(G.skin.width * sX);
+			var frameHeight:Int = Std.int(G.skin.height * sY);
 			
 			if (skey != "") key = skey;
 			
