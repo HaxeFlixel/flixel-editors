@@ -39,6 +39,9 @@ class EntitySprite extends FlxSprite
 	public var name:String;
 	public var recycled:Bool = false;
 	public var destroyed(default, null):Bool = false;
+
+	private var framePaintPoint:Point = new Point();
+	private var framePaintRect:Rectangle = new Rectangle();
 	
 	/**
 	 * Callback for when a sweet-spot animation frame is played, parameters:
@@ -448,8 +451,8 @@ class EntitySprite extends FlxSprite
 			bmd = new BitmapData(w, h, true, FlxColor.TRANSPARENT);
 		}
 		
-		frame.offset.copyToFlash(FlxPoint.point2);
-		bmd.copyPixels(frame.parent.bitmap, frame.frame.copyToFlash(FlxRect.rect), FlxPoint.point2);
+		frame.offset.copyToFlash(framePaintPoint);
+		bmd.copyPixels(frame.parent.bitmap, frame.frame.copyToFlash(framePaintRect), framePaintPoint);
 		
 		return bmd;
 	}
