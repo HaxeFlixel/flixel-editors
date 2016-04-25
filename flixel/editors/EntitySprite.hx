@@ -453,8 +453,6 @@ class EntitySprite extends FlxSprite
 		
 		frame.offset.copyToFlash(framePaintPoint);
 		bmd.copyPixels(frame.parent.bitmap, frame.frame.copyToFlash(framePaintRect), framePaintPoint);
-		frame.offset.copyToFlash(pt);
-		bmd.copyPixels(frame.parent.bitmap, frame.frame.copyToFlash(rect),pt);
 		
 		return bmd;
 	}
