@@ -148,8 +148,8 @@ class EntitySprite extends FlxSprite
 				antialiasing = true;
 			}
 			
-			var frameWidth:Int = Std.int(G.skin.width * sX);
-			var frameHeight:Int = Std.int(G.skin.height * sY);
+			var frameWidth:Int = Math.round(G.skin.width * sX);
+			var frameHeight:Int = Math.round(G.skin.height * sY);
 			
 			if (skey != "") key = skey;
 			
@@ -448,8 +448,10 @@ class EntitySprite extends FlxSprite
 			bmd = new BitmapData(w, h, true, FlxColor.TRANSPARENT);
 		}
 		
-		frame.offset.copyToFlash(FlxPoint.point2);
-		bmd.copyPixels(frame.parent.bitmap, frame.frame.copyToFlash(FlxRect.rect), FlxPoint.point2);
+		var pt = new Point();
+		var rect = new Rectangle();
+		frame.offset.copyToFlash(pt);
+		bmd.copyPixels(frame.parent.bitmap, frame.frame.copyToFlash(rect),pt);
 		
 		return bmd;
 	}
@@ -524,7 +526,6 @@ class EntitySprite extends FlxSprite
 		}
 		else
 		{
-			
 			//Scale to appropriate size
 			var scaledPixels:BitmapData = new BitmapData(newWidth, newHeight,true,0x00000000);
 			var matrix:Matrix = new Matrix();

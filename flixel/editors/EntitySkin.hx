@@ -264,6 +264,7 @@ class EntitySkin implements IFlxDestroyable
 		copy.using_structure = using_structure;
 		copy.scaleX = scaleX;
 		copy.scaleY = scaleY;
+		copy.blend = blend;
 		
 		if (list_color_features != null)
 		{
@@ -299,6 +300,7 @@ class EntitySkin implements IFlxDestroyable
 		xml.set("off_y", Std.string(off_y));
 		xml.set("scale_x", Std.string(scaleX));
 		xml.set("scale_y", Std.string(scaleY));
+		xml.set("blend", Std.string(blend));
 		if (color_change_mode != EntityGraphics.COLOR_CHANGE_NONE) {
 			var colors:Xml = Xml.createElement("colors");
 			if (color_change_mode == EntityGraphics.COLOR_CHANGE_LAYERS_BAKED) {

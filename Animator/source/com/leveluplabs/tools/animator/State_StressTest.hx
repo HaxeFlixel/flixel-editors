@@ -127,7 +127,7 @@ class State_StressTest extends FlxUIState
 			case FlxUIButton.CLICK_EVENT:
 				var str:String = "";
 				if (params != null && params.length >= 1) {
-					str = cast params[0];
+					str = Std.string(params[0]);
 					if (str == "animator") {
 						FlxG.switchState(new State_Animator());
 					}

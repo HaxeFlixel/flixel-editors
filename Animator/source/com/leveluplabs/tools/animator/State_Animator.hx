@@ -1116,11 +1116,11 @@ class State_Animator extends FlxUIState
 				}else if (sender == btn_anim_rename) {
 					renameAnimation();
 				}else if (sender.name == "btn_change_color_feature") {
-					var paletteName:String = cast params[0];
-					var featureName:String = cast params[1];
+					var paletteName:String = Std.string(params[0]);
+					var featureName:String = Std.string(params[1]);
 					changeColorFeature(featureName,paletteName);
 				}else if (sender.name == "btn_delete_color_feature") {
-					var featureName:String = cast params[0];
+					var featureName:String = Std.string(params[0]);
 					deleteColorFeature(featureName);
 				}else if (sender.name == "btn_new_color_feature") {
 					newColorFeature();
