@@ -527,6 +527,7 @@ class EntitySprite extends FlxSprite
 		}
 		else
 		{
+			
 			//Scale to appropriate size
 			var scaledPixels:BitmapData = new BitmapData(newWidth, newHeight,true,0x00000000);
 			var matrix:Matrix = new Matrix();
