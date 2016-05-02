@@ -66,6 +66,33 @@ class EntitySprite extends FlxSprite
 		}
 	}
 	
+	public override function destroy():Void
+	{
+		destroyed = true;
+		super.destroy();
+		if (_layerSprites != null)
+		{
+			_layerSprites.destroy();
+		}
+		_layerSprites = null;
+		onSweetSpotCallback = null;
+		framePaintPoint = null;
+		framePaintRect = null;
+		
+		if (_sweetSpotMap != null)
+		{
+			for (key in _sweetSpotMap.keys())
+			{
+				var arr = _sweetSpotMap.get(key);
+				FlxArrayUtil.clearArray(arr);
+				_sweetSpotMap.remove(key);
+			}
+		}
+		_sweetSpotMap = null;
+		
+		FlxArrayUtil.clearArray(_layerSpriteProperties);
+	}
+	
 	public function addAnimation(anim:AnimationData, fromAtlas:Bool=false):Void
 	{
 		if (!fromAtlas) {
@@ -700,17 +727,6 @@ class EntitySprite extends FlxSprite
 			}
 		}
 		return null;
-	}
-	
-	public override function destroy():Void
-	{
-		destroyed = true;
-		super.destroy();
-		if (_layerSprites != null)
-		{
-			_layerSprites.destroy();
-		}
-		_layerSprites = null;
 	}
 	
 	override function updateMotion(elapsed:Float):Void 
