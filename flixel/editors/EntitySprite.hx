@@ -554,16 +554,29 @@ class EntitySprite extends FlxSprite
 		}
 		else
 		{
+			var effScaleX = (newWidth / pixels.width);
+			var effScaleY = (newHeight / pixels.height);
+			var scaledPixels:BitmapData=null;
+			var matrix:Matrix=null;
 			
-			//Scale to appropriate size
-			var scaledPixels:BitmapData = new BitmapData(newWidth, newHeight,true,0x00000000);
-			var matrix:Matrix = new Matrix();
-			matrix.scale(newWidth / pixels.width, newHeight / pixels.height);
-			
-			scaledPixels.draw(pixels, matrix, null, null, null, G.scaleSmooth);
-			
-			//Load resulting image
-			loadGraphic(scaledPixels, true, fWidth, fHeight, false, scaleKey);
+			if (!G.scaleWithHardware)
+			{
+				//Scale to appropriate size
+				var scaledPixels:BitmapData = new BitmapData(newWidth, newHeight,true,0x00000000);
+				matrix = new Matrix();
+				matrix.scale(effScaleX, effScaleY);
+				
+				scaledPixels.draw(pixels, matrix, null, null, null, G.scaleSmooth);
+				
+				//Load resulting image
+				loadGraphic(scaledPixels, true, fWidth, fHeight, false, scaleKey);
+			}
+			else
+			{
+				scale.set(effScaleX, effScaleY);
+				updateHitbox();
+				antialiasing = G.scaleSmooth;
+			}
 			
 			//If it's a sprite stack...
 			if (isStack && _layerSprites != null)
@@ -571,15 +584,23 @@ class EntitySprite extends FlxSprite
 				//Scale the various layers
 				for (i in 0..._layerSprites.members.length)
 				{
-					
-					scaledPixels = new BitmapData(newWidth, newHeight, true, 0x00000000);
-					scaledPixels.draw(_layerSprites.members[i].graphic.bitmap, matrix, null, null, null, G.scaleSmooth);
-					
-					var sgfx:FlxGraphic = null;
-					
-					var skey:String = _layerSprites.members[i].graphic.key + G.getScaleSuffix();
-					sgfx = FlxG.bitmap.add(scaledPixels, false, skey);
-					_layerSprites.members[i].loadGraphic(sgfx, true, fWidth, fHeight);
+					if (!G.scaleWithHardware)
+					{
+						scaledPixels = new BitmapData(newWidth, newHeight, true, 0x00000000);
+						scaledPixels.draw(_layerSprites.members[i].graphic.bitmap, matrix, null, null, null, G.scaleSmooth);
+						
+						var sgfx:FlxGraphic = null;
+						
+						var skey:String = _layerSprites.members[i].graphic.key + G.getScaleSuffix();
+						sgfx = FlxG.bitmap.add(scaledPixels, false, skey);
+						_layerSprites.members[i].loadGraphic(sgfx, true, fWidth, fHeight);
+					}
+					else
+					{
+						_layerSprites.members[i].scale.set(effScaleX, effScaleY);
+						_layerSprites.members[i].updateHitbox();
+						_layerSprites.members[i].antialiasing = G.scaleSmooth;
+					}
 				}
 			}
 		}

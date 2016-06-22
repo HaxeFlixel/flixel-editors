@@ -42,6 +42,7 @@ class EntityGraphics implements IFlxDestroyable
 	public var scaleY:Float = 1.0;
 	
 	public var scaleSmooth:Bool = true;
+	public var scaleWithHardware:Bool = false;			//If true, scales using the scale property, if false, uses BitmapData.draw()
 	
 	public var colorKey(get, null):String;				//Returns a unique identifier for the current skin (combination of asset file(s) + custom color rules)
 														//examples: 
@@ -231,6 +232,7 @@ class EntityGraphics implements IFlxDestroyable
 		eg.scaleX = scaleX;
 		eg.scaleY = scaleY;
 		eg.scaleSmooth = scaleSmooth;
+		eg.scaleWithHardware = scaleWithHardware;
 		eg.ignoreColor = ignoreColor;
 		eg.skinName = skinName;
 		return eg;
