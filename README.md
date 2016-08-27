@@ -1,7 +1,7 @@
 flixel-editors
 ===========
 
-[![Build Status](https://travis-ci.org/HaxeFlixel/flixel-editors.png)](https://travis-ci.org/HaxeFlixel/flixel-editors)
+[![Build Status](https://img.shields.io/travis/HaxeFlixel/flixel-editors.svg?style=flat-square)](https://travis-ci.org/HaxeFlixel/flixel-editors)
 
 A set of editors for HaxeFlixel
 
