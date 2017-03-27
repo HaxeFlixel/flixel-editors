@@ -5,7 +5,8 @@ flixel-editors
 
 A set of editors for HaxeFlixel
 
-#Animator
+# Animator
+
 Animator is a tool for viewing, building, and colorizing animations and "skins" for HaxeFlixel-based "Entity" objects.
 It's NOT for creating animations from scratch (like GraphicsGale), but for easily creating the necessary animation & colorization metadata visually.
 
