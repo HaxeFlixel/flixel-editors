@@ -15,6 +15,7 @@ import flixel.graphics.frames.FlxTileFrames;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
+import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxColor;
 import flixel.graphics.FlxGraphic;
@@ -349,10 +350,19 @@ class EntitySprite extends FlxSprite
 		}
 	}
 	
-	private function loadAtlasFrames(sprite:FlxSprite, gfx:EntityGraphics, asset_src:String, xmlStr:String):Void
+	private function loadAtlasFrames(sprite:FlxSprite, gfx:EntityGraphics, asset_src:String, xmlStr:String, flxGraphic:FlxGraphic=null):Void
 	{
 		var skin = gfx.skin;
-		var imgSrc = U.gfx(skin.path + "/" + asset_src);
+		var imgSrc:FlxGraphicAsset = null;
+		
+		if (asset_src == null)
+		{
+			imgSrc = flxGraphic;
+		}
+		else
+		{
+			imgSrc = U.gfx(skin.path + "/" + asset_src);
+		}
 		
 		var tex = FlxAtlasFrames.fromSparrow(imgSrc, xmlStr);
 		sprite.frames = tex;
@@ -368,89 +378,11 @@ class EntitySprite extends FlxSprite
 		}
 		
 		sprite.scale.set(sX, sY);
-		sprite.width  = Std.int(sX * gfx.skin.width);  // sprite.frameWidth;
-		sprite.height = Std.int(sY * gfx.skin.height); // sprite.frameHeight;
+		sprite.width  = Std.int(sX * gfx.skin.width);
+		sprite.height = Std.int(sY * gfx.skin.height);
 		sprite.updateHitbox();
 		
 		return;
-		
-		/**
-		 * Probably totally unecessary now:
-		 * 
-		if (bakeScale && !(scaleIsOne)) {
-			
-			var imgKey = imgSrc + "_scale:" + sX + "x" + sY;
-			
-			var timer = Lib.getTimer();
-			if (!FlxG.bitmap.checkCache(imgKey))
-			{
-				var imgOrig = FlxG.bitmap.get(imgSrc).bitmap;
-				var W = Std.int(sX * imgOrig.width);
-				var H = Std.int(sY * imgOrig.height);
-				
-				var bmp2:BitmapData = new BitmapData(W, H, true, 0x00000000);
-				
-				var rect = new Rectangle();
-				
-				//make a bitmap data to hold each frame image
-				
-				var frameBmp:BitmapData  = new BitmapData(gfx.skin.width, gfx.skin.height, true, 0x00000000);
-				//new BitmapData(Std.int(rect.width), Std.int(rect.height), true, 0x00000000);
-				
-				var frameBmp2:BitmapData = null;// new BitmapData(Std.int(frameBmp.width * sX), Std.int(frameBmp.height * sY), true, 0x00000000);
-				var zeroPt = new Point();
-				var destPt = new Point();
-				var matrix = new Matrix();
-				
-				var i:Int = 0;
-				for (frame in tex.frames) {
-					
-					//copy to the frame bitmap
-					frameBmp = framePaint(frame, frameBmp);
-					
-					//draw scaled down to the separate buffer
-					var sw = Std.int(frameBmp.width  * sX + 0.5);
-					var sh = Std.int(frameBmp.height * sY + 0.5);
-					var sx = Std.int(frame.offset.x * sX);
-					var sy = Std.int(frame.offset.y * sY);
-					if (frameBmp2 != null && (frameBmp2.width < sw || frameBmp2.height < sh)) frameBmp2 = null;
-					if (frameBmp2 == null) {
-						frameBmp2 = new BitmapData(sw, sh, true, 0x00000000);
-					}
-					matrix.identity();
-					matrix.scale(sX, sY);
-					frameBmp2.fillRect(frameBmp2.rect, 0x00000000);
-					rect.setTo(sx, sy, sw, sh);
-					frameBmp2.draw(frameBmp, matrix, null, null, rect, true);
-					
-					//copy to the final atlas location
-					rect.setTo(sx, sy, Std.int(frame.frame.width * sX + 0.5), Std.int(frame.frame.height * sY + 0.5));
-					destPt.setTo(Std.int(frame.frame.x * sX + 0.5), Std.int(frame.frame.y * sY + 0.5));
-					bmp2.copyPixels(frameBmp2, rect, destPt, null, null, true);
-					i++;
-					
-				}
-				
-				FlxG.bitmap.add(bmp2, false, imgKey);
-				var totalTime = Lib.getTimer() - timer;
-				#if sys
-					Sys.println("totalTime to scale atlas = " + totalTime);
-				#end
-			}
-			
-			var gfx = FlxG.bitmap.get(imgKey);
-			
-			var newFrames = new FlxAtlasFrames(gfx);
-			for (frame in tex.frames) {
-				var r:FlxRect = new FlxRect(Std.int(frame.frame.x * sX+0.5), Std.int(frame.frame.y * sY+0.5), Std.int(frame.frame.width * sX + 0.5), Std.int(frame.frame.height * sY + 0.5));
-				var o:FlxPoint = new FlxPoint(Std.int(frame.offset.x * sX), Std.int(frame.offset.y * sY));
-				var s:FlxPoint = new FlxPoint(Std.int(frame.sourceSize.x * sX), Std.int(frame.sourceSize.y * sY));
-				newFrames.addAtlasFrame(r, s, o, frame.name, frame.angle, frame.flipX, frame.flipY);
-			}
-			sprite.frames = newFrames;
-		}
-		
-		*/
 	}
 	
 	private function framePaint(frame:FlxFrame, bmd:BitmapData = null):BitmapData
@@ -927,10 +859,8 @@ class EntitySprite extends FlxSprite
 	{
 		//Get the base layer
 		
-		var baseLayer:BitmapData = getBmp(G.asset_src,G.remotePath);
-		var baseCopy = baseLayer.clone();
-		
-		baseLayer = null;
+		var baseLayer:BitmapData = getBmp(G.asset_src, G.remotePath);
+		var baseCopy:BitmapData = baseLayer.clone();
 		
 		var orig_color:FlxColor=0;
 		var pix_color:FlxColor=0;
@@ -974,9 +904,12 @@ class EntitySprite extends FlxSprite
 					}
 					if (!ignored && replace_color != 0x00000000) 
 					{
-						try {
+						try
+						{
 							baseCopy.threshold(baseCopy, baseCopy.rect, _flashPointZero, "==", orig_color, replace_color);
-						}catch (msg:Dynamic) {
+						}
+						catch (msg:Dynamic)
+						{
 							FlxG.log.error(msg);
 						}
 					}
@@ -984,8 +917,19 @@ class EntitySprite extends FlxSprite
 			}
 		}
 		
-		//Load the base copy into our graphic and cache it with our custom color key
-		loadGraphic(baseCopy, true, G.skin.width, G.skin.height, false, G.colorKey);
+		var xmlStr = getAtlasXmlStr(G.skin.path, G.skin.asset_meta);
+		var hasAtlas = (xmlStr != "");
+		
+		if (!hasAtlas)
+		{
+			//Load the base copy into our graphic and cache it with our custom color key
+			loadGraphic(baseCopy, true, G.skin.width, G.skin.height, false, G.colorKey);
+		}
+		else
+		{
+			var graphic = FlxG.bitmap.add(baseCopy, true, G.colorKey);
+			loadAtlasFrames(this, G, null, xmlStr, graphic);
+		}
 	}
 	
 	private function loadCustomColorLayersStacked(G:EntityGraphics):Void
