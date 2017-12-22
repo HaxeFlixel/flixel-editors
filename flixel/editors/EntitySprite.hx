@@ -927,7 +927,11 @@ class EntitySprite extends FlxSprite
 		}
 		else
 		{
-			var graphic = FlxG.bitmap.add(baseCopy, true, G.colorKey);
+			var graphic = FlxG.bitmap.get(G.colorKey);
+			if (graphic == null)
+			{
+				graphic = FlxG.bitmap.add(baseCopy, true, G.colorKey);
+			}
 			loadAtlasFrames(this, G, null, xmlStr, graphic);
 		}
 	}
