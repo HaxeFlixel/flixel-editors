@@ -303,7 +303,8 @@ class EntityGraphics implements IFlxDestroyable
 			gfxXml.addChild(animXml);
 		}
 		
-		for (key in map_skins.keys()) {
+		for (key in map_skins.keys())
+		{
 			var s:EntitySkin = map_skins.get(key);
 			var skinXml:Fast = s.toXML();
 			gfxXml.addChild(skinXml.x);
@@ -350,6 +351,72 @@ class EntityGraphics implements IFlxDestroyable
 		}
 	}
 	
+	private function isPlatform(name:String):Bool
+	{
+		switch(name)
+		{
+			case "windows":
+				#if windows
+				return true;
+				#end
+			case "mac":
+				#if mac
+				return true;
+				#end
+			case "linux":
+				#if linux
+				return true;
+				#end
+			case "ps4":
+				#if (ps4 || simulate == "ps4")
+				return true;
+				#end
+			case "vita":
+				#if (vita || simulate == "vita")
+				return true;
+				#end
+			case "xbox1":
+				#if (xbox1 || simulate == "xbox1")
+				return true;
+				#end
+			case "sys":
+				#if sys
+				return true;
+				#end
+			case "flash":
+				#if flash
+				return true;
+				#end
+			case "html5":
+				#if html5
+				return true;
+				#end
+			case "web":
+				#if web
+				return true;
+				#end
+		}
+		return false;
+	}
+	
+	private function platformCheck(skinNode:Fast):Bool
+	{
+		//Check platform compatibility per skin
+		if (skinNode.hasNode.platform)
+		{
+			for (platformNode in skinNode.nodes.platform)
+			{
+				var pName = U.xml_str(platformNode.x, "name");
+				Sys.println("platform = " + pName + " is ? " + isPlatform(pName));
+				if (!isPlatform(pName))
+				{
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
 	/**
 	 * Load all the skin information from the xml
 	 * @param	xml
@@ -369,6 +436,11 @@ class EntityGraphics implements IFlxDestroyable
 			
 			for (skinNode in xml.nodes.skin)
 			{
+				if (!platformCheck(skinNode))
+				{
+					continue;
+				}
+				
 				//Get all the basic properties
 				
 				var sName = U.xml_str(skinNode.x, "name", true);
@@ -584,6 +656,11 @@ class EntityGraphics implements IFlxDestroyable
 		{
 			for (skinNode in xml.nodes.skin)
 			{
+				if (!platformCheck(skinNode)) 
+				{
+					continue;
+				}
+				
 				var sName:String = U.xml_str(skinNode.x, "name");
 				var s:EntitySkin = map_skins.get(sName);
 				
