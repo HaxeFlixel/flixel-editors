@@ -932,7 +932,6 @@ class EntitySprite extends FlxSprite
 		}
 		else
 		{
-			var graphic = FlxG.bitmap.add(baseCopy, true, G.colorKey);
 			loadAtlasFrames(this, G, null, xmlStr, graphic);
 		}
 	}
@@ -1086,10 +1085,17 @@ class EntitySprite extends FlxSprite
 						}
 						
 						//Stamp it on the base
-						pixels.copyPixels(piece, piece.rect, zpt, null, null, true);
+						try
+						{
+							pixels.copyPixels(piece, piece.rect, zpt, null, null, true);
+						}
+						catch (msg:Dynamic)
+						{
+							FlxG.log.error("EntitySprite.loadCustomColorLayersBaked(), couldn't copy piece form layer : " + layer.asset_src + " msg = " + msg);
+						}
 						
 						//destroy piece
-						piece.dispose();
+						dispose(piece, G.skin.path + "/" + layer.asset_src, G.remotePath);
 						piece = null;
 					}
 				}
@@ -1100,6 +1106,19 @@ class EntitySprite extends FlxSprite
 				i++;
 			}
 		}
+	}
+	
+	private function dispose(piece:BitmapData, file:String, remotePath:String)
+	{
+		if (remotePath == "" || remotePath == null)
+		{
+			var daPath = U.gfx(file);
+			if (Assets.cache.hasBitmapData(daPath))
+			{
+				Assets.cache.removeBitmapData(daPath);
+			}
+		}
+		piece.dispose();
 	}
 	
 	private function safeColorTransform(piece:BitmapData, trans:ColorTransform):BitmapData
