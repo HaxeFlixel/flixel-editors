@@ -629,6 +629,11 @@ class EntitySprite extends FlxSprite
 			}
 		}
 		
+		loadCustomColorsWork(G);
+	}
+	
+	private function loadCustomColorsWork(G:EntityGraphics)
+	{
 		//Else, construct it from scratch using the proper method
 		if (G.skin.color_change_mode == EntityGraphics.COLOR_CHANGE_LAYERS_BAKED) 
 		{
