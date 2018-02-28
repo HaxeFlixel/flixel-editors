@@ -37,6 +37,7 @@ class EntityGraphics implements IFlxDestroyable
 	public static inline var COLOR_CHANGE_LAYERS_BAKED:Int = 1;		//it's an "HD style" layered sprite, change colors by colorizing & compositing layers
 	public static inline var COLOR_CHANGE_PIXEL_PALETTE:Int = 2;	//it's a pixel-sprite, change colors by palette-swapping exact pixel color values
 	public static inline var COLOR_CHANGE_LAYERS_STACKED:Int = 3;	//it's an "HD style" layered sprite, change colors by colorizing & stacking layers
+	public static inline var COLOR_CHANGE_CUSTOM:Int = 4;	//it's an "HD style" layered sprite, change colors by colorizing & stacking layers
 	
 	public var scaleX:Float = 1.0;
 	public var scaleY:Float = 1.0;
@@ -645,7 +646,7 @@ class EntityGraphics implements IFlxDestroyable
 		}
 	}
 	
-	private function getColorChangeModeFromString(str:String):Int
+	private function getColorChangeModeFromString(mode:String):Int
 	{
 		var i:Int = -1;
 		if (mode == "layers" || mode == "layers_baked" || mode == "baked") {
@@ -654,10 +655,21 @@ class EntityGraphics implements IFlxDestroyable
 			i = COLOR_CHANGE_PIXEL_PALETTE;
 		}else if (mode == "stacked" || mode == "layers_stacked") {
 			i = COLOR_CHANGE_LAYERS_STACKED;
+		}else if (mode.indexOf("custom=") != -1){
+			i = COLOR_CHANGE_CUSTOM;
 		}else {
 			i = COLOR_CHANGE_NONE;
 		}
 		return i;
+	}
+	
+	private function getCustomColorModeFromString(mode:String):String
+	{
+		if (mode.indexOf("custom=") != -1)
+		{
+			return StringTools.replace(mode, "custom=", "");
+		}
+		return "";
 	}
 	
 	private function getColorsFromXMLWork(s:EntitySkin, skinNode:Fast):Void
@@ -785,6 +797,9 @@ class EntityGraphics implements IFlxDestroyable
 					//Determine the color change mode of this skin
 					var mode:String = U.xml_str(skinNode.node.colors.x, "mode", true);
 					s.color_change_mode = getColorChangeModeFromString(mode);	
+					if (s.color_change_mode == COLOR_CHANGE_CUSTOM){
+						s.custom_color_change_mode = getCustomColorModeFromString(mode);
+					}
 					
 					getColorsFromXMLWork(s,skinNode);
 					
