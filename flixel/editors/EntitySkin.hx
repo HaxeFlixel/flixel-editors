@@ -31,6 +31,7 @@ class EntitySkin implements IFlxDestroyable
 	public var isDefault:Bool;					//is this the default skin
 	public var blend:BlendMode;					//blend mode this skin uses
 	public var color_change_mode:Int;			//color change method: COLOR_CHANGE_NONE, COLOR_CHANGE_LAYERS, COLOR_CHANGE_PIXELS
+	public var custom_color_change_mode:String;			
 	public var list_colors:Array<Int>;			//color change values, in correct sorting order (optional: works with PIXELS and LAYERS )
 	public var list_original_pixel_colors:Array<Int>;						//original pixels for color change (optional: COLOR_CHANGE_PIXELS mode only)
 	public var list_color_layers:Array<EntityGraphics.EntityColorLayer>;	//layer structure for color change (optional: COLOR_CHANGE_LAYERS mode only)
@@ -256,6 +257,7 @@ class EntitySkin implements IFlxDestroyable
 		copy.asset_meta = asset_meta;
 		copy.isDefault = isDefault;
 		copy.color_change_mode = color_change_mode;
+		copy.custom_color_change_mode = custom_color_change_mode;
 		copy.list_color_layers = null;
 		copy.list_original_pixel_colors = U.copy_shallow_arr_i(list_original_pixel_colors);
 		copy.list_colors = U.copy_shallow_arr_i(list_colors);
@@ -309,6 +311,8 @@ class EntitySkin implements IFlxDestroyable
 				colors.set("mode", "layers_stacked");
 			}else if(color_change_mode == EntityGraphics.COLOR_CHANGE_PIXEL_PALETTE) {
 				colors.set("mode", "pixels");
+			}else if (color_change_mode == EntityGraphics.COLOR_CHANGE_CUSTOM) {
+				colors.set("mode", "custom=" + custom_color_change_mode);
 			}
 			
 			if (using_default_structure || using_structure != "")

@@ -37,6 +37,7 @@ class EntityGraphics implements IFlxDestroyable
 	public static inline var COLOR_CHANGE_LAYERS_BAKED:Int = 1;		//it's an "HD style" layered sprite, change colors by colorizing & compositing layers
 	public static inline var COLOR_CHANGE_PIXEL_PALETTE:Int = 2;	//it's a pixel-sprite, change colors by palette-swapping exact pixel color values
 	public static inline var COLOR_CHANGE_LAYERS_STACKED:Int = 3;	//it's an "HD style" layered sprite, change colors by colorizing & stacking layers
+	public static inline var COLOR_CHANGE_CUSTOM:Int = 4;	//it's an "HD style" layered sprite, change colors by colorizing & stacking layers
 	
 	public var scaleX:Float = 1.0;
 	public var scaleY:Float = 1.0;
@@ -645,6 +646,133 @@ class EntityGraphics implements IFlxDestroyable
 		}
 	}
 	
+	private function getColorChangeModeFromString(mode:String):Int
+	{
+		var i:Int = -1;
+		if (mode == "layers" || mode == "layers_baked" || mode == "baked") {
+			i = COLOR_CHANGE_LAYERS_BAKED;
+		}else if (mode == "pixels") {
+			i = COLOR_CHANGE_PIXEL_PALETTE;
+		}else if (mode == "stacked" || mode == "layers_stacked") {
+			i = COLOR_CHANGE_LAYERS_STACKED;
+		}else if (mode.indexOf("custom=") != -1){
+			i = COLOR_CHANGE_CUSTOM;
+		}else {
+			i = COLOR_CHANGE_NONE;
+		}
+		return i;
+	}
+	
+	private function getCustomColorModeFromString(mode:String):String
+	{
+		if (mode.indexOf("custom=") != -1)
+		{
+			return StringTools.replace(mode, "custom=", "");
+		}
+		return "";
+	}
+	
+	private function getColorsFromXMLWork(s:EntitySkin, skinNode:Fast):Void
+	{
+		if (s.color_change_mode == COLOR_CHANGE_LAYERS_BAKED || s.color_change_mode == COLOR_CHANGE_LAYERS_STACKED)
+		{
+			var use_default:Bool = U.xml_bool(skinNode.node.colors.x, "use_default");
+			
+			var copySkin:EntitySkin = null;
+			
+			if (use_default)
+			{
+				s.using_default_structure = true;
+				//if it wants to use default layer structure, 
+				//grab & copy that from the default skin
+				copySkin = getDefaultSkin();
+			}
+			
+			var use_structure:String = U.xml_str(skinNode.node.colors.x, "use_structure");
+			if (use_structure != "")
+			{
+				s.using_structure = use_structure;
+				copySkin = map_skins.get(use_structure);
+			}
+			
+			if (copySkin != null && copySkin.list_color_layers != null)
+			{
+				s.list_color_layers = [];
+				for (ecl in copySkin.list_color_layers) {
+					s.list_color_layers.push(copyEntityColorLayer(ecl));
+				}
+			}
+		}
+		else if (s.color_change_mode == COLOR_CHANGE_PIXEL_PALETTE)
+		{
+			//Temporarily load the image
+			//Scan the first vertical column in the first frame for palette information
+			
+			skinName = s.name;
+			
+			s.list_original_pixel_colors = peekPixelPalette();
+		}
+		
+		//If color data is supplied in the skin
+		if (skinNode.node.colors.hasNode.color) 
+		{
+			s.list_colors = [];
+			
+			//Loop through the color nodes
+			for (colorNode in skinNode.node.colors.nodes.color) 
+			{
+				//Get color value
+				var lValue = U.parseHex(U.xml_str(colorNode.x, "value", true, "0xffffffff"), true, true, 0x00000000);
+				var index = U.xml_i(colorNode.x, "index", -1);
+				
+				var insert:Int = -1;
+				
+				if (index != -1) {
+					insert = index;
+				}
+				
+				if (s.color_change_mode == COLOR_CHANGE_LAYERS_BAKED || s.color_change_mode == COLOR_CHANGE_LAYERS_STACKED) 
+				{
+					//Get name value too
+					var lName = U.xml_str(colorNode.x, "name", true, "");
+					
+					var i:Int = 0;
+					
+					//If a name is specified, try to match it to a color layer
+					if (lName != "") 
+					{
+						if (s.list_color_layers != null) 
+						{
+							for (colorLayer in s.list_color_layers) 
+							{
+								if (colorLayer.name == lName) 
+								{
+									insert = i;
+									break;
+								}
+								i++;
+							}
+						}
+					}
+					
+					//Still can't find an insertion point? Default to the index value if it exists
+					if (insert == -1 && index != -1) {
+						insert = index;
+					}
+				}
+				
+				if (insert == -1) 						//no layer name was specified; just add the color in the order you found it
+				{
+					s.list_colors.push(lValue);
+				}
+				else									//a layer name was found and matched; add the color at this exact index
+				{
+					s.list_colors[insert] = lValue;
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Load all the color information for each skin from the xml
 	 * @param	xml
@@ -668,114 +796,12 @@ class EntityGraphics implements IFlxDestroyable
 				{
 					//Determine the color change mode of this skin
 					var mode:String = U.xml_str(skinNode.node.colors.x, "mode", true);
-					
-					if (mode == "layers" || mode == "layers_baked" || mode == "baked") {
-						s.color_change_mode = COLOR_CHANGE_LAYERS_BAKED;
-					}else if (mode == "pixels") {
-						s.color_change_mode = COLOR_CHANGE_PIXEL_PALETTE;
-					}else if (mode == "stacked" || mode == "layers_stacked") {
-						s.color_change_mode = COLOR_CHANGE_LAYERS_STACKED;
-					}else {
-						s.color_change_mode = COLOR_CHANGE_NONE;
+					s.color_change_mode = getColorChangeModeFromString(mode);	
+					if (s.color_change_mode == COLOR_CHANGE_CUSTOM){
+						s.custom_color_change_mode = getCustomColorModeFromString(mode);
 					}
 					
-					if (s.color_change_mode == COLOR_CHANGE_LAYERS_BAKED || s.color_change_mode == COLOR_CHANGE_LAYERS_STACKED)
-					{
-						var use_default:Bool = U.xml_bool(skinNode.node.colors.x, "use_default");
-						
-						var copySkin:EntitySkin = null;
-						
-						if (use_default)
-						{
-							s.using_default_structure = true;
-							//if it wants to use default layer structure, 
-							//grab & copy that from the default skin
-							copySkin = getDefaultSkin();
-						}
-						
-						var use_structure:String = U.xml_str(skinNode.node.colors.x, "use_structure");
-						if (use_structure != "")
-						{
-							s.using_structure = use_structure;
-							copySkin = map_skins.get(use_structure);
-						}
-						
-						if (copySkin != null && copySkin.list_color_layers != null)
-						{
-							s.list_color_layers = [];
-							for (ecl in copySkin.list_color_layers) {
-								s.list_color_layers.push(copyEntityColorLayer(ecl));
-							}
-						}
-					}
-					else if (s.color_change_mode == COLOR_CHANGE_PIXEL_PALETTE)
-					{
-						//Temporarily load the image
-						//Scan the first vertical column in the first frame for palette information
-						
-						skinName = s.name;
-						
-						s.list_original_pixel_colors = peekPixelPalette();
-					}
-					
-					//If color data is supplied in the skin
-					if (skinNode.node.colors.hasNode.color) 
-					{
-						s.list_colors = [];
-						
-						//Loop through the color nodes
-						for (colorNode in skinNode.node.colors.nodes.color) 
-						{
-							//Get color value
-							var lValue = U.parseHex(U.xml_str(colorNode.x, "value", true, "0xffffffff"), true, true, 0x00000000);
-							var index = U.xml_i(colorNode.x, "index", -1);
-							
-							var insert:Int = -1;
-							
-							if (index != -1) {
-								insert = index;
-							}
-							
-							if (s.color_change_mode == COLOR_CHANGE_LAYERS_BAKED || s.color_change_mode == COLOR_CHANGE_LAYERS_STACKED) 
-							{
-								//Get name value too
-								var lName = U.xml_str(colorNode.x, "name", true, "");
-								
-								var i:Int = 0;
-								
-								//If a name is specified, try to match it to a color layer
-								if (lName != "") 
-								{
-									if (s.list_color_layers != null) 
-									{
-										for (colorLayer in s.list_color_layers) 
-										{
-											if (colorLayer.name == lName) 
-											{
-												insert = i;
-												break;
-											}
-											i++;
-										}
-									}
-								}
-								
-								//Still can't find an insertion point? Default to the index value if it exists
-								if (insert == -1 && index != -1) {
-									insert = index;
-								}
-							}
-							
-							if (insert == -1) 						//no layer name was specified; just add the color in the order you found it
-							{
-								s.list_colors.push(lValue);
-							}
-							else									//a layer name was found and matched; add the color at this exact index
-							{
-								s.list_colors[insert] = lValue;
-							}
-						}
-					}
+					getColorsFromXMLWork(s,skinNode);
 					
 					#if neko
 						if (s.list_colors != null) {

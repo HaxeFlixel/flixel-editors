@@ -561,6 +561,11 @@ class EntitySprite extends FlxSprite
 			}
 		}
 		
+		loadCustomColorsWork(G);
+	}
+	
+	private function loadCustomColorsWork(G:EntityGraphics)
+	{
 		//Else, construct it from scratch using the proper method
 		if (G.skin.color_change_mode == EntityGraphics.COLOR_CHANGE_LAYERS_BAKED) 
 		{
@@ -927,11 +932,6 @@ class EntitySprite extends FlxSprite
 		}
 		else
 		{
-			var graphic = FlxG.bitmap.add(baseCopy, true, G.colorKey);
-			/*if (graphic == null)
-			{
-				graphic = FlxG.bitmap.add(baseCopy, true, G.colorKey);
-			}*/
 			loadAtlasFrames(this, G, null, xmlStr, graphic);
 		}
 	}
