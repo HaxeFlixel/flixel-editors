@@ -566,6 +566,8 @@ class EntitySprite extends FlxSprite
 	
 	private function loadCustomColorsWork(G:EntityGraphics)
 	{
+		var customColorKey = G.colorKey;
+		
 		//Else, construct it from scratch using the proper method
 		if (G.skin.color_change_mode == EntityGraphics.COLOR_CHANGE_LAYERS_BAKED) 
 		{
