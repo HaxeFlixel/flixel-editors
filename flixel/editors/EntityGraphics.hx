@@ -638,7 +638,7 @@ class EntityGraphics implements IFlxDestroyable
 										}
 									}
 								}
-								sweet = new AnimSweetSpot(s_name, s_x, s_y, meta);
+								sweet = new AnimSweetSpot(s_name, s_x, s_y);
 							}else {
 								sweet = new AnimSweetSpot(s_name, s_x, s_y);
 							}
