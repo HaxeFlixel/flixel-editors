@@ -708,10 +708,14 @@ class EntitySprite extends FlxSprite
 		{
 			for (i in 0..._layerSprites.members.length)
 			{
-				_layerSprites.members[i].updateAnimation(elapsed);
-				if (animation.curAnim != null && _layerSprites.members[i].animation.curAnim == null)
+				var member = _layerSprites.members[i];
+				member.updateAnimation(elapsed);
+				var memberAnim = member.animation;
+				var memberCurAnim = memberAnim.curAnim;
+				var curAnim = animation.curAnim;
+				if (curAnim != null && memberCurAnim == null)
 				{
-					_layerSprites.members[i].animation.play(animation.curAnim.name, true, false, animation.curAnim.curFrame);
+					memberAnim.play(curAnim.name, true, false, curAnim.curFrame);
 				}
 			}
 		}
@@ -725,18 +729,24 @@ class EntitySprite extends FlxSprite
 		{
 			for (i in 0..._layerSprites.members.length)
 			{
-				if (_layerSprites.x != x || _layerSprites.y != y) {
+				var member = _layerSprites.members[i];
+				var curAnim = animation.curAnim;
+				var memberAnim = member.animation;
+				var memberAnimCurAnim = memberAnim.curAnim;
+				
+				if (_layerSprites.x != x || _layerSprites.y != y)
+				{
 					_layerSprites.x = x;
 					_layerSprites.y = y;
 					_layerSprites.offset.set(offset.x, offset.y);
 				}
-				_layerSprites.members[i].animation.frameIndex = animation.frameIndex;
-				if (animation.curAnim != null && _layerSprites.members[i].animation.curAnim != null)
+				memberAnim.frameIndex = animation.frameIndex;
+				if (curAnim != null && memberAnimCurAnim != null)
 				{
-					_layerSprites.members[i].animation.curAnim.flipX = animation.curAnim.flipX;
-					_layerSprites.members[i].animation.curAnim.flipY = animation.curAnim.flipY;
+					memberAnimCurAnim.flipX = curAnim.flipX;
+					memberAnimCurAnim.flipY = curAnim.flipY;
 				}
-				_layerSprites.members[i].draw();
+				member.draw();
 			}
 		}
 	}
