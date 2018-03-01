@@ -425,7 +425,6 @@ class EntityGraphics implements IFlxDestroyable
 			for (platformNode in skinNode.nodes.platform)
 			{
 				var pName = U.xml_str(platformNode.x, "name");
-				Sys.println("platform = " + pName + " is ? " + isPlatform(pName));
 				if (!isPlatform(pName))
 				{
 					return false;
