@@ -14,105 +14,28 @@ class AnimSweetSpot implements IFlxDestroyable
 	
 	public var name:String;	//name associated with the sweet spot, if any
 	
-	public var meta:Map<String,Dynamic>;	//any other data
-	
-	public function new(name_:String="",x_:Float=-2,y_:Float=-1,?Meta:Map<String,Dynamic>) 
+	public function new(name_:String="",x_:Float=-2,y_:Float=-1) 
 	{
 		name = name_;
 		x = x_;
 		y = y_;
-		meta = Meta;
 	}
 	
-	public function copy():AnimSweetSpot
+	public inline function copy():AnimSweetSpot
 	{
-		var metaCopy:Map<String,Dynamic>=null;
-		if (meta != null)
-		{
-			metaCopy = new Map<String,Dynamic>();
-			for (key in meta.keys()) {
-				metaCopy.set(key, copyVal(meta.get(key)));
-			}
-		}
-		return new AnimSweetSpot(name, x, y, metaCopy);
-	}
-	
-	public function getMetaF(key:String):Float
-	{
-		if (meta.exists(key))
-		{
-			return cast meta.get(key);
-		}
-		return 0;
-	}
-	
-	public function getMetaStr(key:String):String
-	{
-		if (meta.exists(key))
-		{
-			return cast meta.get(key);
-		}
-		return "";
-	}
-	
-	public function getMetaI(key:String):Int
-	{
-		if (meta.exists(key))
-		{
-			return cast meta.get(key);
-		}
-		return 0;
+		return new AnimSweetSpot(name, x, y);
 	}
 	
 	public function toString():String
 	{
-		var str:String = "{name:" + name+", (" + x + "," + y + ")";
-		if (meta == null)
-		{
-			str += "}";
-		}
-		else
-		{
-			str += ", meta:[";
-			for (key in meta.keys())
-			{
-				str += key + ":" + meta.get(key) + ", ";
-			}
-			str = str.substr(0, str.length - 2);
-			str += "]}";
-		}
+		var str:String = "{name:" + name+", (" + x + "," + y + ")}";
 		return str;
-	}
-	
-	public function copyVal(d:Dynamic):Dynamic
-	{
-		if (d == null || Std.is(d, Float) || Std.is(d, Int) || Std.is(d, Bool) || Std.is(d, String))
-		{
-			return d;
-		}
-		else
-		{
-			throw "can't deep-copy value(" + d + ")";
-		}
-		
-		return null;
 	}
 	
 	public function destroy():Void
 	{
-		if (meta != null)
-		{
-			for (key in meta.keys())
-			{
-				var thing = meta.get(key);
-				if (Std.is(thing, IFlxDestroyable))
-				{
-					FlxDestroyUtil.destroy(thing);
-					meta.remove(key);
-					thing = null;
-				}
-			}
-			meta = null;
-		}
+		x = 0;
+		y = 0;
+		name = "";
 	}
 }

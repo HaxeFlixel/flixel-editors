@@ -315,14 +315,6 @@ class EntityGraphics implements IFlxDestroyable
 					if (sweet.name != "" && sweet.name != null) {
 						frameXml.set("name", sweet.name);
 					}
-					var meta:Map<String,Dynamic> = anim.getSweetSpot(i).meta;
-					if (meta != null)
-					{
-						for (key in meta.keys())
-						{
-							frameXml.set(key, meta.get(key));
-						}
-					}
 				}
 				animXml.addChild(frameXml);
 			}
