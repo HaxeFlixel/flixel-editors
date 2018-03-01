@@ -1,5 +1,6 @@
 package flixel.editors;
 import flixel.FlxSprite;
+import flixel.addons.ui.U;
 import flixel.math.FlxPoint;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
@@ -27,6 +28,32 @@ class AnimationData implements IFlxDestroyable
 	public function new() 
 	{
 		frames = [];
+	}
+	
+	public function copy():AnimationData
+	{
+		var ad = new AnimationData();
+		ad.name = name;
+		
+		ad.frames = null;
+		if (frames != null) ad.frames = U.copy_shallow_arr_i(frames);
+		
+		ad.sweets = null;
+		if (sweets != null) 
+		{
+			ad.sweets = [];
+			for (sweet in sweets){
+				var newSweet = (sweet != null ? sweet.copy() : null);
+				ad.sweets.push(newSweet);
+			}
+		}
+		
+		ad.frameRate = frameRate;
+		ad.looped = looped;
+		ad.flipX = flipX;
+		ad.flipY = flipY;
+		
+		return ad;
 	}
 	
 	public function destroy():Void

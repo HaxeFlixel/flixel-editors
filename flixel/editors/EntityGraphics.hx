@@ -132,10 +132,7 @@ class EntityGraphics implements IFlxDestroyable
 		return ck + getScaleSuffix();
 	}
 	
-	public function new() 
-	{
-		
-	}
+	public function new() {}
 	
 	public function destroy():Void {
 		name = "";
@@ -226,16 +223,44 @@ class EntityGraphics implements IFlxDestroyable
 	
 	public function copy():EntityGraphics
 	{
-		//TODO: not exactly optimized....
-		
 		var eg:EntityGraphics = new EntityGraphics();
-		eg.fromXML(toXML());
+		
+		eg.name = name;
+		eg.asset_src = asset_src;
+		eg.skinName = skinName;
+		eg.remotePath = remotePath;
+		
+		if (facings != null)
+		{
+			eg.facings = facings.copy();
+		}
+		
+		if (map_skins != null)
+		{
+			eg.map_skins = new Map<String,EntitySkin>();
+			for (key in map_skins.keys()){
+				var oldSkin = map_skins.get(key);
+				eg.map_skins.set(key, oldSkin.copy());
+			}
+		}
+		if (animations != null)
+		{
+			eg.animations = new Map<String, AnimationData>();
+			for (key in animations.keys()){
+				var anim = animations.get(key);
+				if (anim != null){ anim = anim.copy(); }
+				eg.animations.set(key, anim);
+			}
+		}
+		
+		eg.defaultFacing = defaultFacing;
+		
 		eg.scaleX = scaleX;
 		eg.scaleY = scaleY;
 		eg.scaleSmooth = scaleSmooth;
 		eg.scaleWithHardware = scaleWithHardware;
 		eg.ignoreColor = ignoreColor;
-		eg.skinName = skinName;
+		
 		return eg;
 	}
 	
@@ -501,13 +526,12 @@ class EntityGraphics implements IFlxDestroyable
 						var lSort = U.xml_i(layerNode.x, "sort", 0);
 						
 						//Create each color layer object
-						var ecl:EntityColorLayer = {
-							name:lName,
-							asset_src:lAssetSrc,
-							asset_meta:lAssetMeta,
-							alpha:lAlpha,
-							sort:lSort
-						}
+						var ecl = new EntityColorLayer();
+						ecl.name = lName;
+						ecl.asset_src = lAssetSrc;
+						ecl.asset_meta = lAssetMeta;
+						ecl.alpha = lAlpha;
+						ecl.sort = lSort;
 						
 						//Add the color layer to the skin
 						s.list_color_layers.push(ecl);
@@ -929,23 +953,30 @@ class EntityGraphics implements IFlxDestroyable
 		return Trans;
 	}
 	
-	public static function copyEntityColorLayer(ecl:EntityColorLayer):EntityColorLayer 
+	public static inline function copyEntityColorLayer(ecl:EntityColorLayer):EntityColorLayer 
 	{
-		var copy:EntityColorLayer = {
-			name:ecl.name,
-			asset_src:ecl.asset_src,
-			asset_meta:ecl.asset_meta,
-			alpha:ecl.alpha,
-			sort:ecl.sort
-		};
-		return copy;
+		return ecl.copy();
 	}
 }
 
-typedef EntityColorLayer = {
-	name:String,					//the user-facing name (or localization flag) of this color value, "Hair", "Pants"
-	asset_src:String,				//mask asset filename sans extension
-	asset_meta:String, 				
-	alpha:Float,					//alpha value between 1 and 0
-	sort:Int,						//sorting index
+class EntityColorLayer
+{
+	public var name:String;			//the user-facing name (or localization flag) of this color value, "Hair", "Pants"
+	public var asset_src:String;	//mask asset filename sans extension
+	public var asset_meta:String;
+	public var alpha:Float;			//alpha value between 1 and 0
+	public var sort:Int;			//sorting index
+	
+	public function new(){}
+	
+	public inline function copy():EntityColorLayer
+	{
+		var copy:EntityColorLayer = new EntityColorLayer();
+		copy.name = name;
+		copy.asset_src = asset_src;
+		copy.asset_meta = asset_meta;
+		copy.alpha = alpha;
+		copy.sort = sort;
+		return copy;
+	}
 }

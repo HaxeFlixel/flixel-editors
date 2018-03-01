@@ -243,7 +243,7 @@ class EntitySkin implements IFlxDestroyable
 		return str;
 	}
 	
-	public function copy():EntitySkin 
+	public inline function copy():EntitySkin 
 	{
 		var copy = new EntitySkin();
 		
@@ -253,20 +253,22 @@ class EntitySkin implements IFlxDestroyable
 		copy.height = height;
 		copy.off_x = off_x;
 		copy.off_y = off_y;
+		copy.scaleX = scaleX;
+		copy.scaleY = scaleY;
 		copy.asset_src = asset_src;
 		copy.asset_meta = asset_meta;
 		copy.isDefault = isDefault;
+		copy.blend = blend;
 		copy.color_change_mode = color_change_mode;
 		copy.custom_color_change_mode = custom_color_change_mode;
-		copy.list_color_layers = null;
-		copy.list_original_pixel_colors = U.copy_shallow_arr_i(list_original_pixel_colors);
-		copy.list_colors = U.copy_shallow_arr_i(list_colors);
-		copy.list_color_features = null;
 		copy.using_default_structure = using_default_structure;
 		copy.using_structure = using_structure;
-		copy.scaleX = scaleX;
-		copy.scaleY = scaleY;
-		copy.blend = blend;
+		
+		copy.list_original_pixel_colors = U.copy_shallow_arr_i(list_original_pixel_colors);
+		copy.list_colors = U.copy_shallow_arr_i(list_colors);
+		
+		copy.list_color_layers = null;
+		copy.list_color_features = null;
 		
 		if (list_color_features != null)
 		{
@@ -281,7 +283,7 @@ class EntitySkin implements IFlxDestroyable
 			copy.list_color_layers = [];
 			for (ecl in list_color_layers)
 			{
-				copy.list_color_layers.push(EntityGraphics.copyEntityColorLayer(ecl));
+				copy.list_color_layers.push(ecl.copy());
 			}
 		}
 		

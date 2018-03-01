@@ -24,7 +24,7 @@ import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 		list_colors = null;
 	}
 
-	public function copy() : ColorPalette 
+	public inline function copy() : ColorPalette 
 	{
 		var list : Array<SwatchData> = new Array<SwatchData>();
 		for (cs in list_colors)

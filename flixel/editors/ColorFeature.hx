@@ -1,5 +1,6 @@
 package flixel.editors;
 import flixel.addons.ui.SwatchData;
+import flixel.addons.ui.U;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxDestroyUtil;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
@@ -50,6 +51,10 @@ class ColorFeature implements IFlxDestroyable
 	public var midtone(get,set):Int;				//and a value > 0 means "where to put this color swatch sub-color in entitySkin.list_colors"
 	public var shadowMid(get,set):Int;
 	public var shadowDark(get,set):Int;
+	public var swatch : SwatchData;			//currently selected color swatch
+	public var palette : ColorPalette;		//palette of possible swatches
+	public var palette_name:String;			//palette name (for lookup purposes)
+	
 	
 	public function get_hilight():Int {
 		if (colors.length >= 1) {
@@ -95,11 +100,6 @@ class ColorFeature implements IFlxDestroyable
 		return Value;
 	}
 	
-	public var swatch : SwatchData;			//currently selected color swatch
-	public var palette : ColorPalette;		//palette of possible swatches
-	
-	public var palette_name:String;			//palette name (for lookup purposes)
-	
 	/**
 	 * Create a new ColorFeature for letting the user re-color the sprite
 	 * @param	Name			Name of the ColorFeature, "hat", "pants", etc
@@ -138,8 +138,12 @@ class ColorFeature implements IFlxDestroyable
 		palette = null;
 	}
 
-	public function copy() : ColorFeature 
+	public inline function copy() : ColorFeature 
 	{
+		var newColors = null;
+		if (colors != null){
+			newColors = U.copy_shallow_arr_i(colors);
+		}
 		var cs : SwatchData = null;
 		if (swatch != null)
 		{
@@ -150,7 +154,7 @@ class ColorFeature implements IFlxDestroyable
 		{
 			pal = palette.copy();
 		}
-		return new ColorFeature(name, colors.copy(), palette_name, pal, cs);
+		return new ColorFeature(name, newColors, palette_name, pal, cs);
 	}
 
 	public function toString() : String 
