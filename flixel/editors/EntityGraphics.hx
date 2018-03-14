@@ -89,13 +89,8 @@ class EntityGraphics implements IFlxDestroyable
 					color = skin.list_colors[i];
 					if (layer.asset_src != null && layer.asset_src != "")
 					{
-						key += "+" + layer.asset_src + "#" + StringTools.hex(color, 6);
+						key += layer.asset_src + color;
 					}
-					else
-					{
-						key += "+_";
-					}
-					//Returns e.g. "assets/gfx/defenders/dude+pants#FF0000+hat#0000FF+shirt#00FF00"
 				}
 				i++;
 			}
@@ -104,8 +99,7 @@ class EntityGraphics implements IFlxDestroyable
 		{
 			for (color in skin.list_colors) 
 			{
-				key += "+" + "#" + StringTools.hex(color, 6);
-				//Returns e.g. "assets/gfx/defenders/dude+#FF0000+#0000FF+#00FF00"
+				key += ","+color;
 			}
 		}
 		
@@ -425,7 +419,6 @@ class EntityGraphics implements IFlxDestroyable
 			for (platformNode in skinNode.nodes.platform)
 			{
 				var pName = U.xml_str(platformNode.x, "name");
-				Sys.println("platform = " + pName + " is ? " + isPlatform(pName));
 				if (!isPlatform(pName))
 				{
 					return false;

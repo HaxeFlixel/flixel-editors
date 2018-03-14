@@ -889,45 +889,54 @@ class EntitySprite extends FlxSprite
 		
 		var length = (!origNull ? G.skin.list_original_pixel_colors.length : 16);
 		 
-		//Strip off the palette data in the image
-		for (i in 0...length) 
-		{
-			if (!origNull)
-			{
-				orig_color = G.skin.list_original_pixel_colors[i];
-				pix_color = baseCopy.getPixel32(0, i);
-			}
-			if (origNull || pix_color == orig_color) 
-			{
-				baseCopy.setPixel32(0, i, 0x00000000);
-			}
-		}
+		var skip = false;
 		
-		if (G.skin.list_colors != null)
+		#if (vita || simulate == "vita")
+		skip = true;
+		#end
+		
+		if (!skip)
 		{
-			//Loop through color replacement rules and apply them pixel for pixel
-			for (i in 0...G.skin.list_original_pixel_colors.length) 
+			//Strip off the palette data in the image
+			for (i in 0...length) 
 			{
-				if (i < G.skin.list_colors.length) 
+				if (!origNull)
 				{
 					orig_color = G.skin.list_original_pixel_colors[i];
-					replace_color = G.skin.list_colors[i];
-					var ignored:Bool = false;
-					if (G.ignoreColor != null) {
-						var testColor:FlxColor = replace_color | 0x00FFFFFF;
-						if ((replace_color & 0x00FFFFFF) == G.ignoreColor) {
-							ignored = true;
-						}
-					}
-					if (!ignored && replace_color != 0x00000000) 
+					pix_color = baseCopy.getPixel32(0, i);
+				}
+				if (origNull || pix_color == orig_color) 
+				{
+					baseCopy.setPixel32(0, i, 0x00000000);
+				}
+			}
+			
+			if (G.skin.list_colors != null)
+			{
+				//Loop through color replacement rules and apply them pixel for pixel
+				for (i in 0...G.skin.list_original_pixel_colors.length) 
+				{
+					if (i < G.skin.list_colors.length) 
 					{
-						try
-						{
-							baseCopy.threshold(baseCopy, baseCopy.rect, _flashPointZero, "==", orig_color, replace_color);
+						orig_color = G.skin.list_original_pixel_colors[i];
+						replace_color = G.skin.list_colors[i];
+						var ignored:Bool = false;
+						if (G.ignoreColor != null) {
+							var testColor:FlxColor = replace_color | 0x00FFFFFF;
+							if ((replace_color & 0x00FFFFFF) == G.ignoreColor) {
+								ignored = true;
+							}
 						}
-						catch (msg:Dynamic)
+						if (!ignored && replace_color != 0x00000000) 
 						{
-							FlxG.log.error(msg);
+							try
+							{
+								baseCopy.threshold(baseCopy, baseCopy.rect, _flashPointZero, "==", orig_color, replace_color);
+							}
+							catch (msg:Dynamic)
+							{
+								FlxG.log.error(msg);
+							}
 						}
 					}
 				}
