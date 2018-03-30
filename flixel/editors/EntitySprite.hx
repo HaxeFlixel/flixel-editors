@@ -293,6 +293,16 @@ class EntitySprite extends FlxSprite
 		if (remotePath == "" || remotePath == null)
 		{
 			var daPath = U.gfx(file);
+			
+			if (FlxG.bitmap.checkCache(daPath))
+			{
+				var gfx = FlxG.bitmap.get(daPath);
+				if (gfx != null && gfx.bitmap != null)
+				{
+					return gfx.bitmap;
+				}
+			}
+			
 			if (Assets.exists(daPath, AssetType.IMAGE))
 			{
 				return Assets.getBitmapData(daPath);
