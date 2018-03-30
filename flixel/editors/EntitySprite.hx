@@ -564,7 +564,7 @@ class EntitySprite extends FlxSprite
 		//If not an atlas, see if it already exists and if so return early
 		if (!hasAtlas)
 		{
-			if(G.skin.color_change_mode != EntityGraphics.COLOR_CHANGE_LAYERS_STACKED && FlxG.bitmap.checkCache(customColorKey)) 
+			if(G.skin.color_change_mode != EntityGraphics.COLOR_CHANGE_LAYERS_STACKED && FlxG.bitmap.checkCache(customColorKey) && G.skin.color_change_mode != EntityGraphics.COLOR_CHANGE_CUSTOM) 
 			{
 				loadGraphic(customColorKey, true, G.skin.width, G.skin.height);
 				return;
@@ -592,7 +592,7 @@ class EntitySprite extends FlxSprite
 			loadCustomPixelPalette(G);	//do individual per-pixel exact-color-value palette swaps
 		}
 		
-		if (G.skin.color_change_mode != EntityGraphics.COLOR_CHANGE_LAYERS_STACKED)
+		if (G.skin.color_change_mode != EntityGraphics.COLOR_CHANGE_LAYERS_STACKED && G.skin.color_change_mode != EntityGraphics.COLOR_CHANGE_CUSTOM)
 		{
 			if (FlxG.bitmap.checkCache(customColorKey) == false)
 			{
