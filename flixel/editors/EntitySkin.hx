@@ -183,8 +183,15 @@ class EntitySkin implements IFlxDestroyable
 		}
 	}
 	
-	public function changeColorFeature(name:String, data:SwatchData):Void
+	/**
+	 * 
+	 * @param	name
+	 * @param	data
+	 * @return	whether the change resulted in a different palette
+	 */
+	public function changeColorFeature(name:String, data:SwatchData):Bool
 	{
+		var change = false;
 		if (list_color_features != null)
 		{
 			var match:ColorFeature = null;
@@ -199,7 +206,8 @@ class EntitySkin implements IFlxDestroyable
 			
 			if (match != null) 
 			{
-				if (list_colors == null) {
+				if (list_colors == null)
+				{
 					list_colors = [];
 				}
 				
@@ -208,6 +216,10 @@ class EntitySkin implements IFlxDestroyable
 				{
 					if (cIndex >= 0)
 					{
+						if (list_colors.length > cIndex && list_colors[cIndex] != data.colors[i])
+						{
+							change = true;
+						}
 						list_colors[cIndex] = data.colors[i];
 					}
 					i++;
@@ -225,6 +237,7 @@ class EntitySkin implements IFlxDestroyable
 				#end 
 			}
 		}
+		return change;
 	}
 	
 	public function colorString():String
