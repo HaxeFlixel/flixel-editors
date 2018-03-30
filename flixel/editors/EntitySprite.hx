@@ -852,17 +852,20 @@ class EntitySprite extends FlxSprite
 	
 	private function animationCallback(Name:String, AnimFrame:Int, SpriteFrame:Int):Void
 	{
-		if (_hasSweetSpots && _sweetSpotMap.exists(Name)) 				//If we have at least one sweet spot for this animation
+		if (_hasSweetSpots) //If we have at least one sweet spot for this animation
 		{
-			if (onSweetSpotCallback != null && (AnimFrame != _lastAnimFrame || Name != _lastAnimName))
+			if (onSweetSpotCallback != null)
 			{
 				var arr:Array<AnimSweetSpot> = _sweetSpotMap.get(Name);		//Get the list of sweet spots
-				if (AnimFrame < arr.length) 
+				if (arr != null && (AnimFrame != _lastAnimFrame || Name != _lastAnimName))
 				{
-					if (arr[AnimFrame] != null) 							//If the current frame has a sweet spot
+					if (AnimFrame < arr.length)
 					{
-						var sweet:AnimSweetSpot = arr[AnimFrame];
-						onSweetSpotCallback(Name,sweet.name,sweet.x,sweet.y);	//do the sweet spot callback
+						if (arr[AnimFrame] != null) 							//If the current frame has a sweet spot
+						{
+							var sweet:AnimSweetSpot = arr[AnimFrame];
+							onSweetSpotCallback(Name,sweet.name,sweet.x,sweet.y);	//do the sweet spot callback
+						}
 					}
 				}
 			}
