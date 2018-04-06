@@ -65,7 +65,7 @@ abstract Facing(Int) from Int to Int
 			case "l", "left", "w", "west": return LEFT;
 			case "r", "right", "e", "east": return RIGHT;
 			case "d", "down", "s", "south": return DOWN;
-			case "up", "up", "n", "north": return NORTH;
+			case "u", "up", "n", "north": return NORTH;
 			case "ul", "upleft", "upperleft", "nw", "northwest": return UPPER_LEFT;
 			case "ur", "upright", "upperright", "ne", "northeast": return UPPER_RIGHT;
 			case "ll", "dl", "downleft", "lowerleft", "sw", "southwest": return LOWER_LEFT;
