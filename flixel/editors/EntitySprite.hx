@@ -134,6 +134,12 @@ class EntitySprite extends FlxSprite
 				}
 			}
 		}
+		
+		if (_hasSweetSpots)
+		{
+			animation.callback = animationCallback;
+		}
+		animation.finishCallback = animationCallbackFinish;
 	}
 	
 	public function loadEntityGraphics(G:EntityGraphics):Void
@@ -184,7 +190,7 @@ class EntitySprite extends FlxSprite
 			
 			if (skey != "") key = skey;
 			
-			//Fixes a bug on where callbacks get called on recycle but not on construction
+			//Fixes a bug where callbacks get called on recycle but not on construction
 			animation.callback = null;
 			
 			loadGraphic(key, true, frameWidth, frameHeight);
@@ -620,7 +626,12 @@ class EntitySprite extends FlxSprite
 		{
 			addAnimation(Anims.get(key), fromAtlas);
 		}
-		animation.callback = animationCallback;
+		
+		if (_hasSweetSpots)
+		{
+			animation.callback = animationCallback;
+		}
+		animation.finishCallback = animationCallbackFinish;
 		
 		if (_layerSprites != null)
 		{
@@ -871,13 +882,16 @@ class EntitySprite extends FlxSprite
 			}
 		}
 		
-		if (animation.finished)
-		{
-			onAnimationFinish(Name);
-		}
-		
 		_lastAnimFrame = AnimFrame;
 		_lastAnimName  = Name;
+	}
+	
+	private function animationCallbackFinish(Name:String)
+	{
+		onAnimationFinish(Name);
+		
+		_lastAnimFrame = animation.frameIndex;
+		_lastAnimName = Name;
 	}
 	
 	private function onAnimationFinish(Name:String):Void
