@@ -30,6 +30,10 @@ import sys.io.File;
 #end
 import openfl.Lib;
 
+#if (openfl >= "8.0.0")
+import openfl.utils.AssetType;
+#end
+
 /**
  * An extension of FlxSprite with some extra power -- namely extra metadata for animation,
  * and the ability to dynamically recolor the sprite.
