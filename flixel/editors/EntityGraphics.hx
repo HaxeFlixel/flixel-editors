@@ -337,7 +337,7 @@ class EntityGraphics implements IFlxDestroyable
 	}
 	
 	
-	private function _facingsFromXML(xml:Fast):Void
+	function _facingsFromXML(xml:Fast):Void
 	{
 		facings = [];
 		if (xml.hasNode.facing)
@@ -363,7 +363,7 @@ class EntityGraphics implements IFlxDestroyable
 		}
 	}
 	
-	private function isPlatform(name:String):Bool
+	function isPlatform(name:String):Bool
 	{
 		switch(name)
 		{
@@ -411,7 +411,7 @@ class EntityGraphics implements IFlxDestroyable
 		return false;
 	}
 	
-	private function platformCheck(skinNode:Fast):Bool
+	function platformCheck(skinNode:Fast):Bool
 	{
 		//Check platform compatibility per skin
 		if (skinNode.hasNode.platform)
@@ -433,7 +433,7 @@ class EntityGraphics implements IFlxDestroyable
 	 * @param	xml
 	 */
 	
-	private function _skinsFromXML(xml:Fast):Void {
+	function _skinsFromXML(xml:Fast):Void {
 		if (xml.hasNode.skin) 
 		{
 			var firstSkin:String = "";
@@ -550,7 +550,7 @@ class EntityGraphics implements IFlxDestroyable
 		}
 	}
 	
-	private function hasMetaAttr(frameNode:Fast):Bool {
+	function hasMetaAttr(frameNode:Fast):Bool {
 		for (attr in frameNode.x.attributes())
 		{
 			switch(attr) {
@@ -560,7 +560,7 @@ class EntityGraphics implements IFlxDestroyable
 		return false;
 	}
 	
-	private function sortEntityColorLayers(a:EntityColorLayer, b:EntityColorLayer):Int {
+	function sortEntityColorLayers(a:EntityColorLayer, b:EntityColorLayer):Int {
 		if (a.sort < b.sort) return -1;
 		if (a.sort > b.sort) return 1;
 		return 0;
@@ -655,7 +655,7 @@ class EntityGraphics implements IFlxDestroyable
 		}
 	}
 	
-	private function getColorChangeModeFromString(mode:String):Int
+	function getColorChangeModeFromString(mode:String):Int
 	{
 		var i:Int = -1;
 		if (mode == "layers" || mode == "layers_baked" || mode == "baked") {
@@ -672,7 +672,7 @@ class EntityGraphics implements IFlxDestroyable
 		return i;
 	}
 	
-	private function getCustomColorModeFromString(mode:String):String
+	function getCustomColorModeFromString(mode:String):String
 	{
 		if (mode.indexOf("custom=") != -1)
 		{
@@ -681,7 +681,7 @@ class EntityGraphics implements IFlxDestroyable
 		return "";
 	}
 	
-	private function getColorsFromXMLWork(s:EntitySkin, skinNode:Fast):Void
+	function getColorsFromXMLWork(s:EntitySkin, skinNode:Fast):Void
 	{
 		if (s.color_change_mode == COLOR_CHANGE_LAYERS_BAKED || s.color_change_mode == COLOR_CHANGE_LAYERS_STACKED)
 		{

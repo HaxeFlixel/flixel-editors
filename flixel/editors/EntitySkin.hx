@@ -392,7 +392,7 @@ class EntitySkin implements IFlxDestroyable
 		return new Fast(xml);
 	}
 	
-	private inline function hexColor(col:Int):String
+	inline function hexColor(col:Int):String
 	{
 		return "0x" + StringTools.hex(col, 6);
 	}

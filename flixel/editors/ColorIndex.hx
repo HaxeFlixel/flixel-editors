@@ -168,10 +168,10 @@ class ColorIndex implements IFlxDestroyable
 	
 	/**PRIVATE**/
 	
-	private var _map_palettes:Map<String,Array<String>>;
-	private var _map_swatches:Map<String,SwatchData>;
+	var _map_palettes:Map<String,Array<String>>;
+	var _map_swatches:Map<String,SwatchData>;
 
-	private function _loadSwatches(xml:Fast):Void 
+	function _loadSwatches(xml:Fast):Void 
 	{
 		for (swatchNode in xml.nodes.swatch)
 		{
@@ -195,7 +195,7 @@ class ColorIndex implements IFlxDestroyable
 		}
 	}
 	
-	private function _loadPalettes(xml:Fast):Void 
+	function _loadPalettes(xml:Fast):Void 
 	{
 		for (paletteNode in xml.nodes.palette)
 		{

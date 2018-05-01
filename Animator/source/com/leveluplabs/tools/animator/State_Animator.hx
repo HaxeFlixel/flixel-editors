@@ -63,79 +63,79 @@ import flixel.editors.ColorFeature;
  */
 class State_Animator extends FlxUIState
 {
-	private var list_files:Array<String>;
+	var list_files:Array<String>;
 	
-	private var entity_graphics:EntityGraphics;
-	private var entity_sprite:EntitySprite;
-	private var bounds:FlxRect;
-	private var entity_click:FlxClickArea;
-	private var frame_sprite:EntitySprite;
+	var entity_graphics:EntityGraphics;
+	var entity_sprite:EntitySprite;
+	var bounds:FlxRect;
+	var entity_click:FlxClickArea;
+	var frame_sprite:EntitySprite;
 	
-	private var frame_rect:FlxRect;
-	private var anim_rect:FlxRect;
+	var frame_rect:FlxRect;
+	var anim_rect:FlxRect;
 	
-	private var check_loop:FlxUICheckBox;
-	private var curr_anim_name:String = "";
+	var check_loop:FlxUICheckBox;
+	var curr_anim_name:String = "";
 	
-	private var input_name:FlxUIInputText;
-	private var input_new:FlxUIInputText;
-	private var input_color_feature:FlxUIInputText;
-	private var stepper_fps:FlxUINumericStepper;
+	var input_name:FlxUIInputText;
+	var input_new:FlxUIInputText;
+	var input_color_feature:FlxUIInputText;
+	var stepper_fps:FlxUINumericStepper;
 	
-	private var dd_anims:FlxUIDropDownMenu;
-	private var dd_skins:FlxUIDropDownMenu;
-	private var dd_sprites:FlxUIDropDownMenu;
+	var dd_anims:FlxUIDropDownMenu;
+	var dd_skins:FlxUIDropDownMenu;
+	var dd_sprites:FlxUIDropDownMenu;
 	
-	private var spritesheet:AnimationPreviewSprite;
-	private var anim_preview:AnimationPreviewSprite;
+	var spritesheet:AnimationPreviewSprite;
+	var anim_preview:AnimationPreviewSprite;
 	
-	private var frames:FlxSprite;
+	var frames:FlxSprite;
 	
-	private var underGroup:FlxGroup;
+	var underGroup:FlxGroup;
 	
-	private var selected_anim_frame:Int = -1;
-	private var selected_sheet_frame:Int = -1;
+	var selected_anim_frame:Int = -1;
+	var selected_sheet_frame:Int = -1;
 	
-	private var btn_insert:FlxUIButton;
-	private var btn_remove:FlxUIButton;
+	var btn_insert:FlxUIButton;
+	var btn_remove:FlxUIButton;
 	
-	private var btn_anim_new:FlxUIButton;
-	private var btn_anim_delete:FlxUIButton;
-	private var btn_anim_rename:FlxUIButton;
+	var btn_anim_new:FlxUIButton;
+	var btn_anim_delete:FlxUIButton;
+	var btn_anim_rename:FlxUIButton;
 	
-	private var btn_index:FlxUIButton;
-	private var btn_save:FlxUIButton;
-	private var btn_stress_test:FlxUIButton;
+	var btn_index:FlxUIButton;
+	var btn_save:FlxUIButton;
+	var btn_stress_test:FlxUIButton;
 	
-	private var radio_insert:FlxUIRadioGroup;
+	var radio_insert:FlxUIRadioGroup;
 	
-	private var insert_mode:Int = -1;
+	var insert_mode:Int = -1;
 	
 	
-	private var map_xml_dirty:Map<String,Bool> = null;
-	private var map_xml_data:Map<String,Fast> = null;
+	var map_xml_dirty:Map<String,Bool> = null;
+	var map_xml_data:Map<String,Fast> = null;
 	
-	private var swatch_selecter:FlxSprite;
-	private var group_color_stuff:FlxUIGroup;
-	private var radio_color_modes:FlxUIRadioGroup;
-	private var group_sweet:FlxUIGroup;
-	private var tab_menu:FlxUITabMenu;
+	var swatch_selecter:FlxSprite;
+	var group_color_stuff:FlxUIGroup;
+	var radio_color_modes:FlxUIRadioGroup;
+	var group_sweet:FlxUIGroup;
+	var tab_menu:FlxUITabMenu;
 	
-	private var check_sweet:FlxUICheckBox;
-	private var check_sweet_test:FlxUICheckBox;
-	private var stepper_sweet_x:FlxUINumericStepper;
-	private var stepper_sweet_y:FlxUINumericStepper;
-	private var input_sweet_name:FlxUIInputText;
-	private var label_curr_frame:FlxUIText;
+	var check_sweet:FlxUICheckBox;
+	var check_sweet_test:FlxUICheckBox;
+	var stepper_sweet_x:FlxUINumericStepper;
+	var stepper_sweet_y:FlxUINumericStepper;
+	var input_sweet_name:FlxUIInputText;
+	var label_curr_frame:FlxUIText;
 	
-	private var sprite_sweet_spot:FlxSprite;
+	var sprite_sweet_spot:FlxSprite;
 	
-	private var sweetSpotTestOn:Bool = false;
+	var sweetSpotTestOn:Bool = false;
 	
-	private var group_sweet_test:FlxSpriteGroup;
-	private var vector:FlxVector = FlxVector.get();
+	var group_sweet_test:FlxSpriteGroup;
+	var vector:FlxVector = FlxVector.get();
 	
-	private var colorFeatureToEdit:String = "";
+	var colorFeatureToEdit:String = "";
 	
 	override public function create():Void
 	{
@@ -165,7 +165,7 @@ class State_Animator extends FlxUIState
 	}
 	
 	#if sys
-		private function useIndexPath(path:String):Void {
+		function useIndexPath(path:String):Void {
 			Do.changeIndexPath(path);
 			showIndex(Reg.path_index);
 			var dirpath:String = Reg.path_index + Reg.path_entities;
@@ -201,12 +201,12 @@ class State_Animator extends FlxUIState
 			}
 		}
 		
-		private function changeIndex():Void {
+		function changeIndex():Void {
 			Reg.path_index = Dialogs.folder("TITLE!", "MESSAGE!");
 			useIndexPath(Reg.path_index);
 		}
 		
-		private function showIndex(path:String):Void {
+		function showIndex(path:String):Void {
 			var text_index:FlxUIText = cast _ui.getAsset("text_index");
 			text_index.text = Reg.path_index;
 			var safe:Int = 0;
@@ -222,7 +222,7 @@ class State_Animator extends FlxUIState
 			btn_index.x = text_index.x + text_index.textField.textWidth+ 5;
 		}
 		
-		private function saveFile():Void {
+		function saveFile():Void {
 			if (map_xml_dirty == null || map_xml_data == null) {
 				return;
 			}
@@ -243,12 +243,12 @@ class State_Animator extends FlxUIState
 		}
 	#end
 	
-	private function entryPoint(t:FlxTimer = null):Void {
+	function entryPoint(t:FlxTimer = null):Void {
 		setupDropdowns();
 		setupSprite();
 	}
 	
-	private function setupDropdowns():Void{
+	function setupDropdowns():Void{
 		if (list_files == null || list_files.length <= 0) 
 		{
 			FlxG.log.error("list of files is empty!");
@@ -278,18 +278,18 @@ class State_Animator extends FlxUIState
 		btn_anim_rename = cast _ui.getAsset("btn_anim_rename");
 	}
 		
-	private function setupSprite():Void
+	function setupSprite():Void
 	{
 		var files:Array<StrNameLabel> = getStrIdList(list_files);
 		dd_sprites.setData(files);
 		loadSprite(files[0].name);
 	}
 	
-	private function loadSkin(skinName:String):Void {
+	function loadSkin(skinName:String):Void {
 		loadSprite(entity_graphics.name+".xml", skinName);
 	}
 	
-	private function loadSprite(fname:String, skinName:String = ""):Void {
+	function loadSprite(fname:String, skinName:String = ""):Void {
 		
 		if (map_xml_dirty == null) {
 			map_xml_dirty = new Map<String,Bool>();
@@ -370,7 +370,7 @@ class State_Animator extends FlxUIState
 		}
 	}
 	
-	private function makeTabMenu():Void {
+	function makeTabMenu():Void {
 		var reg_colors = _ui.getAsset("reg_colors");
 		
 		var tabs = [{name:"colors", label:"Colors"},{name:"sweets", label:"SweetSpots"}];
@@ -446,12 +446,12 @@ class State_Animator extends FlxUIState
 		enableSweetMenu(false);
 	}
 	
-	private function onClickColorIndex():Void {
+	function onClickColorIndex():Void {
 		openSubState(new Popup_EditColorIndex(Reg.color_index));
 		//confirm("...", "Testing", "Color Index Goes Here", ["OK"]);
 	}
 	
-	private function onColorModeRadio(mode:String):Void {
+	function onColorModeRadio(mode:String):Void {
 		var modeInt:Int = Std.parseInt(mode);
 		var oldMode:Int = entity_graphics.skin.color_change_mode;
 		
@@ -463,7 +463,7 @@ class State_Animator extends FlxUIState
 		}
 	}
 	
-	private function doColorModeRadio(mode:String):Void {
+	function doColorModeRadio(mode:String):Void {
 		switch(Std.parseInt(mode)) {
 			case EntityGraphics.COLOR_CHANGE_NONE:
 				entity_graphics.skin.color_change_mode = EntityGraphics.COLOR_CHANGE_NONE;
@@ -478,7 +478,7 @@ class State_Animator extends FlxUIState
 		showSpriteColorization();
 	}
 	
-	private function getCurrentAnimation():AnimationData{
+	function getCurrentAnimation():AnimationData{
 		var name:String = curr_anim_name;
 		if (name != "" && name != null) {
 			return entity_graphics.animations.get(name);
@@ -486,7 +486,7 @@ class State_Animator extends FlxUIState
 		return null;
 	}
 	
-	private function enableSweetMenu(b:Bool,i:Int=0):Void {
+	function enableSweetMenu(b:Bool,i:Int=0):Void {
 		if (group_sweet == null) {
 			return;
 		}
@@ -559,7 +559,7 @@ class State_Animator extends FlxUIState
 		showSweetSpotLocation();
 	}
 	
-	private function showSpriteColorization():Void 
+	function showSpriteColorization():Void 
 	{
 		var skin:EntitySkin = entity_graphics.skin;
 		
@@ -707,7 +707,7 @@ class State_Animator extends FlxUIState
 		}
 	}
 	
-	private function getColorStuffInputText():FlxUIInputText {
+	function getColorStuffInputText():FlxUIInputText {
 		for (thing in group_color_stuff.members) {
 			if (Std.is(thing, FlxUIInputText)) {
 				if (thing.visible == false && thing.active == false) {
@@ -720,7 +720,7 @@ class State_Animator extends FlxUIState
 		return null;
 	}
 	
-	private function getColorStuffButton(Name:String=""):FlxUIButton {
+	function getColorStuffButton(Name:String=""):FlxUIButton {
 		for (thing in group_color_stuff.members) {
 			if (Std.is(thing, FlxUIButton)) {
 				var b:FlxUIButton = cast thing;
@@ -742,7 +742,7 @@ class State_Animator extends FlxUIState
 		return null;
 	}
 	
-	private function getColorStuffLabel():FlxText {
+	function getColorStuffLabel():FlxText {
 		for (thing in group_color_stuff.members) {
 			if (Std.is(thing, FlxText) && !Std.is(thing,FlxUIInputText)) {
 				if (thing.visible == false && thing.active == false) {
@@ -755,7 +755,7 @@ class State_Animator extends FlxUIState
 		return null;
 	}
 	
-	private function getColorStuffSwatchSelecter():FlxUIColorSwatchSelecter{
+	function getColorStuffSwatchSelecter():FlxUIColorSwatchSelecter{
 		for (thing in group_color_stuff.members) {
 			if (Std.is(thing, FlxUIColorSwatchSelecter)) {
 				if (thing.visible == false && thing.active == false) {
@@ -768,7 +768,7 @@ class State_Animator extends FlxUIState
 		return null;
 	}
 	
-	private function getStrIdList(list:Array<String>):Array<StrNameLabel>
+	function getStrIdList(list:Array<String>):Array<StrNameLabel>
 	{
 		var silist:Array<StrNameLabel> = [];
 		for (str in list)
@@ -778,7 +778,7 @@ class State_Animator extends FlxUIState
 		return silist;
 	}
 	
-	private function createSpriteSheet():Void {
+	function createSpriteSheet():Void {
 		var reg_spritesheet = _ui.getAsset("reg_spritesheet");
 		
 		var ad:AnimationData = new AnimationData();
@@ -804,7 +804,7 @@ class State_Animator extends FlxUIState
 		checkBullets();
 	}
 	
-	private function updateSheetButtons():Void {
+	function updateSheetButtons():Void {
 		if (btn_insert == null) { btn_insert = cast _ui.getAsset("btn_insert");}
 		if (btn_remove == null) { btn_remove = cast _ui.getAsset("btn_remove"); }
 		
@@ -826,11 +826,11 @@ class State_Animator extends FlxUIState
 		}
 	}
 	
-	private function onClickSpriteSheet(i:Int):Void {
+	function onClickSpriteSheet(i:Int):Void {
 		clickSpriteSheet(i);
 	}
 		
-	private function clickSpriteSheet(i:Int,toggle:Bool=true):Void {
+	function clickSpriteSheet(i:Int,toggle:Bool=true):Void {
 		if (toggle && i == selected_sheet_frame) {
 			selected_sheet_frame = spritesheet.hilightCell( -1, 1);
 		}else{
@@ -840,11 +840,11 @@ class State_Animator extends FlxUIState
 		updateSheetButtons();
 	}
 	
-	private function onClickAnimPreview(i:Int):Void {
+	function onClickAnimPreview(i:Int):Void {
 		clickAnimPreview(i);
 	}
 		
-	private function clickAnimPreview(i:Int, toggle:Bool = true):Void {
+	function clickAnimPreview(i:Int, toggle:Bool = true):Void {
 		if (toggle && i == selected_anim_frame) {
 			selected_anim_frame = anim_preview.hilightCell( -1);
 			spritesheet.hilightCell( -1);
@@ -864,11 +864,11 @@ class State_Animator extends FlxUIState
 		updateSheetButtons();
 	}
 	
-	private inline function currAnim():AnimationData {
+	inline function currAnim():AnimationData {
 		return entity_graphics.animations.get(curr_anim_name);
 	}
 	
-	private function removeFrame():Void {
+	function removeFrame():Void {
 		if (selected_anim_frame == -1) { return; }
 		var anim:AnimationData = currAnim();
 		if(anim.frames.length > 1){
@@ -878,7 +878,7 @@ class State_Animator extends FlxUIState
 		stashAndDirtyData();
 	}
 	
-	private function insertFrame():Void {
+	function insertFrame():Void {
 		if (selected_anim_frame == -1) { return; }
 		if (selected_sheet_frame == -1) { return; }
 		var anim:AnimationData = currAnim();
@@ -892,7 +892,7 @@ class State_Animator extends FlxUIState
 		stashAndDirtyData();
 	}
 	
-	private function refreshSprite():Void {
+	function refreshSprite():Void {
 		var fname:String = dd_sprites.header.text.text;
 		
 		stashAndDirtyData();
@@ -901,7 +901,7 @@ class State_Animator extends FlxUIState
 		loadSprite(fname, entity_graphics.skinName);
 	}
 	
-	private function stashAndDirtyData():Void {
+	function stashAndDirtyData():Void {
 		var fname:String = dd_sprites.header.text.text;
 		var curr_path:String = Reg.path_index + Reg.path_entities + "\\" + fname;		//get the full filename
 		
@@ -916,7 +916,7 @@ class State_Animator extends FlxUIState
 		dirtyFileState(fname);
 	}
 	
-	private function dirtyFileState(fileName:String):Void {
+	function dirtyFileState(fileName:String):Void {
 		map_xml_dirty.set(fileName, true);
 		
 		var butt:FlxUIButton = null;
@@ -939,7 +939,7 @@ class State_Animator extends FlxUIState
 		btn_save.label.color = btn_save.over_color = btn_save.down_color = btn_save.up_color = 0xff0000;
 	}
 	
-	private function refreshAnim(?t:FlxTimer=null,?the_frame:Int=-1):Void {
+	function refreshAnim(?t:FlxTimer=null,?the_frame:Int=-1):Void {
 		selectAnim(curr_anim_name);
 		if (the_frame == -1) {
 			the_frame = selected_anim_frame;
@@ -948,13 +948,13 @@ class State_Animator extends FlxUIState
 		clickSpriteSheet(the_frame, false);
 	}
 	
-	private function stressTest():Void {
+	function stressTest():Void {
 		Main.data.curr_anim = curr_anim_name;
 		Main.data.curr_gfx = entity_graphics;
 		FlxG.switchState(new State_StressTest());
 	}
 	
-	private function createAnimation():Void {
+	function createAnimation():Void {
 		if (input_new != null) {
 			var animName:String = input_new.text;
 			if(animName!= "" && animName != null){
@@ -976,7 +976,7 @@ class State_Animator extends FlxUIState
 		stashAndDirtyData();
 	}
 	
-	private function renameAnimation():Void {
+	function renameAnimation():Void {
 		var anim:AnimationData = currAnim();
 		if (anim != null) {
 			entity_graphics.animations.remove(anim.name);
@@ -990,7 +990,7 @@ class State_Animator extends FlxUIState
 		stashAndDirtyData();
 	}
 	
-	private function deleteAnimation():Void {
+	function deleteAnimation():Void {
 		if (dd_anims.list.length <= 1) {
 			confirm("alert", "Error", "Can't delete the last animation!", ["OK"]);
 		}else {
@@ -999,7 +999,7 @@ class State_Animator extends FlxUIState
 		stashAndDirtyData();
 	}
 	
-	private function confirm(confirmId:String, title:String, message:String, buttons:Array<String>, ?Params:Array<Dynamic>):Void {
+	function confirm(confirmId:String, title:String, message:String, buttons:Array<String>, ?Params:Array<Dynamic>):Void {
 		var p:FlxUIPopup = new FlxUIPopup();
 		p.quickSetup(title, message, buttons);
 		p.name = confirmId;
@@ -1007,7 +1007,7 @@ class State_Animator extends FlxUIState
 		openSubState(p);
 	}
 	
-	private function doDeleteAnimation():Void {
+	function doDeleteAnimation():Void {
 		var ad:AnimationData = currAnim();
 		entity_graphics.animations.remove(ad.name);
 		ad.destroy();
@@ -1019,7 +1019,7 @@ class State_Animator extends FlxUIState
 		}
 	}
 	
-	private function deleteColorFeature(featureName:String):Void {
+	function deleteColorFeature(featureName:String):Void {
 		var p:FlxUIPopup = new FlxUIPopup();
 		
 		p.params = [featureName];
@@ -1029,18 +1029,18 @@ class State_Animator extends FlxUIState
 		openSubState(p);
 	}
 	
-	private function doDeleteColorFeature(featureName):Void {
+	function doDeleteColorFeature(featureName):Void {
 		entity_graphics.skin.removeColorFeature(featureName);
 		stashAndDirtyData();
 		loadSkin(entity_graphics.skinName);	//reload the skin
 	}
 	
-	private function changeColorFeature(featureName:String, paletteName:String):Void {
+	function changeColorFeature(featureName:String, paletteName:String):Void {
 		colorFeatureToEdit = featureName;
 		openSubState(new Popup_ChangeColorFeature(paletteName,Reg.color_index,false,entity_graphics,featureName));
 	}
 	
-	private function doChangeColorFeature(colorFeature:ColorFeature):Void
+	function doChangeColorFeature(colorFeature:ColorFeature):Void
 	{
 		var cp:ColorPalette = Reg.color_index.getPalette(colorFeature.palette_name);
 		
@@ -1052,11 +1052,11 @@ class State_Animator extends FlxUIState
 		colorFeatureToEdit = "";
 	}
 	
-	private function newColorFeature():Void {
+	function newColorFeature():Void {
 		openSubState(new Popup_ChangeColorFeature("",Reg.color_index,true,entity_graphics,input_color_feature.text));
 	}
 	
-	private function doNewColorFeature(colorFeature:ColorFeature):Void {
+	function doNewColorFeature(colorFeature:ColorFeature):Void {
 		var cp:ColorPalette = Reg.color_index.getPalette(colorFeature.palette_name);
 		colorFeature.palette = cp;
 		entity_graphics.skin.addColorFeature(colorFeature);
@@ -1188,7 +1188,7 @@ class State_Animator extends FlxUIState
 		}
 	}
 	
-	private function onInputAnimNew():Void {
+	function onInputAnimNew():Void {
 		if (input_new.text == "" || input_new.text == null && entity_graphics.animations.exists(input_new.text) == false) {
 			btn_anim_new.active = false;
 			btn_anim_new.color = 0xa0a0a0;
@@ -1198,7 +1198,7 @@ class State_Animator extends FlxUIState
 		}
 	}
 	
-	private function setSweetSpotTest(b:Bool = true):Void {
+	function setSweetSpotTest(b:Bool = true):Void {
 		sweetSpotTestOn = b;
 		if (sweetSpotTestOn) {
 			entity_sprite.onSweetSpotCallback = onEntitySpriteSweetSpot;
@@ -1207,7 +1207,7 @@ class State_Animator extends FlxUIState
 		}
 	}
 	
-	private function showSweetSpotLocation(b:Bool = true):Void {
+	function showSweetSpotLocation(b:Bool = true):Void {
 		if (b == false) {
 			if (sprite_sweet_spot != null) {
 				sprite_sweet_spot.visible = false;
@@ -1242,7 +1242,7 @@ class State_Animator extends FlxUIState
 		}
 	}
 	
-	private function updateSweetSpot():Void {
+	function updateSweetSpot():Void {
 		if (group_sweet == null) {
 			return;
 		}
@@ -1313,14 +1313,14 @@ class State_Animator extends FlxUIState
 		}
 	}
 	
-	private function fetchAnim(str:String):AnimationData {
+	function fetchAnim(str:String):AnimationData {
 		if (entity_graphics.animations.exists(str)) {
 			return entity_graphics.animations.get(str);
 		}
 		return null;
 	}
 	
-	private function showSpriteSheetFrame(i:Int):Void {
+	function showSpriteSheetFrame(i:Int):Void {
 		var box:FlxUI9SliceSprite = cast _ui.getAsset("frame_box");
 		if (frame_rect == null) {
 			frame_rect = FlxRect.get(box.x, box.y, box.width, box.height);
@@ -1345,7 +1345,7 @@ class State_Animator extends FlxUIState
 		frame_sprite.animation.frameIndex = i;
 	}
 	
-	private function getRawFrames():AnimationData{
+	function getRawFrames():AnimationData{
 		var ad:AnimationData = new AnimationData();
 		ad.name = "raw_frames";
 		ad.frameRate = 0;
@@ -1355,7 +1355,7 @@ class State_Animator extends FlxUIState
 		return ad;
 	}
 	
-	private function makeEntityClick():Void {
+	function makeEntityClick():Void {
 		if (entity_click == null) {
 			entity_click = new FlxClickArea(entity_sprite.x, entity_sprite.y, entity_sprite.width, entity_sprite.height, onEntitySpriteClick);
 			add(entity_click);
@@ -1373,7 +1373,7 @@ class State_Animator extends FlxUIState
 		bounds.height = entity_sprite.height * 3;
 	}
 	
-	private function onEntitySpriteSweetSpot(AnimName:String, SweetName:String, X:Float, Y:Float):Void {
+	function onEntitySpriteSweetSpot(AnimName:String, SweetName:String, X:Float, Y:Float):Void {
 		if (group_sweet_test == null) {
 			group_sweet_test = new FlxSpriteGroup();
 			add(group_sweet_test);
@@ -1400,7 +1400,7 @@ class State_Animator extends FlxUIState
 		bullet.velocity.set(vector.x*50, vector.y*50);
 	}
 	
-	private function checkBullets():Void {
+	function checkBullets():Void {
 		if(sweetSpotTestOn && group_sweet_test != null){
 			for (bullet in group_sweet_test.members) {
 				if (bullet.x < bounds.left || bullet.x > bounds.right || bullet.y < bounds.top || bullet.y > bounds.bottom) {
@@ -1410,7 +1410,7 @@ class State_Animator extends FlxUIState
 		}
 	}
 	
-	private function onEntitySpriteClick():Void {
+	function onEntitySpriteClick():Void {
 		if (tab_menu != null && tab_menu.selected_tab_id == "sweets") {
 			var dx:Float = FlxG.mouse.x - entity_click.x;
 			var dy:Float = FlxG.mouse.y - entity_click.y;
@@ -1420,7 +1420,7 @@ class State_Animator extends FlxUIState
 		}
 	}
 	
-	private function loadAnimation(anim:String):Void {
+	function loadAnimation(anim:String):Void {
 		var box:FlxUI9SliceSprite = cast _ui.getAsset("preview_box");
 		if (anim_rect == null) {
 			anim_rect = FlxRect.get(box.x,box.y,box.width,box.height);
@@ -1465,7 +1465,7 @@ class State_Animator extends FlxUIState
 		}
 	}
 	
-	private function reloadState():Void {
+	function reloadState():Void {
 		FlxG.switchState(new State_Animator());
 	}
 }

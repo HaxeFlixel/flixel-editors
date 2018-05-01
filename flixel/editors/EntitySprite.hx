@@ -45,8 +45,8 @@ class EntitySprite extends FlxSprite
 	public var recycled:Bool = false;
 	public var destroyed(default, null):Bool = false;
 
-	private var framePaintPoint:Point = new Point();
-	private var framePaintRect:Rectangle = new Rectangle();
+	var framePaintPoint:Point = new Point();
+	var framePaintRect:Rectangle = new Rectangle();
 	
 	/**
 	 * Callback for when a sweet-spot animation frame is played, parameters:
@@ -265,7 +265,7 @@ class EntitySprite extends FlxSprite
 		}
 	}
 	
-	private function addAtlasAnimation(sprite:FlxSprite, anim:AnimationData):Void
+	function addAtlasAnimation(sprite:FlxSprite, anim:AnimationData):Void
 	{
 		var fNames = [];
 		for (i in 0...anim.frames.length)
@@ -275,7 +275,7 @@ class EntitySprite extends FlxSprite
 		sprite.animation.addByNames(anim.name, fNames, anim.frameRate, anim.looped, anim.flipX, anim.flipY);
 	}
 	
-	private function checkHasAtlas(path:String, file:String, useAssets:Bool=true):Bool
+	function checkHasAtlas(path:String, file:String, useAssets:Bool=true):Bool
 	{
 		var sys = false;
 		#if sys
@@ -298,7 +298,7 @@ class EntitySprite extends FlxSprite
 		return true;
 	}
 	
-	private function getBmp(file:String, remotePath:String=""):BitmapData
+	function getBmp(file:String, remotePath:String=""):BitmapData
 	{
 		if (remotePath == "" || remotePath == null)
 		{
@@ -340,7 +340,7 @@ class EntitySprite extends FlxSprite
 		return null;
 	}
 	
-	private function getAtlasXmlStr(path:String, file:String, useAssets:Bool=true):String
+	function getAtlasXmlStr(path:String, file:String, useAssets:Bool=true):String
 	{
 		var sys = false;
 		#if sys
@@ -370,7 +370,7 @@ class EntitySprite extends FlxSprite
 		}
 	}
 	
-	private function loadAtlasFrames(sprite:FlxSprite, gfx:EntityGraphics, asset_src:String, xmlStr:String, flxGraphic:FlxGraphic=null):Void
+	function loadAtlasFrames(sprite:FlxSprite, gfx:EntityGraphics, asset_src:String, xmlStr:String, flxGraphic:FlxGraphic=null):Void
 	{
 		var skin = gfx.skin;
 		var imgSrc:FlxGraphicAsset = null;
@@ -405,7 +405,7 @@ class EntitySprite extends FlxSprite
 		return;
 	}
 	
-	private function framePaint(frame:FlxFrame, bmd:BitmapData = null):BitmapData
+	function framePaint(frame:FlxFrame, bmd:BitmapData = null):BitmapData
 	{
 		var w:Int = Std.int(frame.sourceSize.x);
 		var h:Int = Std.int(frame.sourceSize.y);
@@ -437,7 +437,7 @@ class EntitySprite extends FlxSprite
 	}
 	
 	
-	private function basicLoad(G:EntityGraphics):Void
+	function basicLoad(G:EntityGraphics):Void
 	{
 		var s:EntitySkin = cast G.skin;
 		
@@ -459,7 +459,7 @@ class EntitySprite extends FlxSprite
 		}
 	}
 	
-	private function doScale(G:EntityGraphics):Void
+	function doScale(G:EntityGraphics):Void
 	{
 		var s:EntitySkin = G.skin;
 		
@@ -584,7 +584,7 @@ class EntitySprite extends FlxSprite
 		loadCustomColorsWork(G);
 	}
 	
-	private function loadCustomColorsWork(G:EntityGraphics)
+	function loadCustomColorsWork(G:EntityGraphics)
 	{
 		var customColorKey = G.colorKey;
 		
@@ -843,20 +843,20 @@ class EntitySprite extends FlxSprite
 	
 	/**PRIVATE**/
 	
-	private var _animFlipX:Bool = false;
-	private var _animFlipY:Bool = false;
+	var _animFlipX:Bool = false;
+	var _animFlipY:Bool = false;
 	
-	private var _dirtyAnim:String = "";
+	var _dirtyAnim:String = "";
 	
-	private var _usingAtlas:Bool = false;
-	private var _hasSweetSpots:Bool = false;
-	private var _sweetSpotMap:Map<String,Array<AnimSweetSpot>> = null;
+	var _usingAtlas:Bool = false;
+	var _hasSweetSpots:Bool = false;
+	var _sweetSpotMap:Map<String,Array<AnimSweetSpot>> = null;
 	
-	private var _layerSprites:FlxSpriteGroup;
-	private var _layerSpriteProperties:Array<LayerSpriteProperty>;
+	var _layerSprites:FlxSpriteGroup;
+	var _layerSpriteProperties:Array<LayerSpriteProperty>;
 	
-	private var _lastAnimFrame:Int = 0;
-	private var _lastAnimName:String = "";
+	var _lastAnimFrame:Int = 0;
+	var _lastAnimName:String = "";
 	
 	/**
 	 * Callback for animation stuffs
@@ -865,7 +865,7 @@ class EntitySprite extends FlxSprite
 	 * @param	SpriteFrame		Index of the frameR in the Sprite Sheet
 	 */
 	
-	private function animationCallback(Name:String, AnimFrame:Int, SpriteFrame:Int):Void
+	function animationCallback(Name:String, AnimFrame:Int, SpriteFrame:Int):Void
 	{
 		if (_hasSweetSpots) //If we have at least one sweet spot for this animation
 		{
@@ -890,7 +890,7 @@ class EntitySprite extends FlxSprite
 		_lastAnimName  = Name;
 	}
 	
-	private function animationCallbackFinish(Name:String)
+	function animationCallbackFinish(Name:String)
 	{
 		onAnimationFinish(Name);
 		
@@ -898,12 +898,12 @@ class EntitySprite extends FlxSprite
 		_lastAnimName = Name;
 	}
 	
-	private function onAnimationFinish(Name:String):Void
+	function onAnimationFinish(Name:String):Void
 	{
 		//override per subclass
 	}
 	
-	private function loadCustomPixelPalette(G:EntityGraphics):Void 
+	function loadCustomPixelPalette(G:EntityGraphics):Void 
 	{
 		//Get the base layer
 		
@@ -988,7 +988,7 @@ class EntitySprite extends FlxSprite
 		}
 	}
 	
-	private function loadCustomColorLayersStacked(G:EntityGraphics):Void
+	function loadCustomColorLayersStacked(G:EntityGraphics):Void
 	{
 		//Load the base layer first
 		
@@ -1082,7 +1082,7 @@ class EntitySprite extends FlxSprite
 		}
 	}
 	
-	private function loadCustomColorLayersBaked(G:EntityGraphics):Void
+	function loadCustomColorLayersBaked(G:EntityGraphics):Void
 	{
 		//Get the base layer
 		var baseLayer:BitmapData = getBmp(G.asset_src, G.remotePath);
@@ -1160,7 +1160,7 @@ class EntitySprite extends FlxSprite
 		}
 	}
 	
-	private function dispose(piece:BitmapData, file:String, remotePath:String)
+	function dispose(piece:BitmapData, file:String, remotePath:String)
 	{
 		if (remotePath == "" || remotePath == null)
 		{
@@ -1173,7 +1173,7 @@ class EntitySprite extends FlxSprite
 		piece.dispose();
 	}
 	
-	private function safeColorTransform(piece:BitmapData, trans:ColorTransform):BitmapData
+	function safeColorTransform(piece:BitmapData, trans:ColorTransform):BitmapData
 	{
 		if (piece.height > 2048)
 		{

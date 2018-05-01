@@ -38,7 +38,7 @@ class StressSprite extends EntitySprite
 		}
 	}
 
-	private function setBounds():Void
+	function setBounds():Void
 	{
 		if (x+width > FlxG.width)
 		{

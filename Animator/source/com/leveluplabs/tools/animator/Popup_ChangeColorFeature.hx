@@ -27,22 +27,22 @@ import flixel.editors.EntityGraphics;
  */
 class Popup_ChangeColorFeature extends FlxUIPopup
 {
-	private var color_index:ColorIndex;
-	private var swatchSelecter:FlxUIColorSwatchSelecter;
-	private var dropDown:FlxUIDropDownMenu;
-	private var createMode:Bool = false;
-	private var entity:EntityGraphics = null;
-	private var paletteName:String = "";
+	var color_index:ColorIndex;
+	var swatchSelecter:FlxUIColorSwatchSelecter;
+	var dropDown:FlxUIDropDownMenu;
+	var createMode:Bool = false;
+	var entity:EntityGraphics = null;
+	var paletteName:String = "";
 	
-	private var group_colorFeatures:FlxUIGroup;
-	private var btn_add:FlxUIButton;
+	var group_colorFeatures:FlxUIGroup;
+	var btn_add:FlxUIButton;
 	
-	private var swatchData:Array<StrNameLabel>;
-	private var spriteData:Array<StrNameLabel>;
+	var swatchData:Array<StrNameLabel>;
+	var spriteData:Array<StrNameLabel>;
 	
-	private var input:FlxUIInputText;
-	private var inputName:String = "";
-	private var anchorY:Float = 0;
+	var input:FlxUIInputText;
+	var inputName:String = "";
+	var anchorY:Float = 0;
 	
 	public function new(PaletteName:String, Color_index:ColorIndex, ?Create:Bool = false, ?Entity:EntityGraphics = null, ?InputName:String = ""):Void {
 		color_index = Color_index;
@@ -110,7 +110,7 @@ class Popup_ChangeColorFeature extends FlxUIPopup
 		setupIndexStuff();
 	}
 	
-	private function setupIndexStuff():Void {
+	function setupIndexStuff():Void {
 		var back:FlxUI9SliceSprite = cast _ui.getAsset("back");
 		
 		back.resize(back.width, back.height * 2);
@@ -226,7 +226,7 @@ class Popup_ChangeColorFeature extends FlxUIPopup
 		updateSpacing();
 	}
 	
-	private function onClickAdd():Void {
+	function onClickAdd():Void {
 		var thing:ColorFeatureThingy = new ColorFeatureThingy(0, 0, spriteData, swatchData);
 		thing.ID = group_colorFeatures.members.length;
 		var otherThing:ColorFeatureThingy = cast group_colorFeatures.members[group_colorFeatures.members.length - 1];
@@ -235,7 +235,7 @@ class Popup_ChangeColorFeature extends FlxUIPopup
 		updateSpacing();
 	}
 	
-	private function updateSpacing():Void {
+	function updateSpacing():Void {
 		group_colorFeatures.members.sort(sortOnId);
 		var yy:Float = group_colorFeatures.members[0].y;
 		var xx:Float = group_colorFeatures.members[0].x;
@@ -253,20 +253,20 @@ class Popup_ChangeColorFeature extends FlxUIPopup
 	}
 	
 	
-	private function sortOnId(a:FlxSprite, b:FlxSprite):Int {
+	function sortOnId(a:FlxSprite, b:FlxSprite):Int {
 		if (a.ID < b.ID) return -1;
 		if (a.ID > b.ID) return 1;
 		return 0;
 	}
 	
-	private function sortOnY(a:FlxSprite, b:FlxSprite):Int {
+	function sortOnY(a:FlxSprite, b:FlxSprite):Int {
 		if (a.y < b.y) return 1;
 		if (a.y > b.y) return -1;
 		return 0;
 	}
 	
 	
-	private function deleteColorFeature(Name:String):Void {
+	function deleteColorFeature(Name:String):Void {
 		var thing:ColorFeatureThingy;
 		for (sprite in group_colorFeatures.members) {
 			thing = cast sprite;
@@ -281,7 +281,7 @@ class Popup_ChangeColorFeature extends FlxUIPopup
 		updateSpacing();
 	}
 	
-	private function refreshSwatchSelecter(colorPalette:ColorPalette):Void {
+	function refreshSwatchSelecter(colorPalette:ColorPalette):Void {
 		if (swatchSelecter != null) {
 			remove(swatchSelecter, true);
 			swatchSelecter.destroy();
@@ -304,7 +304,7 @@ class Popup_ChangeColorFeature extends FlxUIPopup
 		}
 	}
 	
-	private function getColorFeatureList():Array<Int> {
+	function getColorFeatureList():Array<Int> {
 		var color_list:Array<Int> = [];
 		group_colorFeatures.members.sort(sortOnId);
 		var thing:ColorFeatureThingy;

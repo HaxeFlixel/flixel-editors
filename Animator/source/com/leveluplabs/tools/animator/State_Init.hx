@@ -44,19 +44,19 @@ class State_Init extends FlxUIState
 		}
 	}
 	
-	private function startAnimator():Void
+	function startAnimator():Void
 	{
 		Reg.color_index = Do.readColorIndex();
 		FlxG.switchState(new State_Animator());
 	}
 	
 	
-	private function changeIndexPath(path:String):Void
+	function changeIndexPath(path:String):Void
 	{
 		Do.changeIndexPath(path);
 	}
 	
-	private function initData():Bool
+	function initData():Bool
 	{
 		Reg.path_index = Do.readIndex();
 		if (Reg.path_index == "") {

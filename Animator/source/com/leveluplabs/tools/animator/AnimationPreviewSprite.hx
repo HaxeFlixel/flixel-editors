@@ -28,8 +28,8 @@ class AnimationPreviewSprite extends FlxSpriteGroup
 	 * @param	anim	The Animation you want to display
 	 */
 	
-	private var _maxWidth:Float = 100;
-	private var _maxHeight:Float = 100;
+	var _maxWidth:Float = 100;
+	var _maxHeight:Float = 100;
 	
 	public var cellOutlineColor:Int = 0x00000000;
 	public var hilightColor(default,set):Int     = 0xff00ff00;
@@ -37,23 +37,23 @@ class AnimationPreviewSprite extends FlxSpriteGroup
 	public var cellCheckColor1:Int  = 0xff808080;
 	public var cellCheckColor2:Int  = 0xff404040;
 	
-	private var _canvas:FlxSprite;
-	private var _backing:FlxSprite;
-	private var _myRect:Rectangle;
-	private var _btn:FlxButton;
-	private var _hilight:FlxSprite;
-	private var _hilight2:FlxSprite;
+	var _canvas:FlxSprite;
+	var _backing:FlxSprite;
+	var _myRect:Rectangle;
+	var _btn:FlxButton;
+	var _hilight:FlxSprite;
+	var _hilight2:FlxSprite;
 	
-	private var _callback:Int->Void;
+	var _callback:Int->Void;
 	
-	private var _cellWidth:Float;
-	private var _cellHeight:Float;
-	private var _heightInCells:Int;
-	private var _widthInCells:Int;
-	private var _totalCells:Int;
-	private var _scale:Float = 1;
+	var _cellWidth:Float;
+	var _cellHeight:Float;
+	var _heightInCells:Int;
+	var _widthInCells:Int;
+	var _totalCells:Int;
+	var _scale:Float = 1;
 	
-	private var _sweet:FlxSprite;
+	var _sweet:FlxSprite;
 	
 	public override function destroy():Void {
 		super.destroy();
@@ -180,7 +180,7 @@ class AnimationPreviewSprite extends FlxSpriteGroup
 		}
 	}
 	
-	private function redraw(entity:FlxSprite,frames:Array<Int>,sweets:Array<AnimSweetSpot>):Void {
+	function redraw(entity:FlxSprite,frames:Array<Int>,sweets:Array<AnimSweetSpot>):Void {
 		var frame_index:Int = 0;
 		var i:Int = 0;
 		var grid_x:Int = 0;
@@ -221,18 +221,18 @@ class AnimationPreviewSprite extends FlxSpriteGroup
 		return i;
 	}
 	
-	private inline function indexToGridLoc(i:Int):FlxPoint {
+	inline function indexToGridLoc(i:Int):FlxPoint {
 		var pt:FlxPoint = FlxPoint.get();
 		pt.y = Math.floor(i / _widthInCells);
 		pt.x = i % _widthInCells;
 		return pt;
 	}
 	
-	private inline function gridLocToIndex(X:Int, Y:Int):Int {
+	inline function gridLocToIndex(X:Int, Y:Int):Int {
 		return (Y * _widthInCells) + X;
 	}
 	
-	private function onClick():Void{
+	function onClick():Void{
 		var m = FlxG.mouse.getScreenPosition();
 		var rx:Float = m.x - x;
 		var ry:Float = m.y - y;
@@ -245,7 +245,7 @@ class AnimationPreviewSprite extends FlxSpriteGroup
 		}
 	}
 	
-	private function pasteFrame(source:FlxSprite, frame:Int, cellX:Int, cellY:Int, scale:Float= 1, i:Int=0, hasSweet:Bool=false):Void {
+	function pasteFrame(source:FlxSprite, frame:Int, cellX:Int, cellY:Int, scale:Float= 1, i:Int=0, hasSweet:Bool=false):Void {
 		var bmp:BitmapData = source.frames.frames[frame].getBitmap();
 		
 		if (_flashPoint == null) {
@@ -276,7 +276,7 @@ class AnimationPreviewSprite extends FlxSpriteGroup
 		}
 	}
 	
-	private function drawOutlinesAndFills(pt:Point,w:Float,h:Float,cellX:Int,cellY:Int):Void {
+	function drawOutlinesAndFills(pt:Point,w:Float,h:Float,cellX:Int,cellY:Int):Void {
 		
 		_myRect.x = pt.x;
 		_myRect.y = pt.y;
@@ -310,7 +310,7 @@ class AnimationPreviewSprite extends FlxSpriteGroup
 		_backing.dirty = true;
 	}
 	
-	private function fitCellsToDimensions(maxW:Float, maxH:Float, cells:Int, cellW:Float, cellH:Float):FlxPoint {
+	function fitCellsToDimensions(maxW:Float, maxH:Float, cells:Int, cellW:Float, cellH:Float):FlxPoint {
 		var gridW:Int = cells;				//start with a long strip of cells
 		var gridH:Int = 1;
 		

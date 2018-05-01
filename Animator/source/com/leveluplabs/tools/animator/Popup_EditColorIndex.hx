@@ -23,29 +23,29 @@ import systools.Dialogs;
  */
 class Popup_EditColorIndex extends FlxUIPopup
 {
-	private var colorIndex:ColorIndex;
-	private var currSwatch:FlxUIColorSwatch;
+	var colorIndex:ColorIndex;
+	var currSwatch:FlxUIColorSwatch;
 	
-	private var slider_r:FlxSlider;
-	private var slider_g:FlxSlider;
-	private var slider_b:FlxSlider;
+	var slider_r:FlxSlider;
+	var slider_g:FlxSlider;
+	var slider_b:FlxSlider;
 	
-	private var slider_h:FlxSlider;
-	private var slider_s:FlxSlider;
-	private var slider_br:FlxSlider;
+	var slider_h:FlxSlider;
+	var slider_s:FlxSlider;
+	var slider_br:FlxSlider;
 	
-	private var list_data:Array<SwatchData>;
+	var list_data:Array<SwatchData>;
 	
-	private var dd_swatch_component:FlxUIDropDownMenu;
+	var dd_swatch_component:FlxUIDropDownMenu;
 	
-	private var colorBlank:FlxSprite;
+	var colorBlank:FlxSprite;
 	
-	private var btn_save:FlxUIButton;
+	var btn_save:FlxUIButton;
 	
 	public var rgb:{alpha:Float,red:Float,green:Float,blue:Float};
 	public var hsb:{alpha:Float, hue:Float, saturation:Float, brightness:Float };
 	
-	private var swatch_selecter:FlxUIColorSwatchSelecter;
+	var swatch_selecter:FlxUIColorSwatchSelecter;
 	
 	public function new(ci:ColorIndex):Void {
 		colorIndex = ci;
@@ -78,7 +78,7 @@ class Popup_EditColorIndex extends FlxUIPopup
 		setup();
 	}
 	
-	private function setup():Void {
+	function setup():Void {
 		
 		name = "confirm_color_index_change";
 		
@@ -150,14 +150,14 @@ class Popup_EditColorIndex extends FlxUIPopup
 		onDropDown(0);
 	}
 	
-	private function onSliderR(f:Float):Void { onSliderRGB(); };
-	private function onSliderG(f:Float):Void { onSliderRGB(); };
-	private function onSliderB(f:Float):Void { onSliderRGB(); };
-	private function onSliderH(f:Float):Void { onSliderHSB(); };
-	private function onSliderS(f:Float):Void { onSliderHSB(); };
-	private function onSliderBR(f:Float):Void { onSliderHSB(); };
+	function onSliderR(f:Float):Void { onSliderRGB(); };
+	function onSliderG(f:Float):Void { onSliderRGB(); };
+	function onSliderB(f:Float):Void { onSliderRGB(); };
+	function onSliderH(f:Float):Void { onSliderHSB(); };
+	function onSliderS(f:Float):Void { onSliderHSB(); };
+	function onSliderBR(f:Float):Void { onSliderHSB(); };
 	
-	private function onSliderRGB():Void {
+	function onSliderRGB():Void {
 		var red:Int = Std.int(rgb.red);
 		var green:Int = Std.int(rgb.green);
 		var blue:Int = Std.int(rgb.blue);
@@ -171,7 +171,7 @@ class Popup_EditColorIndex extends FlxUIPopup
 		onSlider();
 	}
 	
-	private function onSliderHSB():Void {
+	function onSliderHSB():Void {
 		var c:FlxColor= FlxColor.fromHSB(hsb.hue, hsb.saturation, hsb.brightness, 1.0);
 		rgb.red = c.red;
 		rgb.green = c.green;
@@ -179,7 +179,7 @@ class Popup_EditColorIndex extends FlxUIPopup
 		onSlider();
 	}
 	
-	private function onSlider():Void {
+	function onSlider():Void {
 		var str:String = dd_swatch_component.selectedId;
 		var curr_swatchIndex:Int = Std.parseInt(str);
 		
@@ -192,7 +192,7 @@ class Popup_EditColorIndex extends FlxUIPopup
 		btn_save.label.color = 0xFF0000;
 	}
 	
-	private function updateSwatch():Void {
+	function updateSwatch():Void {
 		btn_save.label.text = "Update";
 		btn_save.label.color = 0x000000;
 		var s:FlxUIColorSwatch = swatch_selecter.selectedSwatch;
@@ -201,7 +201,7 @@ class Popup_EditColorIndex extends FlxUIPopup
 		}
 	}
 	
-	private function onDropDown(id:Int):Void {
+	function onDropDown(id:Int):Void {
 		var c:FlxColor = currSwatch.colors.getColor(id);
 		
 		rgb.red = c.red;
@@ -215,7 +215,7 @@ class Popup_EditColorIndex extends FlxUIPopup
 		colorBlank.color = c;
 	}
 	
-	private function onSwatchClick(sd:SwatchData):Void {
+	function onSwatchClick(sd:SwatchData):Void {
 		refreshSwatch(sd);
 		btn_save.label.text = "Update";
 		btn_save.label.color = 0x000000;
@@ -223,7 +223,7 @@ class Popup_EditColorIndex extends FlxUIPopup
 		dd_swatch_component.selectedId = "1";
 	}
 	
-	private function refreshSwatch(sd:SwatchData):Void {
+	function refreshSwatch(sd:SwatchData):Void {
 		currSwatch.colors = sd;
 		var input_swatch_name:FlxUIText = cast _ui.getAsset("input_swatch_name");
 		
@@ -255,7 +255,7 @@ class Popup_EditColorIndex extends FlxUIPopup
 		}
 	}
 	
-	private function updateColorIndex():Void {
+	function updateColorIndex():Void {
 		var list_swatch_data:Array<SwatchData> = [];
 		for (sprite in swatch_selecter.members) {
 			if (Std.is(sprite, FlxUIColorSwatch)) {

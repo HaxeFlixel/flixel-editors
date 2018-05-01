@@ -108,7 +108,7 @@ class ColorFeatureThingy extends FlxUIGroup
 		dd_swatch.selectedId = id;
 	}
 	
-	private function onSprite(id:String):Void {
+	function onSprite(id:String):Void {
 		var colorString:String = dd_sprite.header.text.text;
 		var colorInt = U.parseHex(colorString, false, true, 0xFFFFFF);
 		var colorIcon = new FlxSprite();
@@ -116,7 +116,7 @@ class ColorFeatureThingy extends FlxUIGroup
 		dd_sprite.header.background.stamp(colorIcon, 2, 4);
 	}
 	
-	private function onClick():Void {
+	function onClick():Void {
 		FlxUI.event("color_feature_click_delete", this, name);
 	}
 	

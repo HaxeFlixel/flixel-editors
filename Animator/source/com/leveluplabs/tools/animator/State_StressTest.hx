@@ -32,27 +32,27 @@ import flixel.editors.EntityGraphics;
  */
 class State_StressTest extends FlxUIState
 {
-	private var step_change:FlxUINumericStepper;
-	private var step_colors:FlxUINumericStepper;
-	private var btn_add:FlxUIButton;
-	private var btn_remove:FlxUIButton;
+	var step_change:FlxUINumericStepper;
+	var step_colors:FlxUINumericStepper;
+	var btn_add:FlxUIButton;
+	var btn_remove:FlxUIButton;
 	
-	private var gfx:EntityGraphics;
+	var gfx:EntityGraphics;
 	
 	public static var offscreen:Bool = false;
 	
-	private var spriteGroup:FlxGroup;
+	var spriteGroup:FlxGroup;
 	
-	private var label_fps:FlxText;
-	private var label_bunnies:FlxText;
+	var label_fps:FlxText;
+	var label_bunnies:FlxText;
 	
-	private var _times:Array<Float>;
+	var _times:Array<Float>;
 	
-	private var _list_colors:Array<Array<Int>>;
+	var _list_colors:Array<Array<Int>>;
 	
-	private var _list_keys:Array<String>;
+	var _list_keys:Array<String>;
 	
-	private var _anim:String = "";
+	var _anim:String = "";
 	
 	override public function create():Void
 	{
@@ -141,7 +141,7 @@ class State_StressTest extends FlxUIState
 		}
 	}
 	
-	private function changeColors():Void {
+	function changeColors():Void {
 		
 		if (gfx.skin.color_change_mode == EntityGraphics.COLOR_CHANGE_NONE) 
 		{
@@ -256,7 +256,7 @@ class State_StressTest extends FlxUIState
 		}
 	}
 	
-	private function addSprites(count:Int):Void {
+	function addSprites(count:Int):Void {
 		var counter:Int = 0;
 		
 		var list_skins = gfx.getSkinNames();
@@ -283,7 +283,7 @@ class State_StressTest extends FlxUIState
 		label_bunnies.text = "Sprites: " + spriteGroup.countLiving();
 	}
 	
-	private function removeSprites(count:Int):Void {
+	function removeSprites(count:Int):Void {
 		for (i in 0...count) {
 			var sprite:FlxSprite = cast spriteGroup.getFirstAlive();
 			if(sprite != null){
