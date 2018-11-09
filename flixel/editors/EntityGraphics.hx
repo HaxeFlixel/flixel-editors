@@ -904,7 +904,11 @@ class EntityGraphics implements IFlxDestroyable
 		
 		if (b == null)
 		{
-			b = Assets.getBitmapData(U.gfx(asset_src),false);	//don't cache it, just peek at it
+			var asset = U.gfx(asset_src);
+			if (Assets.exists(asset))
+			{
+				b = Assets.getBitmapData(asset, false);	//don't cache it, just peek at it
+			}
 		}
 		
 		if (b != null)
