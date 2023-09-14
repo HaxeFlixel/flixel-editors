@@ -1,4 +1,5 @@
 package flixel.editors;
+import flixel.FlxG;
 import flixel.editors.EntityGraphics.EntityColorLayer;
 import flixel.editors.EntitySkin;
 import flash.display.BitmapData;
@@ -902,12 +903,17 @@ class EntityGraphics implements IFlxDestroyable
 			}
 		#end
 		
+		var skipCache = false;
 		if (b == null)
 		{
 			var asset = U.gfx(asset_src);
-			if (Assets.exists(asset))
+			if (FlxG.bitmap.checkCache(asset)){
+				b = FlxG.bitmap.get(asset).bitmap;
+			}
+			else if (Assets.exists(asset))
 			{
 				b = Assets.getBitmapData(asset, false);	//don't cache it, just peek at it
+				skipCache = true;
 			}
 		}
 		
@@ -923,9 +929,11 @@ class EntityGraphics implements IFlxDestroyable
 				arr.push(pix_color);
 			}
 			
-			//destroy bitmap data information (it's safe b/c we didn't cache it!)
-			b.dispose();
-			b = null;
+			if(skipCache){
+				//destroy bitmap data information (it's safe b/c we didn't cache it!)
+				b.dispose();
+				b = null;
+			}
 		}
 		
 		return arr;
